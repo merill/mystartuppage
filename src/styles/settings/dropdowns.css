@@ -119,7 +119,7 @@
     max-height: 120px;
 }
 
-/* Dropdowns: Quicklinks, Notes, Searchbar, and Quotes Options */
+/* Dropdowns: Quicklinks, Notes, and Quotes Options */
 
 #quicklinks_options.shown {
     max-height: 423px;
@@ -127,14 +127,6 @@
 
 #notes_options.shown {
     max-height: 200px;
-}
-
-#searchbar_options.shown {
-    max-height: 440px;
-}
-
-#searchbar_request.shown {
-    max-height: 120px;
 }
 
 #quotes_options.shown {
@@ -199,10 +191,6 @@
 
 .all .as_timedate {
     max-height: 430px;
-}
-
-.all .as_searchbar {
-    max-height: 320px;
 }
 
 .all .as_weather {

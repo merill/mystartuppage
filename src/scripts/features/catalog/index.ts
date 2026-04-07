@@ -33,7 +33,7 @@ interface PortalGroup {
 
 /**
  * Get the cached catalog or fetch fresh data.
- * Called on extension startup and when searchbar opens.
+ * Called on extension startup and from the settings catalog browser.
  */
 export async function getCatalog(): Promise<CatalogEntry[]> {
     const local = await storage.local.get('catalogCache')

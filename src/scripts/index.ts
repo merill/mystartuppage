@@ -4,10 +4,10 @@ import { interfacePopup } from './features/popup.ts'
 import { moveElements } from './features/move/index.ts'
 import { hideElements } from './features/hide.ts'
 import { quickLinks } from './features/links/index.ts'
-import { searchbar } from './features/searchbar.ts'
 import { getCatalog } from './features/catalog/index.ts'
 import { customCss } from './features/css.ts'
 import { cmdmsInit } from './features/cmdms.ts'
+import { msportalsInit } from './features/msportals.ts'
 import { notes } from './features/notes.ts'
 import { clock } from './features/clock/index.ts'
 import './features/contextmenu.ts'
@@ -76,12 +76,12 @@ async function startup(): Promise<void> {
     hideElements(sync.hide)
     backgroundsInit(sync, local, true)
     cmdmsInit(sync.cmdms)
+    msportalsInit(sync.msportals)
     quickLinks({ sync, local })
     settingsInit(sync, local)
 
     // Pre-fetch catalog in background (non-blocking)
     getCatalog()
-    searchbar()
     pageControl({ width: sync.pagewidth, gap: sync.pagegap })
     operaExtensionExplainer(local.operaExplained)
     tabsTracking()

@@ -32,6 +32,24 @@ export interface CmdmsCache {
     commands: CmdCommand[]
 }
 
+export interface MsPortal {
+    portalName: string
+    primaryURL: string
+    shortURL?: string
+    secondaryURLs?: { icon: string; url: string }[]
+    note?: string
+}
+
+export interface MsPortalGroup {
+    groupName: string
+    portals: MsPortal[]
+}
+
+export interface MsPortalsCache {
+    lastFetch: number
+    categories: Record<string, MsPortalGroup[]>
+}
+
 export interface Local {
     operaExplained?: true
 
@@ -57,6 +75,9 @@ export interface Local {
 
     // cmd.ms terminal
     cmdmsCache?: CmdmsCache
+
+    // msportals.io
+    msportalsCache?: MsPortalsCache
 
     // Links
     [key: `x-icon-${string}`]: string

@@ -38,7 +38,6 @@
 /* Baked-in features and dialogs */
 @import './features/time';
 @import './features/main';
-@import './features/searchbar';
 @import './features/notes';
 @import './features/links';
 @import './features/grid';
@@ -46,6 +45,8 @@
 @import './features/contextmenu';
 @import './features/csseditor';
 @import './features/cmdms';
+@import './features/msportals';
+@import './features/catalog';
 
 /* <!> Responsive must be imported last */
 @import './_responsive';

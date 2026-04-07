@@ -1,0 +1,100 @@
+/* Catalog browser in settings */
+
+#catalog-search-wrapper {
+    padding-top: 0;
+}
+
+#i_catalog-search {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#catalog-results {
+    max-height: 16em;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding: 0 0.8em;
+}
+
+#catalog-results:empty {
+    display: none;
+}
+
+.catalog-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.4em 0.5em;
+    border-radius: 0.4em;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.catalog-item:hover {
+    background-color: rgba(var(--blue, 66, 133, 244), 0.1);
+}
+
+.catalog-item img {
+    width: 1.2em;
+    height: 1.2em;
+    object-fit: contain;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.catalog-item-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.05em;
+}
+
+.catalog-item-name {
+    font-size: 0.85em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.catalog-item-url {
+    font-size: 0.7em;
+    opacity: 0.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.catalog-item-category {
+    font-size: 0.65em;
+    padding: 0.1em 0.4em;
+    border-radius: 0.3em;
+    background-color: rgba(var(--blue, 66, 133, 244), 0.15);
+    color: var(--color-blue);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.catalog-item-add {
+    font-size: 0.75em;
+    padding: 0.2em 0.6em;
+    border-radius: 0.3em;
+    border: 1px solid rgba(var(--blue, 66, 133, 244), 0.3);
+    background-color: rgba(var(--blue, 66, 133, 244), 0.1);
+    color: var(--color-blue);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.1s;
+    white-space: nowrap;
+}
+
+.catalog-item-add:hover {
+    background-color: rgba(var(--blue, 66, 133, 244), 0.25);
+}
+
+.catalog-item-add.added {
+    border-color: rgba(var(--green, 52, 168, 83), 0.3);
+    background-color: rgba(var(--green, 52, 168, 83), 0.1);
+    color: var(--color-green, #34a853);
+    cursor: default;
+}

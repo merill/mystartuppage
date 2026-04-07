@@ -8,6 +8,7 @@ import { quickLinks } from './features/links/index.ts'
 import { getCatalog } from './features/catalog/index.ts'
 import { getDefaultIcon } from './features/links/helpers.ts'
 import { cmdmsToggle } from './features/cmdms.ts'
+import { msportalsToggle } from './features/msportals.ts'
 import { notes } from './features/notes.ts'
 import { clock } from './features/clock/index.ts'
 import { openSettingsButtonEvent } from './features/contextmenu.ts'
@@ -198,7 +199,6 @@ function initOptionsValues(data: Sync, local: Local): void {
     setInput('i_greetmode', data.greetingsmode ?? 'auto')
     setInput('i_timezone', data.clock?.timezone || 'auto')
     setCheckbox('i_showall', data.showall)
-    setCheckbox('i_cmdms', data.cmdms)
     setCheckbox('i_settingshide', data.hide?.settingsicon ?? false)
     setCheckbox('i_background-mute-videos', data.backgrounds.mute ?? true)
     setCheckbox('i_quicklinks', data.quicklinks)
@@ -213,6 +213,10 @@ function initOptionsValues(data: Sync, local: Local): void {
     setCheckbox('i_notes', data.notes?.on ?? false)
     setCheckbox('i_ampm', data.clock?.ampm ?? false)
     setCheckbox('i_ampm-label', data.clock?.ampmlabel ?? false)
+
+    // Segmented control: determine active view
+    const activeView = data.cmdms ? 'cmdms' : data.msportals ? 'msportals' : 'default'
+    initViewSelector(activeView)
 
     colorInput('solid-background', data.backgrounds.color)
     colorInput('texture-color', data.backgrounds.texture.color ?? '#ffffff')
@@ -321,10 +325,17 @@ function initOptionsEvents(): void {
         showall(target.checked, true)
     })
 
-    // cmd.ms terminal toggle
-    onclickdown(paramId('i_cmdms'), (_, target) => {
-        cmdmsToggle(target.checked)
-    })
+    // New Tab View segmented control
+    const viewSelector = document.getElementById('newtab-view-selector')
+
+    if (viewSelector) {
+        for (const btn of viewSelector.querySelectorAll<HTMLButtonElement>('button')) {
+            btn.addEventListener('click', () => {
+                const view = btn.dataset.view ?? 'default'
+                switchView(view)
+            })
+        }
+    }
 
     paramId('i_favicon').addEventListener('input', function (this: HTMLInputElement): void {
         favicon(this.value, true)
@@ -1324,6 +1335,69 @@ function initCatalogSearch(): void {
     }, 200)
 
     input.addEventListener('input', handleSearch)
+}
+
+//	View selector
+
+const VIEW_DESCRIPTIONS: Record<string, string> = {
+    default: 'A minimalist new tab page with backgrounds, clock, quick links, and more.',
+    cmdms:
+        'A command line to quickly jump to any Microsoft admin portal. <a href="https://cmd.ms" target="_blank" rel="noreferrer noopener">cmd.ms</a>',
+    msportals:
+        'A searchable directory of Microsoft admin portals, sourced from <a href="https://msportals.io" target="_blank" rel="noreferrer noopener">msportals.io</a>.',
+}
+
+function initViewSelector(activeView: string): void {
+    const selector = document.getElementById('newtab-view-selector')
+    const aside = document.querySelector('aside')
+    const desc = document.getElementById('newtab-view-description')
+
+    if (!selector) return
+
+    for (const btn of selector.querySelectorAll<HTMLButtonElement>('button')) {
+        btn.classList.toggle('active', btn.dataset.view === activeView)
+    }
+
+    if (desc) {
+        desc.innerHTML = VIEW_DESCRIPTIONS[activeView] ?? ''
+    }
+
+    if (aside && activeView !== 'default') {
+        aside.classList.add('view-overlay')
+    }
+}
+
+function switchView(view: string): void {
+    const selector = document.getElementById('newtab-view-selector')
+    const aside = document.querySelector('aside')
+    const desc = document.getElementById('newtab-view-description')
+
+    if (!selector) return
+
+    // Update active button
+    for (const btn of selector.querySelectorAll<HTMLButtonElement>('button')) {
+        btn.classList.toggle('active', btn.dataset.view === view)
+    }
+
+    // Update description
+    if (desc) {
+        desc.innerHTML = VIEW_DESCRIPTIONS[view] ?? ''
+    }
+
+    // Toggle dashboard sections visibility
+    if (aside) {
+        aside.classList.toggle('view-overlay', view !== 'default')
+    }
+
+    // Disable both views first, then enable the selected one
+    cmdmsToggle(false)
+    msportalsToggle(false)
+
+    if (view === 'cmdms') {
+        cmdmsToggle(true)
+    } else if (view === 'msportals') {
+        msportalsToggle(true)
+    }
 }
 
 //	Helpers

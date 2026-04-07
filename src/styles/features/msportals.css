@@ -1,0 +1,420 @@
+/* msportals.io — Hacker terminal theme matching https://msportals.io */
+
+/* --- Container --- */
+#msportals {
+    height: 100vh;
+    background: #151515;
+    color: #eaeaea;
+    font-family: Monaco, 'Bitstream Vera Sans Mono', 'Lucida Console', Terminal, monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#msportals.hidden {
+    display: none;
+}
+
+/* --- Header --- */
+.msportals-header {
+    background: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px dashed #b5e853;
+    margin-bottom: 40px;
+}
+
+.msportals-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+}
+
+.msportals-title {
+    color: #b5e853;
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 0 0 5px rgba(181, 232, 83, 0.1);
+}
+
+.msportals-title::before {
+    content: './ ';
+}
+
+.msportals-subtitle {
+    color: #666;
+    font-size: 24px;
+    margin: 4px 0 10px;
+}
+
+/* --- Portal counter badge --- */
+.msportals-counter {
+    display: inline-block;
+    background: rgba(181, 232, 83, 0.15);
+    color: #b5e853;
+    border: 1px solid rgba(181, 232, 83, 0.3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+/* --- Nav buttons --- */
+.msportals-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.msportals-nav-btn {
+    display: inline-block;
+    padding: 8px 18px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #222;
+    background-image: linear-gradient(#333, #222);
+    border: 2px solid #252525;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.msportals-nav-btn:hover {
+    background-color: #333;
+    background-image: linear-gradient(#444, #333);
+    border-color: #444;
+}
+
+.msportals-nav-btn.active {
+    background-color: #b5e853;
+    background-image: linear-gradient(#c5f863, #b5e853);
+    color: #151515;
+    border-color: #b5e853;
+    text-shadow: none;
+}
+
+.msportals-nav-btn-fav {
+    color: #e85353;
+}
+
+.msportals-nav-btn-fav.active {
+    color: #151515;
+}
+
+/* --- Quick filter --- */
+.msportals-filter {
+    display: block;
+    width: 25%;
+    min-width: 200px;
+    padding: 6px 2px;
+    margin-bottom: 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #b5e853;
+    color: #eaeaea;
+    font-family: Monaco, 'Bitstream Vera Sans Mono', 'Lucida Console', Terminal, monospace;
+    font-size: 16px;
+    outline: none;
+    box-shadow: none;
+}
+
+.msportals-filter::placeholder {
+    color: #666;
+}
+
+/* --- Main content container --- */
+.msportals-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+}
+
+/* --- Portal group --- */
+.msportals-group {
+    margin-bottom: 24px;
+}
+
+.msportals-group-title {
+    color: #b5e853;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 8px;
+    text-shadow: 0 0 5px rgba(181, 232, 83, 0.1);
+}
+
+/* --- Portal entry (flat row) --- */
+.msportals-portal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    line-height: 2em;
+    padding: 0 4px;
+    cursor: default;
+    transition: background 0.1s;
+}
+
+.msportals-portal:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* --- Portal name area --- */
+.msportals-portal-name {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* Favorite heart */
+.msportals-portal-add {
+    display: none;
+    color: #e85353;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.msportals-portal-add:active {
+    color: #b5e853;
+}
+
+.msportals-portal-name:hover .msportals-portal-add {
+    display: inline;
+}
+
+/* Portal name text */
+.msportals-portal-name-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #eaeaea;
+}
+
+/* Portal note */
+.msportals-portal-note {
+    color: #bcc7a7;
+    font-style: italic;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Portal details (URL + secondary URLs) --- */
+.msportals-portal-details {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.msportals-portal-url a {
+    color: #63c0f5;
+    text-decoration: none;
+    text-shadow: 0 0 5px rgba(104, 182, 255, 0.5);
+    font-size: 15px;
+}
+
+.msportals-portal-url a:hover {
+    text-decoration: underline;
+}
+
+/* --- Secondary URL badges --- */
+.msportals-secondary-urls {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    flex-wrap: wrap;
+}
+
+.msportals-secondary-urls .msportals-dot {
+    color: #666;
+    margin: 0 1px;
+}
+
+.msportals-btn-secondary {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    background: rgba(0, 120, 212, 0.9);
+    border-radius: 50px;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.msportals-btn-secondary:hover {
+    background: rgba(0, 120, 212, 1);
+    text-decoration: none;
+}
+
+/* --- No results --- */
+.msportals-no-results {
+    padding: 24px 0;
+    color: #b5e853;
+    font-size: 16px;
+}
+
+/* --- Favorite added indicator --- */
+.msportals-portal-add.is-fav {
+    display: inline;
+    color: #e85353;
+}
+
+/* --- Settings icon override when msportals is active --- */
+#show-settings.msportals-active {
+    z-index: 12;
+}
+
+#show-settings.msportals-active button img {
+    filter: brightness(0.8);
+}
+
+#show-settings.msportals-active ~ aside {
+    z-index: 11;
+}
+
+/* --- Scrollbar --- */
+#msportals::-webkit-scrollbar {
+    width: 6px;
+}
+
+#msportals::-webkit-scrollbar-track {
+    background: #151515;
+}
+
+#msportals::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+}
+
+#msportals::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* --- Responsive: large screens --- */
+@media (min-width: 1024px) {
+    .msportals-portal {
+        flex-wrap: nowrap;
+    }
+
+    .msportals-portal-name {
+        flex: 0 1 auto;
+        max-width: 60%;
+    }
+
+    .msportals-portal-details {
+        margin-left: auto;
+    }
+}
+
+/* --- Responsive: small screens --- */
+@media (max-width: 1023px) {
+    .msportals-filter {
+        width: 70%;
+    }
+
+    .msportals-portal-name {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
+    .msportals-portal-details {
+        padding-left: 20px;
+    }
+}
+
+/* --- Light mode --- */
+@media (prefers-color-scheme: light) {
+    #msportals {
+        background: #eee;
+        color: #111;
+    }
+
+    .msportals-header {
+        border-bottom-color: #90a959;
+    }
+
+    .msportals-title {
+        color: #90a959;
+        text-shadow: none;
+    }
+
+    .msportals-subtitle {
+        color: #888;
+    }
+
+    .msportals-counter {
+        background: rgba(144, 169, 89, 0.15);
+        color: #90a959;
+        border-color: rgba(144, 169, 89, 0.3);
+    }
+
+    .msportals-group-title {
+        color: #90a959;
+        text-shadow: none;
+    }
+
+    .msportals-portal:hover {
+        background: #ccc;
+    }
+
+    .msportals-portal-name-text {
+        color: #111;
+    }
+
+    .msportals-portal-note {
+        color: #6a7558;
+    }
+
+    .msportals-portal-url a {
+        color: #006aad;
+        text-shadow: none;
+    }
+
+    .msportals-filter {
+        color: #111;
+        border-bottom-color: #90a959;
+    }
+
+    .msportals-filter::placeholder {
+        color: #888;
+    }
+
+    .msportals-nav-btn {
+        background-color: #ddd;
+        background-image: linear-gradient(#eee, #ddd);
+        color: #333;
+        border-color: #ccc;
+        text-shadow: none;
+    }
+
+    .msportals-nav-btn:hover {
+        background-color: #ccc;
+        background-image: linear-gradient(#ddd, #ccc);
+    }
+
+    .msportals-nav-btn.active {
+        background-color: #90a959;
+        background-image: linear-gradient(#a0b969, #90a959);
+        color: #fff;
+        border-color: #90a959;
+    }
+}

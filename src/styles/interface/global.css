@@ -31,7 +31,6 @@
 .move-edit #main,
 .move-edit #time,
 .move-edit #linkblocks,
-.move-edit #sb_container,
 .move-edit #notes_container,
 .move-edit #quotes_container,
 .move-edit #pomodoro_container {
@@ -44,7 +43,6 @@
 #main,
 #time,
 #linkblocks,
-#sb_container,
 #notes_container,
 #quotes_container,
 #pomodoro_container {

@@ -28,6 +28,7 @@
         "storage"
     ],
     "host_permissions": [
-        "https://services.bonjourr.fr/*"
+        "https://services.bonjourr.fr/*",
+        "https://raw.githubusercontent.com/*"
     ]
 }

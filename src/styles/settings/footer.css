@@ -12,13 +12,7 @@
 }
 
 #settings-footer > div:first-child {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-#settings-footer > div:nth-child(2) {
-    margin: 1.5em 0;
+    text-align: center;
 }
 
 #settings-footer svg {
@@ -26,11 +20,18 @@
     fill: var(--color-blue);
 }
 
-#settings-footer-links a {
-    margin: 0 6px;
+#settings-footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 1em 0;
 }
 
 #settings-footer-links a:hover {
     text-decoration: none;
     opacity: 0.8;
+}
+
+#settings-footer-links + div {
+    margin-top: 1.5em;
 }

@@ -2,6 +2,7 @@ import type { BackgroundImage, BackgroundVideo, Frequency, Link, Widgets } from 
 
 export interface Sync {
     cmdms: boolean
+    msportals: boolean
     showall: boolean
     quicklinks: boolean
     time: boolean

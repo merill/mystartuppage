@@ -12,14 +12,7 @@ export function userActions(): void {
 // Main functions
 
 function keyboardUserActions(event: KeyboardEvent): void {
-    const domsuggestions = document.getElementById('sb-suggestions')
-
     if (event.code === 'Escape') {
-        if (domsuggestions?.classList.contains('shown')) {
-            domsuggestions?.classList.remove('shown')
-            return
-        }
-
         const open = isOpen()
         const keyup = event.type === 'keyup'
 
@@ -70,7 +63,7 @@ function clickUserActions(event: MouseEvent): void {
         folder: path.some((el) => el.className.includes('in-folder')),
         button: path.some((el) => el.className.includes('param-btn')),
         localfiles: path.some((el) => el.id === 'local_options'),
-        interface: pathIds.includes('interface') || pathIds.includes('cmdms'),
+        interface: pathIds.includes('interface') || pathIds.includes('cmdms') || pathIds.includes('msportals'),
         contextmenu: pathIds.includes('contextmenu'),
         settings: path.some((el) => el.id === 'settings'),
         showsettings: path.some((el) => el.id === 'show-settings'),

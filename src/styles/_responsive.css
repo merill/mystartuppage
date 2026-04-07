@@ -193,20 +193,6 @@
         position: fixed;
     }
 
-    #sb-suggestions,
-    #searchbar {
-        font-size: 1.7em;
-        box-sizing: border-box;
-    }
-
-    #sb-buttons {
-        font-size: 1.6em;
-    }
-
-    #sb-buttons button {
-        padding: 0 1em;
-    }
-
     /* #notes_container #pocket-editor {
     	line-height: 1.7em;
     } */

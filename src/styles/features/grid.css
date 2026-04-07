@@ -28,11 +28,6 @@
     grid-area: main;
 }
 
-#move-overlay-searchbar,
-#sb_container {
-    grid-area: searchbar;
-}
-
 #move-overlay-notes,
 #notes_container {
     grid-area: notes;
