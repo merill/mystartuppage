@@ -66,15 +66,9 @@ export function msportalsSetFavorites(enabled: boolean): void {
     showFavorites = enabled
     storage.sync.set({ msportalsFavorites: enabled })
 
-    const favBtn = document.querySelector<HTMLButtonElement>('#msportals-nav .msportals-nav-btn-fav')
-
-    if (favBtn) {
-        favBtn.style.display = enabled ? '' : 'none'
-    }
-
-    // If currently viewing favorites and favorites got turned off, switch to admin
-    if (!enabled && activeCategory === 'favorites') {
-        setActiveCategory('admin')
+    // Switch the active view to match the toggle
+    if (isActive) {
+        setActiveCategory(enabled ? 'favorites' : 'home')
     }
 }
 
@@ -269,11 +263,6 @@ function buildView(): void {
     // Favorites button
     const favBtn = createNavBtn('\u2764', 'favorites')
     favBtn.classList.add('msportals-nav-btn-fav')
-
-    if (!showFavorites) {
-        favBtn.style.display = 'none'
-    }
-
     nav.appendChild(favBtn)
 
     // GitHub button (external link)
@@ -316,7 +305,7 @@ function buildView(): void {
     document.addEventListener('keydown', handleKeydown)
 
     // Set default active
-    setActiveCategory('admin')
+    setActiveCategory(showFavorites ? 'favorites' : 'home')
 
     // Focus filter after a tick
     setTimeout(() => filter.focus(), 50)

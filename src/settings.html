@@ -9,7 +9,7 @@
 <div class="param">
     <div class="newtab-segmented" id="newtab-view-selector">
         <button data-view="default" class="active">Minimalist</button>
-        <button data-view="msportals">msportals.io</button>
+        <button data-view="msportals">MSPortals.io</button>
         <button data-view="cmdms">cmd.ms</button>
     </div>
     <p class="sub" id="newtab-view-description">
@@ -18,13 +18,21 @@
 </div>
 
 <div class="settings-title msportals-setting" id="msportals-options_title">
-    <h2>msportals.io</h2>
+    <h2>Default view</h2>
 </div>
 
 <div class="param msportals-setting">
     <div class="wrapper">
-        <label for="i_msportals-favorites">Show Favourites</label>
+        <label for="i_msportals-favorites">Favourites</label>
         <input id="i_msportals-favorites" class="switch" type="checkbox" />
+    </div>
+
+    <div id="msportals-favorites-options" class="dropdown">
+        <hr />
+        <p>
+            Click the ❤️ next to any portal link in the MSPortals.io view to add it to your favourites. When enabled,
+            the view opens to your favourite portals by default.
+        </p>
     </div>
 </div>
 
@@ -1300,7 +1308,7 @@
     </div>
 </div>
 
-<div class="as as_css dropdown cssEditor">
+<div class="as as_css dropdown cssEditor dashboard-setting">
     <div class="settings-title" id="css_title">
         <h2 id="lbl-css" class="trn">Custom Style</h2>
 

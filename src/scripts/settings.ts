@@ -220,6 +220,7 @@ function initOptionsValues(data: Sync, local: Local): void {
 
     // msportals.io settings
     setCheckbox('i_msportals-favorites', data.msportalsFavorites ?? true)
+    paramId('msportals-favorites-options')?.classList.toggle('shown', data.msportalsFavorites ?? true)
 
     colorInput('solid-background', data.backgrounds.color)
     colorInput('texture-color', data.backgrounds.texture.color ?? '#ffffff')
@@ -341,8 +342,9 @@ function initOptionsEvents(): void {
     }
 
     // msportals.io settings
-    onclickdown(paramId('i_msportals-favorites'), (_, target) => {
-        msportalsSetFavorites(target.checked)
+    paramId('i_msportals-favorites').addEventListener('change', function (this: HTMLInputElement) {
+        msportalsSetFavorites(this.checked)
+        paramId('msportals-favorites-options')?.classList.toggle('shown', this.checked)
     })
 
     paramId('i_favicon').addEventListener('input', function (this: HTMLInputElement): void {
