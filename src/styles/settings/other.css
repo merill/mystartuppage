@@ -170,3 +170,12 @@
 aside.view-overlay .dashboard-setting {
     display: none !important;
 }
+
+/* msportals-setting: hidden by default, shown only when msportals view is active */
+.msportals-setting {
+    display: none !important;
+}
+
+aside.view-msportals .msportals-setting {
+    display: block !important;
+}

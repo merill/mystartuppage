@@ -38,10 +38,15 @@ let categories: Record<string, MsPortalGroup[]> = {}
 let activeCategory = 'admin'
 let favorites: string[] = []
 let isActive = false
+let showFavorites = true
 
 // --- Public API ---
 
-export function msportalsInit(enabled: boolean): void {
+export function msportalsInit(enabled: boolean, favoritesEnabled?: boolean): void {
+    if (favoritesEnabled !== undefined) {
+        showFavorites = favoritesEnabled
+    }
+
     if (enabled) {
         show()
     }
@@ -54,6 +59,22 @@ export function msportalsToggle(enabled: boolean): void {
         show()
     } else {
         hide()
+    }
+}
+
+export function msportalsSetFavorites(enabled: boolean): void {
+    showFavorites = enabled
+    storage.sync.set({ msportalsFavorites: enabled })
+
+    const favBtn = document.querySelector<HTMLButtonElement>('#msportals-nav .msportals-nav-btn-fav')
+
+    if (favBtn) {
+        favBtn.style.display = enabled ? '' : 'none'
+    }
+
+    // If currently viewing favorites and favorites got turned off, switch to admin
+    if (!enabled && activeCategory === 'favorites') {
+        setActiveCategory('admin')
     }
 }
 
@@ -248,6 +269,11 @@ function buildView(): void {
     // Favorites button
     const favBtn = createNavBtn('\u2764', 'favorites')
     favBtn.classList.add('msportals-nav-btn-fav')
+
+    if (!showFavorites) {
+        favBtn.style.display = 'none'
+    }
+
     nav.appendChild(favBtn)
 
     // GitHub button (external link)

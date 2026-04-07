@@ -8,7 +8,7 @@ import { quickLinks } from './features/links/index.ts'
 import { getCatalog } from './features/catalog/index.ts'
 import { getDefaultIcon } from './features/links/helpers.ts'
 import { cmdmsToggle } from './features/cmdms.ts'
-import { msportalsToggle } from './features/msportals.ts'
+import { msportalsSetFavorites, msportalsToggle } from './features/msportals.ts'
 import { notes } from './features/notes.ts'
 import { clock } from './features/clock/index.ts'
 import { openSettingsButtonEvent } from './features/contextmenu.ts'
@@ -218,6 +218,9 @@ function initOptionsValues(data: Sync, local: Local): void {
     const activeView = data.cmdms ? 'cmdms' : data.msportals ? 'msportals' : 'default'
     initViewSelector(activeView)
 
+    // msportals.io settings
+    setCheckbox('i_msportals-favorites', data.msportalsFavorites ?? true)
+
     colorInput('solid-background', data.backgrounds.color)
     colorInput('texture-color', data.backgrounds.texture.color ?? '#ffffff')
 
@@ -336,6 +339,11 @@ function initOptionsEvents(): void {
             })
         }
     }
+
+    // msportals.io settings
+    onclickdown(paramId('i_msportals-favorites'), (_, target) => {
+        msportalsSetFavorites(target.checked)
+    })
 
     paramId('i_favicon').addEventListener('input', function (this: HTMLInputElement): void {
         favicon(this.value, true)
@@ -1365,6 +1373,10 @@ function initViewSelector(activeView: string): void {
     if (aside && activeView !== 'default') {
         aside.classList.add('view-overlay')
     }
+
+    if (aside) {
+        aside.classList.toggle('view-msportals', activeView === 'msportals')
+    }
 }
 
 function switchView(view: string): void {
@@ -1387,6 +1399,7 @@ function switchView(view: string): void {
     // Toggle dashboard sections visibility
     if (aside) {
         aside.classList.toggle('view-overlay', view !== 'default')
+        aside.classList.toggle('view-msportals', view === 'msportals')
     }
 
     // Disable both views first, then enable the selected one

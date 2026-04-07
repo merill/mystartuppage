@@ -76,7 +76,7 @@ async function startup(): Promise<void> {
     hideElements(sync.hide)
     backgroundsInit(sync, local, true)
     cmdmsInit(sync.cmdms)
-    msportalsInit(sync.msportals)
+    msportalsInit(sync.msportals, sync.msportalsFavorites ?? true)
     quickLinks({ sync, local })
     settingsInit(sync, local)
 
