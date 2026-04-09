@@ -141,7 +141,9 @@ export function initblocks(sync: Sync, local?: Local): true {
     const { pinned, synced, selected } = sync.linkgroups
     const activeGroups: LinkGroups = []
 
-    for (const group of [...pinned, selected]) {
+    const visibleGroups = pinned.includes(selected) ? [...pinned] : [...pinned, selected]
+
+    for (const group of visibleGroups) {
         const div = document.querySelector<HTMLDivElement>(`.link-group[data-group="${group}"]`)
         const folder = div?.dataset.folder
         const lis: HTMLLIElement[] = []
@@ -152,7 +154,7 @@ export function initblocks(sync: Sync, local?: Local): true {
             div,
             links,
             title: group,
-            pinned: group !== selected,
+            pinned: pinned.includes(group),
             synced: synced?.includes(group),
         })
     }

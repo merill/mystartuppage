@@ -94,7 +94,7 @@ export const SYNC_DEFAULT: Sync = {
         on: true,
         selected: 'Microsoft 365',
         groups: ['Microsoft 365', 'Admin'],
-        pinned: [],
+        pinned: ['Microsoft 365', 'Admin'],
         synced: [],
     },
     backgrounds: {
@@ -250,7 +250,7 @@ export const SYNC_DEFAULT: Sync = {
     },
     linksDefault09: {
         _id: 'linksDefault09',
-        order: 2,
+        order: 3,
         parent: 'Admin',
         title: 'Intune',
         url: 'https://intune.microsoft.com',
@@ -261,19 +261,18 @@ export const SYNC_DEFAULT: Sync = {
     },
     linksDefault10: {
         _id: 'linksDefault10',
-        order: 3,
+        order: 4,
         parent: 'Admin',
-        title: 'Exchange',
-        url: 'https://admin.cloud.microsoft/exchange#/homepage',
+        title: 'Security',
+        url: 'https://security.microsoft.com',
         icon: {
             type: 'url',
-            value:
-                'https://raw.githubusercontent.com/loryanstrant/MicrosoftCloudLogos/main/Microsoft%20365/Exchange/full-color/Exchange_256x256.png',
+            value: 'https://raw.githubusercontent.com/loryanstrant/MicrosoftCloudLogos/main/other/Defender_512.png',
         },
     },
     linksDefault11: {
         _id: 'linksDefault11',
-        order: 4,
+        order: 2,
         parent: 'Admin',
         title: 'Microsoft 365 Admin',
         url: 'https://admin.microsoft.com',
