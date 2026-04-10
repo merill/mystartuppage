@@ -46,7 +46,7 @@ async function startup(): Promise<void> {
     }
 
     if (oldVersion !== CURRENT_VERSION) {
-        console.info(`Updated My Startup Page, ${oldVersion} => ${CURRENT_VERSION}`)
+        console.info(`Updated Yako, ${oldVersion} => ${CURRENT_VERSION}`)
 
         localStorage.setItem('update-archive', JSON.stringify(sync))
 
@@ -76,7 +76,7 @@ async function startup(): Promise<void> {
     hideElements(sync.hide)
     backgroundsInit(sync, local, true)
     cmdmsInit(sync.cmdms)
-    msportalsInit(sync.msportals, sync.msportalsFavorites ?? true)
+    msportalsInit(sync.msportals, sync.msportalsFavorites ?? false)
     quickLinks({ sync, local })
     settingsInit(sync, local)
 

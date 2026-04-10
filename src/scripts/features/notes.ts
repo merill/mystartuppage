@@ -103,5 +103,5 @@ function translateNotesText(): string {
     const line2 = tradThis('With markdown titles, lists, and checkboxes')
     const line3 = tradThis('Learn more on <url>')
 
-    return `## ${line1}!\n\n[ ] ${line2}\n\n[ ] ${line3.replace('<url>', 'https://mystartup.page')}`
+    return `## ${line1}!\n\n[ ] ${line2}\n\n[ ] ${line3.replace('<url>', 'https://getyako.com')}`
 }

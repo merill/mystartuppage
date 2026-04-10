@@ -39,7 +39,7 @@ export function startClock(options: ClockStartOptions): void {
     }
 
     // <!> First timezone becomes global timezone
-    // <!> for everything in My Startup Page !
+    // <!> for everything in Yako !
     setUserDate(clocks[0].timezone)
 
     start(true)

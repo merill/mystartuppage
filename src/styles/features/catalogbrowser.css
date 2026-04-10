@@ -126,7 +126,7 @@
     border-radius: 4px;
 }
 
-/* Group panel — matches Bonjourr bookmarks-folder style */
+/* Group panel — matches Yako bookmarks-folder style */
 
 .catalog-browser-group {
     border: 2px solid #fff1;
@@ -152,7 +152,7 @@
     color: var(--color-text);
 }
 
-/* Item grid within a group — inline flow like Bonjourr ol */
+/* Item grid within a group — inline flow like Yako ol */
 
 .catalog-browser-items {
     display: grid;

@@ -76,7 +76,7 @@ function resetOnce() {
     const resetBtn = document.querySelector('#help-mode .reset')
     const resetBtnSpan = resetBtn.querySelector('span')
 
-    resetBtn.title = "You're about to reset My Startup Page to its default configuration."
+    resetBtn.title = "You're about to reset Yako to its default configuration."
     resetBtn.classList.add('danger')
     resetBtnSpan.textContent = 'Are you sure?'
 

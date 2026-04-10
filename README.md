@@ -1,13 +1,13 @@
-# My Startup Page
+# Yako
 
-A minimalist new tab browser extension for Microsoft admins. Quickly search and access Microsoft admin portals like Entra, Intune, Azure, Defender, and hundreds more — right from your new tab page.
+A new tab browser extension for Microsoft users and admins. Quickly search and access Microsoft portals like Entra, Intune, Azure, Defender, and hundreds more — right from your new tab page.
 
-**Website:** [mystartup.page](https://mystartup.page)
+**Website:** [getyako.com](https://getyako.com)
 
 ## Features
 
 - Fast, lightweight new tab replacement
-- Searchbar to find and open 900+ Microsoft admin portals instantly
+- Searchbar to find and open 900+ Microsoft portals instantly
 - Quick Links pre-configured with popular Microsoft portals (Entra, Intune, M365 Admin, Azure, Defender)
 - Browse and add portals from [merill/cmd](https://github.com/merill/cmd) and [msportals.io](https://msportals.io) catalogs
 - Clock with analog and digital modes
@@ -73,9 +73,9 @@ deno task build    # Production build for all platforms
 
 ## Attribution
 
-My Startup Page is a modified version of [Bonjourr](https://bonjourr.fr), an open source new tab browser extension created by [Victor Azevedo](https://github.com/victrme) and [Tahoe Beetschen](https://github.com/morceaudebois). The original source code is available at [github.com/victrme/Bonjourr](https://github.com/victrme/Bonjourr).
+Yako is a modified version of [Bonjourr](https://bonjourr.fr), an open source new tab browser extension created by [Victor Azevedo](https://github.com/victrme) and [Tahoe Beetschen](https://github.com/morceaudebois). The original source code is available at [github.com/victrme/Bonjourr](https://github.com/victrme/Bonjourr).
 
-This project removes Bonjourr's external API dependencies (weather, dynamic backgrounds, quotes, web fonts) and replaces the search bar with a Microsoft admin portal search powered by locally cached data from [merill/cmd](https://github.com/merill/cmd) and [msportals.io](https://github.com/adamfowlerit/msportals.io).
+This project removes Bonjourr's external API dependencies (weather, dynamic backgrounds, quotes, web fonts) and replaces the search bar with a Microsoft portal search powered by locally cached data from [merill/cmd](https://github.com/merill/cmd) and [msportals.io](https://github.com/adamfowlerit/msportals.io).
 
 ### Translations
 

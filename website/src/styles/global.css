@@ -1,0 +1,215 @@
+:root {
+  /* Zinc monochrome palette (matches TinyShots) */
+  --color-bg: #ffffff;
+  --color-bg-alt: #fafafa;
+  --color-bg-card: #ffffff;
+  --color-text: #18181b;
+  --color-text-secondary: #71717a;
+  --color-text-muted: #a1a1aa;
+  --color-primary: #18181b;
+  --color-primary-hover: #3f3f46;
+  --color-border: #e4e4e7;
+  --color-border-light: #f4f4f5;
+  --color-code-bg: #f4f4f5;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  --max-width: 1100px;
+  --nav-height: 56px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #09090b;
+    --color-bg-alt: #18181b;
+    --color-bg-card: #18181b;
+    --color-text: #fafafa;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    --color-primary: #fafafa;
+    --color-primary-hover: #d4d4d8;
+    --color-border: #27272a;
+    --color-border-light: #27272a;
+    --color-code-bg: #27272a;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+a:hover {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.15rem; }
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  text-decoration: none;
+  transform: scale(1.02);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-bg);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+/* Docs layout */
+.docs-content {
+  padding: 32px 40px 80px;
+  min-width: 0;
+}
+
+.docs-content h1 {
+  margin-bottom: 8px;
+}
+
+.docs-content .subtitle {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+.docs-content h2 {
+  margin-top: 48px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.docs-content h3 {
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.docs-content p {
+  margin-bottom: 16px;
+  color: var(--color-text);
+}
+
+.docs-content ul, .docs-content ol {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.docs-content li {
+  margin-bottom: 8px;
+}
+
+.docs-content img {
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+}

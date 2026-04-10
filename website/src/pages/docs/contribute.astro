@@ -1,0 +1,74 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+---
+
+<DocsLayout title="Contribute - Yako Docs" description="How to contribute to Yako.">
+  <h1>Contribute</h1>
+  <p class="subtitle">Help make Yako better for everyone.</p>
+
+  <h2>Report Bugs</h2>
+  <p>
+    Found a bug? Open an issue on our
+    <a href="https://github.com/merill/yako/issues" rel="noreferrer noopener">GitHub Issues</a> page.
+    Please include:
+  </p>
+  <ul>
+    <li>What happened and what you expected</li>
+    <li>Your browser and version</li>
+    <li>Your exported settings file (if relevant)</li>
+    <li>Screenshots or screen recordings if possible</li>
+  </ul>
+
+  <h2>Submit a Theme</h2>
+  <p>
+    Share your customized Yako setup with the community! Themes are displayed on the
+    <a href="/themes/">Themes</a> gallery page.
+  </p>
+
+  <h3>How to submit</h3>
+  <ol>
+    <li>Customize Yako to your liking</li>
+    <li>Take a screenshot of your new tab page</li>
+    <li>Export your settings from the Settings panel (Settings Management &rarr; Export)</li>
+    <li>Fork the <a href="https://github.com/merill/yako" rel="noreferrer noopener">Yako repository</a></li>
+    <li>Create a new folder under <code>website/src/content/themes/</code> with a short slug name (e.g. <code>dark-admin</code>)</li>
+    <li>
+      Add three files to your folder:
+      <ul>
+        <li><code>index.md</code> — metadata (see template below)</li>
+        <li><code>screenshot.png</code> — your screenshot image</li>
+        <li><code>settings.json</code> — your exported Yako settings</li>
+      </ul>
+    </li>
+    <li>Open a Pull Request</li>
+  </ol>
+
+  <h3>index.md template</h3>
+  <pre><code>{`---
+title: "My Cool Theme"
+description: "A short description of your theme"
+author: "Your Name"
+linkedin: "https://linkedin.com/in/yourprofile"
+date: ${new Date().toISOString().split('T')[0]}
+---`}</code></pre>
+  <p>
+    The <code>linkedin</code> field is optional. If provided, your name will link to your LinkedIn profile
+    on the themes page.
+  </p>
+
+  <h2>Contribute Code</h2>
+  <p>
+    Yako is open source under GPL-3.0. To contribute code:
+  </p>
+  <ol>
+    <li>Fork and clone the <a href="https://github.com/merill/yako" rel="noreferrer noopener">repository</a></li>
+    <li>Install <a href="https://docs.deno.com/runtime/" rel="noreferrer noopener">Deno</a></li>
+    <li>Run <code>deno install</code> to install dependencies</li>
+    <li>Run <code>deno task edge</code> (or <code>chrome</code> / <code>firefox</code>) to start the dev build</li>
+    <li>Load the extension from the <code>release/</code> folder in your browser</li>
+    <li>Make your changes and open a Pull Request</li>
+  </ol>
+  <p>
+    Please run <code>deno task format</code> and <code>deno task types</code> before submitting.
+  </p>
+</DocsLayout>

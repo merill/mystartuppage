@@ -19,7 +19,7 @@
 	-	URLs option: import background images from a distant server
 	-	Videos can now have sound (muted by default)
 -	Refreshed look for the settings!
-- 	Custom greetings! Define how Bonjourr greets you from the morning to the night
+- 	Custom greetings! Define how Yako greets you from the morning to the night
 - 	Choose the AM/PM position when 12-Hour Time is enabled (thank you @ShrekCoding21!!)
 - 	Toggle between link groups with your mouse wheel
 - 	Things have been moved around or renamed for clarity:
@@ -323,11 +323,11 @@ $~~~~~~~~~~~$
     -   #130 Folders !
     -   Create pages to organize even more your links
     -   Select multiple by long pressing on links
-    -   Automatically add bookmarked pages to Bonjourr
+    -   Automatically add bookmarked pages to Yako
     -   New "inline" style like the bookmark bar
 -   Privacy:
     -   Custom font now use Fontsource instead of Google services
-    -   Icons are now served by Bonjourr’s API instead of pinging every websites
+    -   Icons are now served by Yako’s API instead of pinging every websites
 -   Changes:
     -   #270 Added Chinese date format
     -   Simpler way to add custom quotes
@@ -425,7 +425,7 @@ $~~~~~~~~~~~$
 
 -   Added warning status icon on custom search provider input
 -   Added search suggestions API key to avoid being rate limited
--   Fixed Bonjourr failing on Firefox 93 and older
+-   Fixed Yako failing on Firefox 93 and older
 -   Re-Inverted "At night" dark mode option (oops)
 
 ## 1.17.2
@@ -637,7 +637,7 @@ $~~~~~~~~~~~$
 -   Updated polish & turkish translations, thanks Jakub Mikuło and @lazjedi !
 -   Improved bookmark import styling & unified dark mode colors
 -   Slightly better startup performances on slow computers & mobile
--   Lots of background work to convert Bonjourr to typescript
+-   Lots of background work to convert Yako to typescript
 -   Improved extension security
 
 $~~~~~~~~~~~$
@@ -799,7 +799,7 @@ $~~~~~~~~~~~$
 
 ## 1.9.2
 
--   Bonjourr now supports any image types
+-   Yako now supports any image types
 -   Fixed review redirection
 -   Added animations
 -   Added translations
@@ -807,7 +807,7 @@ $~~~~~~~~~~~$
 ## 1.9.1
 
 -   Added all previously hidden features !
--   Bonjourr greetings
+-   Yako greetings
 -   Hide interface elements
 -   Analog clock
 -   display seconds

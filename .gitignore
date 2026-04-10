@@ -19,6 +19,11 @@ test-results/
 playwright-report
 playwright/.cache
 
+website/dist/
+website/node_modules/
+website/.astro/
+website/public/themes/
+
 package-lock.json
 pnpm-lock.yaml
 yarn.lock

@@ -1,0 +1,942 @@
+---
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+
+const features = [
+  {
+    label: 'Portal search',
+    title: 'Find any Microsoft portal instantly',
+    description: 'Search 900+ Microsoft admin portals sourced from cmd.ms and msportals.io. Find any portal by name, URL, or category. Results appear as you type.',
+    image: '/landing/feature-1.webp',
+    alt: 'Yako portal search with instant results',
+  },
+  {
+    label: 'Quick links',
+    title: 'Your portals, one click away',
+    description: 'Pre-configured with popular Microsoft portals including Entra, Intune, M365 Admin Center, Azure, and Defender. Add your own or browse the built-in catalog.',
+    image: '/landing/feature-2.webp',
+    alt: 'Quick links grid showing Microsoft portal shortcuts',
+  },
+  {
+    label: 'MSPortals.io view',
+    title: 'The full Microsoft portal directory',
+    description: 'A built-in searchable directory of every Microsoft admin portal, sourced from the msportals.io community project. Always up to date.',
+    image: '/landing/feature-3.webp',
+    alt: 'MSPortals.io directory view with searchable list',
+  },
+  {
+    label: 'cmd.ms view',
+    title: 'Jump to any portal with a command',
+    description: 'A command-line style interface to quickly navigate to any Microsoft admin portal using cmd.ms shortcuts. Type, press Enter, done.',
+    image: '/landing/feature-4.webp',
+    alt: 'Command-line interface for portal shortcuts',
+  },
+  {
+    label: 'Customization',
+    title: 'Make it yours with CSS and themes',
+    description: 'Built-in CSS editor with syntax highlighting. Change fonts, colors, layouts, or browse community themes for ready-made configurations.',
+    image: '/landing/feature-5.webp',
+    alt: 'CSS editor and theme customization options',
+  },
+  {
+    label: 'Backgrounds & clock',
+    title: 'A clean new tab that feels like home',
+    description: 'Set solid colors, local images, or videos as your background. Add a digital or analog clock, personalized greetings, and a Markdown notes widget.',
+    image: '/landing/feature-6.webp',
+    alt: 'New tab page with custom background and clock',
+  },
+]
+
+const miniFeatures = [
+  {
+    title: 'Dark mode',
+    description: 'Automatic dark mode that follows your system preference, or set it manually.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+  },
+  {
+    title: 'Notes widget',
+    description: 'Built-in Markdown notes with headings, lists, and checkboxes. Always one tab away.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/></svg>',
+  },
+  {
+    title: 'World clocks',
+    description: 'Add clocks for multiple time zones. 12 or 24 hour format, seconds, analog faces.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>',
+  },
+  {
+    title: 'Settings sync',
+    description: 'Export, import, or sync your configuration across devices through your browser.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>',
+  },
+  {
+    title: 'Keyboard-first',
+    description: 'Tab to search, type to filter, Enter to open. Fast navigation without the mouse.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2"/><path d="M6 8v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"/><line x1="8" x2="8" y1="12" y2="12"/><line x1="12" x2="12" y1="12" y2="12"/><line x1="16" x2="16" y1="12" y2="12"/><line x1="10" x2="14" y1="16" y2="16"/></svg>',
+  },
+  {
+    title: 'Drag & drop layout',
+    description: 'Rearrange widgets on the page. Adjust width, spacing, and element order.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>',
+  },
+]
+
+const faqs = [
+  {
+    q: 'Is Yako free?',
+    a: 'Yes, Yako is completely free and open source under the GPL-3.0 license. No account, no subscription, no strings attached.',
+  },
+  {
+    q: 'Does Yako collect any data?',
+    a: 'No. Yako makes no external API calls, collects no data, has no account system, and requires only the storage permission. All portal data is bundled locally.',
+  },
+  {
+    q: 'What browsers does Yako support?',
+    a: 'Yako supports Microsoft Edge, Google Chrome, and Firefox. It also works on Chromium-based browsers like Brave and Vivaldi.',
+  },
+  {
+    q: 'Where does the portal data come from?',
+    a: 'Portal data is sourced from two community projects: merill/cmd (cmd.ms shortcuts) and msportals.io. The data is bundled locally with the extension — no network requests are made.',
+  },
+  {
+    q: 'Is Yako based on another project?',
+    a: 'Yes. Yako is a fork of <a href="https://bonjourr.fr" rel="noreferrer noopener">Bonjourr</a>, a beautiful open source new tab extension by Victor Azevedo and Tahoe Beetschen. We added Microsoft portal search, catalog integration, and admin-focused features on top of their work. Please consider <a href="https://github.com/victrme/Bonjourr" rel="noreferrer noopener">supporting Bonjourr</a> too.',
+  },
+]
+---
+
+<Base title="Yako - A new tab page for Microsoft users and admins">
+  <Nav slot="nav" />
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-bg" style="background-image: url('/landing/hero-bg.webp');">
+        <div class="hero-overlay"></div>
+        <div class="hero-fade"></div>
+
+        <div class="hero-card">
+          <h1>New tab. Supercharged.</h1>
+          <p class="hero-sub">
+            A new tab page for Microsoft users and admins. Instantly search and access
+            900+ Microsoft portals like Entra, Intune, Azure, and Defender.
+          </p>
+
+          <div class="hero-actions">
+            <a href="/docs/install/" class="btn btn-primary">
+              Install for free
+            </a>
+            <a href="#features" class="btn btn-secondary">
+              See features
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+
+          <p class="hero-trust">Free &middot; Open source &middot; No data collection &middot; Edge, Chrome, Firefox</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features (alternating 2-col) -->
+  <section class="features" id="features">
+    <div class="container">
+      {features.map((feature, i) => (
+        <div class:list={['feature-row', { 'feature-row-reverse': i % 2 === 1 }]}>
+          <div class="feature-text">
+            <p class="feature-label">{feature.label}</p>
+            <h2>{feature.title}</h2>
+            <p class="feature-desc">{feature.description}</p>
+          </div>
+          <div class="feature-image">
+            <img src={feature.image} alt={feature.alt} loading="lazy" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Mini features grid -->
+  <section class="mini-features">
+    <div class="container">
+      <div class="mini-features-header">
+        <h2>And a whole lot more</h2>
+        <p>Small details that make a big difference.</p>
+      </div>
+      <div class="mini-grid">
+        {miniFeatures.map(f => (
+          <div class="mini-cell">
+            <div class="mini-icon" set:html={f.icon} />
+            <h3>{f.title}</h3>
+            <p>{f.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonial -->
+  <section class="testimonial-section">
+    <div class="container">
+      <div class="testimonial-bg" style="background-image: url('/landing/testimonial-bg.webp');">
+        <div class="testimonial-card">
+          <blockquote>
+            &ldquo;Yako turns my new tab into a real productivity tool.
+            Every Microsoft portal I need is just a keystroke away.&rdquo;
+          </blockquote>
+          <p class="testimonial-attr">A happy Microsoft admin</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="faq-container">
+      <h2>Frequently asked questions</h2>
+      <div class="faq-list">
+        {faqs.map(faq => (
+          <details class="faq-item">
+            <summary>
+              <span>{faq.q}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            </summary>
+            <p set:html={faq.a} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Built on Bonjourr -->
+  <section class="bonjourr-section">
+    <div class="container bonjourr-inner">
+      <h2>Built on Bonjourr</h2>
+      <p>
+        Yako is a fork of <a href="https://bonjourr.fr" rel="noreferrer noopener">Bonjourr</a>,
+        a beautiful open source new tab extension created by
+        <strong>Victor Azevedo</strong> and <strong>Tahoe Beetschen</strong>.
+        We built on their excellent foundation to add Microsoft portal search, catalog integration,
+        and admin-focused features.
+      </p>
+      <p>
+        Bonjourr is a fantastic project on its own. If you enjoy Yako, please consider
+        supporting the original Bonjourr project too &mdash; star their repo, contribute code,
+        or spread the word.
+      </p>
+      <div class="bonjourr-actions">
+        <a href="https://bonjourr.fr" class="btn btn-secondary" rel="noreferrer noopener">
+          Visit bonjourr.fr
+        </a>
+        <a href="https://github.com/victrme/Bonjourr" class="btn btn-secondary" rel="noreferrer noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Star Bonjourr on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- More from Merill -->
+  <section class="merill-section">
+    <div class="container">
+      <div class="merill-header">
+        <h2>More from Merill</h2>
+        <p>Other free tools and resources for the Microsoft community.</p>
+      </div>
+      <div class="merill-grid">
+        <a href="https://cmd.ms" class="merill-card" rel="noreferrer noopener">
+          <img src="/logos/cmdms.png" alt="" width="32" height="32" class="merill-logo" />
+          <h3>cmd.ms</h3>
+          <p>The Microsoft Cloud command line. Jump to any portal from your browser address bar.</p>
+        </a>
+        <a href="https://entra.news" class="merill-card" rel="noreferrer noopener">
+          <img src="/logos/entranews-64.png" alt="" width="32" height="32" class="merill-logo" />
+          <h3>Entra News</h3>
+          <p>Weekly newsletter covering the latest Microsoft Entra and identity news.</p>
+        </a>
+        <a href="https://entra.chat" class="merill-card" rel="noreferrer noopener">
+          <img src="/logos/entrachat-64.png" alt="" width="32" height="32" class="merill-logo" />
+          <h3>Entra Chat</h3>
+          <p>A weekly podcast covering the latest Microsoft Entra and identity news.</p>
+        </a>
+        <a href="https://graphxray.merill.net" class="merill-card" rel="noreferrer noopener">
+          <img src="/logos/graphxray.png" alt="" width="32" height="32" class="merill-logo" />
+          <h3>Graph X-Ray</h3>
+          <p>See the Microsoft Graph API calls behind every click in the Azure and Entra portals.</p>
+        </a>
+        <a href="https://maester.dev" class="merill-card" rel="noreferrer noopener">
+          <img src="/logos/maester.ico" alt="" width="32" height="32" class="merill-logo" />
+          <h3>Maester</h3>
+          <p>Automated testing framework for your Microsoft 365 tenant security configuration.</p>
+        </a>
+        <a href="https://lokka.dev" class="merill-card" rel="noreferrer noopener">
+          <img src="/logos/lokka.ico" alt="" width="32" height="32" class="merill-logo" />
+          <h3>Lokka</h3>
+          <p>The first MCP Server for Microsoft Graph. Built for agentic AI workloads.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="container final-cta-inner">
+      <img src="/favicon-128x128.png" alt="Yako" width="64" height="64" class="cta-icon" />
+      <h2>Ready to try Yako?</h2>
+      <p>Start navigating Microsoft portals faster. Free, open source, and private.</p>
+      <a href="/docs/install/" class="btn btn-primary">Install for free</a>
+      <p class="cta-trust">Free forever &middot; Open source &middot; No account required</p>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</Base>
+
+<style>
+  /* ========================================
+     Hero
+     ======================================== */
+  .hero {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  @media (min-width: 640px) {
+    .hero {
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+  }
+
+  .hero-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 8px;
+  }
+
+  @media (min-width: 640px) {
+    .hero-container {
+      padding: 0 24px;
+    }
+  }
+
+  .hero-bg {
+    position: relative;
+    max-width: 960px;
+    margin: 0 auto;
+    border-radius: 24px 24px 8px 8px;
+    background-size: cover;
+    background-position: center;
+    padding: 24px 16px 96px;
+  }
+
+  @media (min-width: 640px) {
+    .hero-bg {
+      padding: 64px 64px 112px;
+    }
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px 24px 8px 8px;
+    background-color: var(--color-bg);
+    opacity: 0.85;
+    transition: opacity 0.7s;
+  }
+
+  .hero-fade {
+    position: absolute;
+    inset: -4px -4px -4px -4px;
+    bottom: -4px;
+    height: 128px;
+    pointer-events: none;
+    background: linear-gradient(to top, var(--color-bg) 20%, transparent 100%);
+    top: auto;
+  }
+
+  .hero-card {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    padding: 24px 16px 32px;
+    background: var(--color-bg);
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .hero-card {
+      padding: 32px 24px 40px;
+    }
+  }
+
+  .hero-card h1 {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-sub {
+    margin-top: 24px;
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.65;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 40px;
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .hero-actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .hero-actions .btn {
+    padding: 14px 24px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+  }
+
+  .hero-trust {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.01em;
+  }
+
+  /* ========================================
+     Features (alternating 2-col grid)
+     ======================================== */
+  .features {
+    padding: 96px 0 128px;
+    scroll-margin-top: 64px;
+  }
+
+  @media (max-width: 768px) {
+    .features {
+      padding: 48px 0 64px;
+    }
+  }
+
+  .feature-row {
+    display: grid;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .feature-row + .feature-row {
+    margin-top: 64px;
+  }
+
+  @media (min-width: 1024px) {
+    .feature-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .feature-row + .feature-row {
+      margin-top: 128px;
+    }
+
+    .feature-row-reverse .feature-text {
+      order: 2;
+    }
+
+    .feature-row-reverse .feature-image {
+      order: 1;
+    }
+  }
+
+  .feature-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+  }
+
+  .feature-text h2 {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 640px) {
+    .feature-text h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .feature-desc {
+    margin-top: 16px;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+  }
+
+  .feature-image {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-alt);
+  }
+
+  .feature-image img {
+    width: 100%;
+    display: block;
+  }
+
+  /* ========================================
+     Mini features grid
+     ======================================== */
+  .mini-features {
+    padding: 40px 0 64px;
+  }
+
+  @media (min-width: 640px) {
+    .mini-features {
+      padding: 56px 0 80px;
+    }
+  }
+
+  .mini-features-header {
+    max-width: 480px;
+    text-align: center;
+    margin: 0 auto 56px;
+  }
+
+  .mini-features-header p {
+    margin-top: 8px;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+  }
+
+  .mini-grid {
+    display: grid;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-border);
+    gap: 1px;
+    overflow: hidden;
+  }
+
+  @media (min-width: 640px) {
+    .mini-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .mini-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .mini-cell {
+    background: var(--color-bg);
+    padding: 24px;
+    transition: background-color 0.15s;
+  }
+
+  .mini-cell:hover {
+    background: var(--color-bg-alt);
+  }
+
+  .mini-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--color-bg-alt);
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .mini-icon :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mini-cell h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .mini-cell p {
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ========================================
+     Testimonial
+     ======================================== */
+  .testimonial-section {
+    padding: 24px 0 96px;
+  }
+
+  @media (min-width: 640px) {
+    .testimonial-section {
+      padding: 32px 0 128px;
+    }
+  }
+
+  .testimonial-bg {
+    max-width: 960px;
+    margin: 0 auto;
+    border-radius: var(--radius-xl);
+    background-size: cover;
+    background-position: center;
+    padding: 40px 16px;
+  }
+
+  @media (min-width: 640px) {
+    .testimonial-bg {
+      padding: 64px;
+    }
+  }
+
+  .testimonial-card {
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--color-bg) 95%, transparent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 32px 16px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.35);
+  }
+
+  @media (min-width: 640px) {
+    .testimonial-card {
+      padding: 40px 24px;
+    }
+  }
+
+  .testimonial-card blockquote {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+
+  @media (min-width: 640px) {
+    .testimonial-card blockquote {
+      font-size: 1.75rem;
+    }
+  }
+
+  .testimonial-attr {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ========================================
+     FAQ
+     ======================================== */
+  .faq-section {
+    padding: 24px 0 96px;
+  }
+
+  @media (min-width: 640px) {
+    .faq-section {
+      padding: 32px 0 128px;
+    }
+  }
+
+  .faq-container {
+    max-width: 672px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .faq-container > h2 {
+    font-size: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .faq-container > h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .faq-list {
+    margin-top: 24px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    divide: var(--color-border);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+    transition: background-color 0.15s;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    background: var(--color-bg-alt);
+  }
+
+  .faq-item summary svg {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    transition: transform 0.2s;
+  }
+
+  .faq-item[open] summary svg {
+    transform: rotate(45deg);
+  }
+
+  .faq-item p {
+    padding: 0 24px 20px;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  .faq-item p a {
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .faq-item p a:hover {
+    color: var(--color-text-secondary);
+  }
+
+  /* ========================================
+     Built on Bonjourr
+     ======================================== */
+  .bonjourr-section {
+    padding: 24px 0 96px;
+  }
+
+  @media (min-width: 640px) {
+    .bonjourr-section {
+      padding: 32px 0 128px;
+    }
+  }
+
+  .bonjourr-inner {
+    max-width: 640px;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .bonjourr-inner h2 {
+    font-size: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .bonjourr-inner h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .bonjourr-inner > p {
+    margin-top: 16px;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .bonjourr-inner > p a {
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .bonjourr-inner > p a:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .bonjourr-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  /* ========================================
+     More from Merill
+     ======================================== */
+  .merill-section {
+    padding: 0 0 96px;
+  }
+
+  @media (min-width: 640px) {
+    .merill-section {
+      padding: 0 0 128px;
+    }
+  }
+
+  .merill-header {
+    max-width: 480px;
+    text-align: center;
+    margin: 0 auto 40px;
+  }
+
+  .merill-header h2 {
+    font-size: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .merill-header h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .merill-header p {
+    margin-top: 8px;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+  }
+
+  .merill-grid {
+    display: grid;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-border);
+    gap: 1px;
+    overflow: hidden;
+  }
+
+  @media (min-width: 640px) {
+    .merill-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .merill-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .merill-card {
+    background: var(--color-bg);
+    padding: 24px;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+
+  .merill-card:hover {
+    background: var(--color-bg-alt);
+    text-decoration: none;
+  }
+
+  .merill-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    object-fit: contain;
+  }
+
+  .merill-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .merill-card p {
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ========================================
+     Final CTA
+     ======================================== */
+  .final-cta {
+    padding: 24px 0 96px;
+  }
+
+  @media (min-width: 640px) {
+    .final-cta {
+      padding: 32px 0 128px;
+    }
+  }
+
+  .final-cta-inner {
+    max-width: 480px;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .cta-icon {
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-border) 50%, transparent);
+    margin: 0 auto 32px;
+  }
+
+  .final-cta-inner h2 {
+    font-size: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .final-cta-inner h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .final-cta-inner > p {
+    margin-top: 12px;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .final-cta-inner .btn {
+    margin-top: 32px;
+    padding: 14px 24px;
+  }
+
+  .cta-trust {
+    margin-top: 16px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+</style>

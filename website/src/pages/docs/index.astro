@@ -1,0 +1,75 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+
+const sections = [
+  { href: '/docs/features/', icon: '💻', title: 'Features Overview', desc: 'Learn all about Yako\'s feature set.' },
+  { href: '/docs/install/', icon: '📦', title: 'Installation', desc: 'Install Yako on Edge, Chrome, or Firefox.' },
+  { href: '/docs/settings/', icon: '⚙️', title: 'Settings Reference', desc: 'A complete description of all settings.' },
+  { href: '/docs/styles/', icon: '✨', title: 'CSS Snippets', desc: 'Copy and paste CSS to customize Yako.' },
+  { href: '/docs/contribute/', icon: '🤝', title: 'Contribute', desc: 'Submit themes, report bugs, and help out.' },
+  { href: '/docs/faq/', icon: '🧐', title: 'FAQ', desc: 'Frequently asked questions.' },
+]
+---
+
+<DocsLayout title="Documentation - Yako" description="Learn how to use and customize Yako.">
+  <h1>Documentation</h1>
+  <p class="subtitle">Everything you need to get started with Yako.</p>
+
+  <div class="docs-grid">
+    {sections.map(s => (
+      <a href={s.href} class="docs-card">
+        <span class="docs-card-icon">{s.icon}</span>
+        <h3>{s.title}</h3>
+        <p>{s.desc}</p>
+      </a>
+    ))}
+  </div>
+</DocsLayout>
+
+<style>
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .docs-card {
+    display: block;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .docs-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    text-decoration: none;
+  }
+
+  .docs-card-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .docs-card h3 {
+    color: var(--color-text);
+    margin-bottom: 4px;
+  }
+
+  .docs-card p {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .docs-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

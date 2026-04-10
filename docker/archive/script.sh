@@ -10,7 +10,7 @@ for folder in /release/*/; do
     [ -d "$folder" ] || continue
 
     name=$(basename "$folder")
-    archive_name="bonjourr-${name}-${version}.zip"
+    archive_name="yako-${name}-${version}.zip"
 
     echo "Archiving $name..."
 

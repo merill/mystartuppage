@@ -1,6 +1,6 @@
 {
-	"name": "My Startup Page",
-	"description": "A minimalist new tab page for Microsoft admins. Quick access to all your Microsoft admin portals.",
+	"name": "Yako",
+	"description": "A new tab page for Microsoft users and admins. Quick access to all your Microsoft portals.",
 	"theme_color": "#ffffff",
 	"background_color": "#222222",
 	"display": "standalone",

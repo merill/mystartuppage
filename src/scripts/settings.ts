@@ -218,8 +218,8 @@ function initOptionsValues(data: Sync, local: Local): void {
     initViewSelector(activeView)
 
     // msportals.io settings
-    setCheckbox('i_msportals-favorites', data.msportalsFavorites ?? true)
-    paramId('msportals-favorites-options')?.classList.toggle('shown', data.msportalsFavorites ?? true)
+    setCheckbox('i_msportals-favorites', data.msportalsFavorites ?? false)
+    paramId('msportals-favorites-options')?.classList.toggle('shown', data.msportalsFavorites ?? false)
 
     colorInput('solid-background', data.backgrounds.color)
     colorInput('texture-color', data.backgrounds.texture.color ?? '#ffffff')
@@ -1221,7 +1221,7 @@ async function toggleSettingsChangesButtons(action: string): Promise<void> {
 //	View selector
 
 const VIEW_DESCRIPTIONS: Record<string, string> = {
-    default: 'A minimalist new tab page with backgrounds, clock, quick links, and more.',
+    default: 'A new tab page with backgrounds, clock, quick links, and more.',
     cmdms:
         'A command line to quickly jump to any Microsoft admin portal. <a href="https://cmd.ms" target="_blank" rel="noreferrer noopener">cmd.ms</a>',
     msportals:

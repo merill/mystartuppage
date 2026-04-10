@@ -1,7 +1,7 @@
 import { TAB_ID, tabsBc } from '../defaults.ts'
 
 /**
- * To keep track of which My Startup Page tab the user interacted with last
+ * To keep track of which Yako tab the user interacted with last
  */
 export function tabsTracking(): void {
     // Whenever the tab becomes visible or focused, mark it as active

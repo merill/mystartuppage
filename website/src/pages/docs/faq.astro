@@ -1,0 +1,80 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+
+const faqs = [
+  {
+    q: 'Is Yako free?',
+    a: 'Yes, Yako is completely free and open source under the GPL-3.0 license.',
+  },
+  {
+    q: 'Does Yako collect any data?',
+    a: 'No. Yako makes no external API calls, collects no data, has no account system, and requires only the storage permission. All portal data is bundled locally.',
+  },
+  {
+    q: 'What browsers does Yako support?',
+    a: 'Yako supports Microsoft Edge, Google Chrome, and Firefox. It also works on Chromium-based browsers like Brave.',
+  },
+  {
+    q: 'Can I sync my settings across devices?',
+    a: 'Yes. Yako stores settings in your browser\'s built-in sync storage, so your configuration syncs automatically if you have browser sync enabled.',
+  },
+  {
+    q: 'How do I reset Yako to default settings?',
+    a: 'Open Settings, scroll to the bottom, and click Reset. You can also export your settings first as a backup.',
+  },
+  {
+    q: 'Where does the portal data come from?',
+    a: 'Portal data is sourced from two community projects: merill/cmd (cmd.ms shortcuts) and msportals.io. The data is bundled locally with the extension — no network requests are made.',
+  },
+  {
+    q: 'Can I add my own links?',
+    a: 'Yes. You can add custom links manually, or browse the built-in catalog of Microsoft portals and add them with one click.',
+  },
+  {
+    q: 'How do I share my Yako setup?',
+    a: 'Export your settings from the Settings panel, take a screenshot, and submit a theme via Pull Request. See the Contribute page for details.',
+  },
+  {
+    q: 'Is Yako based on another project?',
+    a: 'Yes. Yako is a fork of <a href="https://bonjourr.fr" rel="noreferrer noopener">Bonjourr</a>, a beautiful open source new tab extension by Victor Azevedo and Tahoe Beetschen. We added Microsoft portal search, catalog integration, and admin-focused features on top of their work. Please consider <a href="https://github.com/victrme/Bonjourr" rel="noreferrer noopener">supporting Bonjourr</a> too.',
+  },
+]
+---
+
+<DocsLayout title="FAQ - Yako Docs" description="Frequently asked questions about Yako.">
+  <h1>Frequently Asked Questions</h1>
+  <p class="subtitle">Common questions about Yako.</p>
+
+  {faqs.map(faq => (
+    <div class="faq-item">
+      <h3>{faq.q}</h3>
+      <p set:html={faq.a} />
+    </div>
+  ))}
+</DocsLayout>
+
+<style>
+  .faq-item {
+    margin-top: 32px;
+  }
+
+  .faq-item h3 {
+    margin-bottom: 8px;
+  }
+
+  .faq-item p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .faq-item p a {
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .faq-item p a:hover {
+    color: var(--color-text-secondary);
+  }
+</style>

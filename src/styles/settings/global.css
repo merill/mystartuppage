@@ -21,6 +21,29 @@ aside {
     transition: transform 0.33s, background-color 0.33s;
 }
 
+#settings-brand {
+    text-align: center;
+    padding: 24px 0 0;
+}
+
+#settings-brand a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--color-text);
+    font-size: 22px;
+    font-weight: 600;
+}
+
+#settings-brand img {
+    border-radius: 10px;
+}
+
+#settings-brand a:hover {
+    opacity: 0.8;
+}
+
 aside.hidden {
     display: none;
 }

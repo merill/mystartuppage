@@ -1,0 +1,135 @@
+---
+import Base from './Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description } = Astro.props
+const currentPath = Astro.url.pathname
+
+const sidebarLinks = [
+  { href: '/docs/', label: 'Overview' },
+  { href: '/docs/features/', label: 'Features' },
+  { href: '/docs/install/', label: 'Installation' },
+  { href: '/docs/settings/', label: 'Settings Reference' },
+  { href: '/docs/styles/', label: 'CSS Snippets' },
+  { href: '/docs/contribute/', label: 'Contribute' },
+  { href: '/docs/faq/', label: 'FAQ' },
+]
+---
+
+<Base title={title} description={description}>
+  <Nav slot="nav" />
+
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <nav>
+        <h4>Documentation</h4>
+        <ul>
+          {sidebarLinks.map(link => (
+            <li>
+              <a href={link.href} class:list={[{ active: currentPath === link.href }]}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+
+    <article class="docs-content">
+      <slot />
+    </article>
+  </div>
+
+  <Footer slot="footer" />
+</Base>
+
+<style>
+  .docs-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    min-height: calc(100vh - var(--nav-height) - 200px);
+  }
+
+  .docs-sidebar {
+    position: sticky;
+    top: var(--nav-height);
+    height: fit-content;
+    max-height: calc(100vh - var(--nav-height));
+    overflow-y: auto;
+    padding: 32px 24px 40px 24px;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .docs-sidebar h4 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .docs-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .docs-sidebar li {
+    margin: 0;
+  }
+
+  .docs-sidebar a {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.12s, background-color 0.12s;
+  }
+
+  .docs-sidebar a:hover {
+    color: var(--color-text);
+    background: var(--color-bg-alt);
+    text-decoration: none;
+  }
+
+  .docs-sidebar a.active {
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .docs-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .docs-sidebar {
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 24px;
+      max-height: none;
+    }
+
+    .docs-sidebar ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .docs-sidebar a {
+      padding: 4px 10px;
+      font-size: 0.85rem;
+    }
+  }
+</style>

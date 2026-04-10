@@ -1,11 +1,11 @@
 {
     "manifest_version": 3,
     "name": "__MSG_extensionName__",
-    "short_name": "My Startup Page",
+    "short_name": "Yako",
     "version": "1.0.0",
     "description": "__MSG_extensionDesc__",
     "author": "Merill Fernando",
-    "homepage_url": "https://mystartup.page",
+    "homepage_url": "https://getyako.com",
     "default_locale": "en",
     "icons": {
         "128": "src/assets/favicons/favicon-128x128.png"

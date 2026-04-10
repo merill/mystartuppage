@@ -1,7 +1,7 @@
-# 🧑‍✈️ Bonjourr checklist
+# Yako checklist
 
-A list of every behavior possible on Bonjourr, to check if everything is working before an update. Automated testing
-takes too long to implement, but we can at least do it manually !
+A list of every behavior possible on Yako, to check if everything is working before an update. Automated testing takes
+too long to implement, but we can at least do it manually !
 
 ## General
 

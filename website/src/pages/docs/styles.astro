@@ -1,0 +1,93 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+
+const snippets = [
+  {
+    title: 'Hide the settings gear icon',
+    css: `#show-settings { display: none; }`,
+  },
+  {
+    title: 'Plain background (transparent for Zen browser)',
+    css: `body { background: transparent; }`,
+  },
+  {
+    title: 'Centered clock with larger size',
+    css: `.digital {
+  font-size: 4em;
+  font-weight: 200;
+}`,
+  },
+  {
+    title: 'Remove text shadows',
+    css: `#interface {
+  text-shadow: none;
+}`,
+  },
+  {
+    title: 'Rounded link icons',
+    css: `#linkblocks li a img {
+  border-radius: 50%;
+}`,
+  },
+  {
+    title: 'Custom link hover effect',
+    css: `#linkblocks li a {
+  transition: transform 0.2s;
+}
+#linkblocks li a:hover {
+  transform: scale(1.1);
+}`,
+  },
+  {
+    title: 'Compact quick links',
+    css: `#linkblocks {
+  gap: 8px;
+}
+#linkblocks li a {
+  padding: 8px;
+}`,
+  },
+  {
+    title: 'Blur the entire interface slightly',
+    css: `#interface {
+  backdrop-filter: blur(2px);
+}`,
+  },
+]
+---
+
+<DocsLayout title="CSS Snippets - Yako Docs" description="Copy and paste CSS snippets to customize Yako.">
+  <h1>CSS Snippets</h1>
+  <p class="subtitle">Ready-made CSS you can paste into Yako's Custom CSS editor.</p>
+
+  <p>
+    Open Yako settings, scroll to <strong>Custom CSS</strong>, and paste any snippet below.
+    You can combine multiple snippets.
+  </p>
+
+  {snippets.map(snippet => (
+    <div class="snippet">
+      <h3>{snippet.title}</h3>
+      <pre><code>{snippet.css}</code></pre>
+    </div>
+  ))}
+
+  <h2>Tips</h2>
+  <ul>
+    <li>Use your browser's DevTools (<code>F12</code>) to inspect elements and find the right selectors.</li>
+    <li>Yako uses CSS custom properties — you can override them in your custom CSS.</li>
+    <li>The <code>#interface</code> element wraps all visible widgets.</li>
+    <li>Quick links live inside <code>#linkblocks</code>.</li>
+    <li>The clock is inside <code>#time</code>.</li>
+  </ul>
+</DocsLayout>
+
+<style>
+  .snippet {
+    margin-top: 32px;
+  }
+
+  .snippet h3 {
+    margin-bottom: 8px;
+  }
+</style>

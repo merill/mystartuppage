@@ -17,5 +17,5 @@ export function interfacePopup(_init?: PopupInit, event?: PopupUpdate): void {
         return
     }
 
-    // Announcements and review popups are disabled for My Startup Page
+    // Announcements and review popups are disabled for Yako
 }

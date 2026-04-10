@@ -16,7 +16,7 @@ Use Deno when running tasks.
 
 ### Linting & Formatting
 
-Bonjourr strictly follows Deno's built-in formatting and linting rules.
+Yako strictly follows Deno's built-in formatting and linting rules.
 
 - Lint Code: `deno lint`
 - Format Code: `deno task format` (runs `deno fmt`)
@@ -52,7 +52,7 @@ Bonjourr strictly follows Deno's built-in formatting and linting rules.
 
 ### DOM Manipulation
 
-- Bonjourr is a browser extension; direct DOM manipulation is standard.
+- Yako is a browser extension; direct DOM manipulation is standard.
 - Use `document.getElementById` or `document.querySelector`.
 - Use `dataset` for state management on the `<html>` or `<body>` elements (e.g.,
   `document.documentElement.dataset.theme = 'dark'`).

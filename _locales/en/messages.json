@@ -1,10 +1,10 @@
 {
     "extensionName": {
-        "message": "My Startup Page",
+        "message": "Yako",
         "description": "extension name"
     },
     "extensionDesc": {
-        "message": "A minimalist new tab page for Microsoft admins. Quick access to all your Microsoft admin portals.",
+        "message": "A new tab page for Microsoft users and admins. Quick access to all your Microsoft portals.",
         "description": "extension description"
     }
 }

@@ -1,6 +1,6 @@
-# My Startup Page Development Guide
+# Yako Development Guide
 
-My Startup Page is a minimalist and customizable "new tab" browser extension for Microsoft admins.
+Yako is a customizable "new tab" browser extension for Microsoft users and admins.
 
 1. Use **Deno** as its runtime and task runner. Never user `npm` or others. If **Deno** fails at something, stop and ask for help.
 2. Do not try to add dependencies, find a native solution.

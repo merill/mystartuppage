@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "__MSG_extensionName__",
-    "short_name": "My Startup Page",
+    "short_name": "Yako",
     "version": "1.0.0",
     "description": "__MSG_extensionDesc__",
     "author": "Merill Fernando",

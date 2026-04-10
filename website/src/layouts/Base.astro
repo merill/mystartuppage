@@ -1,0 +1,35 @@
+---
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description = 'A new tab page for Microsoft users and admins.' } = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot name="nav" />
+    <main>
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+
+  main {
+    padding-top: var(--nav-height);
+  }
+</style>

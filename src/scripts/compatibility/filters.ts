@@ -11,7 +11,7 @@ import type { Sync } from '../../types/sync.ts'
 type Import = Partial<Sync>
 
 /**
- * converts old link data to new typing (Bonjourr 22 with icon options)
+ * converts old link data to new typing (Yako 22 with icon options)
  */
 export function newLinkIcons(data: Import): Import {
     const links: Link[] = []

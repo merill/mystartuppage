@@ -65,7 +65,7 @@ export const SYNC_DEFAULT: Sync = {
     showall: false,
     cmdms: false,
     msportals: false,
-    msportalsFavorites: true,
+    msportalsFavorites: false,
     lang: DEFAULT_LANG,
     dark: 'system',
     favicon: '',

@@ -1,0 +1,77 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+---
+
+<DocsLayout title="Settings Reference - Yako Docs" description="A complete description of all Yako settings.">
+  <h1>Settings Reference</h1>
+  <p class="subtitle">A guide to every setting in Yako.</p>
+
+  <h2>General</h2>
+  <ul>
+    <li><strong>Language</strong> — Yako supports 42 languages. Changes apply to the entire interface.</li>
+    <li><strong>Dark mode</strong> — System (follows OS), Enable, Disable, or Auto (based on time of day).</li>
+    <li><strong>Tab favicon</strong> — Custom URL for the browser tab icon.</li>
+    <li><strong>Tab title</strong> — Custom text for the browser tab title.</li>
+  </ul>
+
+  <h2>Backgrounds</h2>
+  <ul>
+    <li><strong>Type</strong> — Choose between solid color, local files, or local videos.</li>
+    <li><strong>Blur</strong> — Adjusts the blur intensity on the background (0-25).</li>
+    <li><strong>Brightness</strong> — Adjusts the brightness of the background (0-1).</li>
+  </ul>
+
+  <h2>Quick Links</h2>
+  <ul>
+    <li><strong>Toggle</strong> — Show or hide the quick links widget.</li>
+    <li><strong>Style</strong> — Large, medium, small, inline, or text.</li>
+    <li><strong>Links per row</strong> — Number of links displayed per row.</li>
+    <li><strong>Open in new tab</strong> — Whether clicks open in the current or a new tab.</li>
+    <li><strong>Show titles</strong> — Toggle link title text below icons.</li>
+    <li><strong>Show backgrounds</strong> — Toggle the background behind link icons.</li>
+  </ul>
+
+  <h2>Clock</h2>
+  <ul>
+    <li><strong>Style</strong> — Digital or analog.</li>
+    <li><strong>Show seconds</strong> — Display seconds on the clock.</li>
+    <li><strong>12-hour format</strong> — Switch between 12 and 24 hour display.</li>
+    <li><strong>Size</strong> — Adjust the clock size.</li>
+    <li><strong>Timezone</strong> — Override the default timezone.</li>
+    <li><strong>World clocks</strong> — Add clocks for additional time zones.</li>
+  </ul>
+
+  <h2>Greetings</h2>
+  <ul>
+    <li><strong>Name</strong> — Your name for personalized greetings.</li>
+  </ul>
+
+  <h2>Notes</h2>
+  <ul>
+    <li><strong>Toggle</strong> — Show or hide the notes widget.</li>
+    <li><strong>Alignment</strong> — Left, center, or right.</li>
+    <li><strong>Width</strong> — Adjust the note widget width.</li>
+    <li><strong>Background opacity</strong> — Transparency of the note background.</li>
+  </ul>
+
+  <h2>Page Layout</h2>
+  <ul>
+    <li><strong>Page width</strong> — Maximum width of the page content.</li>
+    <li><strong>Page gap</strong> — Spacing between widgets.</li>
+    <li><strong>Layout editor</strong> — Drag and rearrange widgets on the page.</li>
+  </ul>
+
+  <h2>Custom CSS</h2>
+  <p>
+    A full CSS editor with syntax highlighting. Your CSS is applied on top of the default styles.
+    See <a href="/docs/styles/">CSS Snippets</a> for examples.
+  </p>
+
+  <h2>Settings Management</h2>
+  <ul>
+    <li><strong>Export</strong> — Download your settings as a JSON file.</li>
+    <li><strong>Import</strong> — Load settings from a JSON file.</li>
+    <li><strong>Copy</strong> — Copy settings JSON to clipboard.</li>
+    <li><strong>Reset</strong> — Reset all settings to defaults.</li>
+  </ul>
+</DocsLayout>

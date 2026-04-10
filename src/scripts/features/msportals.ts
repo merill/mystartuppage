@@ -38,7 +38,7 @@ let categories: Record<string, MsPortalGroup[]> = {}
 let activeCategory = 'admin'
 let favorites: string[] = []
 let isActive = false
-let showFavorites = true
+let showFavorites = false
 
 // --- Public API ---
 

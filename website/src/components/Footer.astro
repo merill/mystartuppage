@@ -1,0 +1,121 @@
+---
+const year = new Date().getFullYear()
+
+const yakoLinks = [
+  { href: '/#features', label: 'Features' },
+  { href: '/docs/', label: 'Docs' },
+  { href: '/themes/', label: 'Themes' },
+  { href: '/docs/install/', label: 'Install' },
+  { href: 'https://github.com/merill/yako', label: 'GitHub' },
+]
+
+---
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-col">
+        <a href="/" class="footer-brand">
+          <img src="/favicon-128x128.png" alt="Yako" width="20" height="20" />
+          <span>Yako</span>
+        </a>
+        <div class="footer-col-links">
+          {yakoLinks.map(link => (
+            <a href={link.href} rel="noreferrer noopener">{link.label}</a>
+          ))}
+        </div>
+      </div>
+
+    <div class="footer-bottom">
+      <span>&copy; {year} <a href="https://merill.net" rel="noreferrer noopener">Merill Fernando</a></span>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <span>Open source under <a href="https://github.com/merill/yako/blob/main/LICENSE.md" rel="noreferrer noopener">GPL-3.0</a></span>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <span>Built on <a href="https://bonjourr.fr" rel="noreferrer noopener">Bonjourr</a> by Victor Azevedo &amp; Tahoe Beetschen</span>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <span><a href="https://github.com/victrme/Bonjourr" rel="noreferrer noopener">Support Bonjourr on GitHub</a></span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--color-border-light);
+    padding: 40px 0 32px;
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .footer-brand img {
+    border-radius: 4px;
+  }
+
+  .footer-col-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .footer-col-links a {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .footer-col-links a:hover {
+    color: var(--color-text);
+  }
+
+  .footer-bottom {
+    border-top: 1px solid var(--color-border-light);
+    padding-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+  }
+
+  .footer-bottom .sep {
+    margin: 0 8px;
+    color: var(--color-border);
+  }
+
+  .footer-bottom p + p {
+    margin-top: 4px;
+  }
+
+  .footer-bottom a {
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s;
+  }
+
+  .footer-bottom a:hover {
+    color: var(--color-text);
+  }
+</style>

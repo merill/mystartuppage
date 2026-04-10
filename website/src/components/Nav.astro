@@ -1,0 +1,110 @@
+---
+const currentPath = Astro.url.pathname
+
+const links = [
+  { href: '/#features', label: 'Features' },
+  { href: '/docs/', label: 'Docs' },
+  { href: '/themes/', label: 'Themes' },
+]
+---
+
+<nav>
+  <div class="nav-inner container">
+    <a href="/" class="nav-brand">
+      <img src="/favicon-128x128.png" alt="Yako" width="36" height="36" />
+      <span>Yako</span>
+    </a>
+
+    <div class="nav-links">
+      {links.map(link => (
+        <a href={link.href} class:list={['nav-link', { active: currentPath === link.href }]}>
+          {link.label}
+        </a>
+      ))}
+      <a href="/docs/install/" class="nav-cta">Install</a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  nav {
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: var(--nav-height);
+    border-bottom: 1px solid var(--color-border-light);
+    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-brand img {
+    border-radius: 12px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .nav-link {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-text);
+  }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-bg);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+
+  .nav-cta:hover {
+    background: var(--color-primary-hover);
+    color: var(--color-bg);
+    text-decoration: none;
+  }
+
+  @media (max-width: 480px) {
+    .nav-links {
+      gap: 16px;
+    }
+    .nav-link {
+      display: none;
+    }
+  }
+</style>
