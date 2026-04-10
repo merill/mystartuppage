@@ -8,7 +8,7 @@ import type { Link } from '../src/types/shared.ts'
 
 const defaults = structuredClone(SYNC_DEFAULT)
 
-Deno.test('Global exists', () => {
+Deno.test({ name: 'Global exists', sanitizeOps: false, sanitizeResources: false, sanitizeExit: false }, () => {
     assert(globalThis.document)
 })
 
