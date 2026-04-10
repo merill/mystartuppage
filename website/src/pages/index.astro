@@ -111,11 +111,23 @@ const faqs = [
   <!-- Hero -->
   <section class="hero">
     <div class="hero-container">
-      <div class="hero-bg" style="background-image: url('/landing/hero-bg.webp');">
-        <div class="hero-overlay"></div>
+      <div class="hero-bg" id="hero-bg" style="background-image: url('/landing/hero-bg.webp');">
+        <div class="hero-overlay" id="hero-overlay"></div>
         <div class="hero-fade"></div>
 
-        <div class="hero-card">
+        <div class="hero-card" id="hero-card">
+          <!-- Selection rectangle -->
+          <div class="hero-select-rect" id="hero-rect"></div>
+          <!-- Fake cursor -->
+          <div class="hero-cursor" id="hero-cursor">
+            <svg height="48" width="48" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3))">
+              <g fill="none" fill-rule="evenodd" transform="translate(10 7)">
+                <path d="m6.148 18.473 1.863-1.003 1.615-.839-2.568-4.816h4.332l-11.379-11.408v16.015l3.316-3.221z" fill="#fff"/>
+                <path d="m6.431 17 1.765-.941-2.775-5.202h3.604l-8.025-8.043v11.188l2.53-2.442z" fill="#000"/>
+              </g>
+            </svg>
+          </div>
+
           <h1>New tab. Supercharged.</h1>
           <p class="hero-sub">
             A new tab page for Microsoft users and admins. Instantly search and access
@@ -346,8 +358,12 @@ const faqs = [
     inset: -1px;
     border-radius: 24px 24px 8px 8px;
     background-color: var(--color-bg);
-    opacity: 0.85;
+    opacity: 1;
     transition: opacity 0.7s;
+  }
+
+  .hero-overlay.revealed {
+    opacity: 0;
   }
 
   .hero-fade {
@@ -369,12 +385,87 @@ const faqs = [
     padding: 24px 16px 32px;
     background: var(--color-bg);
     text-align: center;
+    transition: background-color 0.7s, backdrop-filter 0.7s, box-shadow 0.7s;
   }
 
   @media (min-width: 640px) {
     .hero-card {
       padding: 32px 24px 40px;
     }
+  }
+
+  .hero-card.revealed {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Cursor & selection rect */
+  .hero-cursor {
+    position: absolute;
+    z-index: 20;
+    pointer-events: none;
+    display: none;
+    top: 40%;
+    left: 30%;
+    opacity: 0;
+  }
+
+  .hero-cursor.phase-cursor-in {
+    display: block;
+    animation: hero-cursor-enter 0.7s ease-out forwards;
+  }
+
+  .hero-cursor.phase-selecting {
+    display: block;
+    animation: hero-cursor-drag 1.2s ease-out forwards;
+  }
+
+  .hero-cursor.phase-pause {
+    display: block;
+    opacity: 1;
+    top: calc(100% - 4px);
+    left: calc(100% - 4px);
+  }
+
+  .hero-select-rect {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border: 2px dashed rgba(59, 130, 246, 0.7);
+    border-radius: var(--radius-lg);
+    display: none;
+  }
+
+  .hero-select-rect.phase-selecting {
+    display: block;
+    animation: hero-rect-grow 1.2s ease-out forwards;
+  }
+
+  .hero-select-rect.phase-pause {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes hero-cursor-enter {
+    0%   { opacity: 0; top: 40%; left: 30%; }
+    40%  { opacity: 1; }
+    100% { opacity: 1; top: -4px; left: -4px; }
+  }
+
+  @keyframes hero-cursor-drag {
+    0%   { opacity: 1; top: -4px; left: -4px; }
+    100% { opacity: 1; top: calc(100% - 4px); left: calc(100% - 4px); }
+  }
+
+  @keyframes hero-rect-grow {
+    0%   { width: 0; height: 0; top: 0; left: 0; }
+    100% { width: 100%; height: 100%; top: 0; left: 0; }
   }
 
   .hero-card h1 {
@@ -950,3 +1041,109 @@ const faqs = [
     color: var(--color-text-muted);
   }
 </style>
+
+<script>
+  const BACKGROUNDS = [
+    '/landing/hero-bg.webp',
+    '/landing/hero-bg-2.webp',
+    '/landing/hero-bg-3.webp',
+    '/landing/hero-bg-4.webp',
+    '/landing/hero-bg-5.webp',
+  ]
+
+  const heroBg = document.getElementById('hero-bg')
+  const overlay = document.getElementById('hero-overlay')
+  const card = document.getElementById('hero-card')
+  const cursor = document.getElementById('hero-cursor')
+  const rect = document.getElementById('hero-rect')
+
+  let timeouts = []
+  let currentIndex = 0
+  let wasOffscreen = false
+  let imagesLoaded = false
+
+  function clearAll() {
+    timeouts.forEach(clearTimeout)
+    timeouts = []
+  }
+
+  function schedule(fn, delay) {
+    timeouts.push(setTimeout(fn, delay))
+  }
+
+  function setPhase(phase) {
+    // Cursor classes
+    cursor.className = 'hero-cursor'
+    rect.className = 'hero-select-rect'
+
+    if (phase === 'cursor-in' || phase === 'selecting' || phase === 'pause') {
+      cursor.classList.add('phase-' + phase)
+      if (phase === 'selecting' || phase === 'pause') {
+        rect.classList.add('phase-' + phase)
+      }
+    }
+
+    // Overlay + card reveal
+    const revealed = phase === 'beautifying' || phase === 'done'
+    overlay.classList.toggle('revealed', revealed)
+    card.classList.toggle('revealed', revealed)
+  }
+
+  function runAnimation() {
+    schedule(() => setPhase('cursor-in'), 100)
+    schedule(() => setPhase('selecting'), 900)
+    schedule(() => setPhase('pause'), 2100)
+    schedule(() => setPhase('beautifying'), 2600)
+    schedule(() => {
+      setPhase('done')
+      schedule(() => startCycle(true), 2000)
+    }, 3400)
+  }
+
+  function startCycle(advance) {
+    clearAll()
+    setPhase('idle')
+
+    if (advance) {
+      schedule(() => {
+        currentIndex = (currentIndex + 1) % BACKGROUNDS.length
+        heroBg.style.backgroundImage = "url('" + BACKGROUNDS[currentIndex] + "')"
+        runAnimation()
+      }, 800)
+    } else {
+      runAnimation()
+    }
+  }
+
+  // Preload images, start when first loads
+  BACKGROUNDS.forEach((src, i) => {
+    const img = new Image()
+    img.src = src
+    img.onload = () => {
+      if (i === 0 && !imagesLoaded) {
+        imagesLoaded = true
+        startCycle(false)
+      }
+    }
+    img.onerror = () => {
+      if (i === 0) setPhase('done')
+    }
+  })
+
+  // Pause when offscreen, restart when visible
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        if (wasOffscreen && imagesLoaded) {
+          wasOffscreen = false
+          startCycle(true)
+        }
+      } else {
+        wasOffscreen = true
+        clearAll()
+      }
+    },
+    { threshold: 0.3 },
+  )
+  observer.observe(heroBg)
+</script>
