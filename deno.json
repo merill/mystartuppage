@@ -58,5 +58,6 @@
         "strict": true,
         "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
         "types": ["@types/firefox-webext-browser", "@types/chrome"]
-    }
+    },
+    "exclude": ["website"]
 }
