@@ -1,0 +1,240 @@
+---
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+---
+
+<Base title="Privacy Policy - Yako" description="Yako's privacy policy. No data collection, no accounts, no tracking.">
+  <Nav slot="nav" />
+
+  <div class="container privacy-page">
+    <h1>Privacy Policy</h1>
+    <p class="subtitle">Last updated: April 2025</p>
+
+    <section>
+      <h2>The short version</h2>
+      <p>
+        Yako does not collect, store, or transmit any personal data. There are no accounts, no analytics,
+        no tracking, and no telemetry. Your settings stay on your device (or sync via your browser's
+        built-in sync if you have it enabled).
+      </p>
+    </section>
+
+    <section>
+      <h2>Permissions</h2>
+      <p>
+        Yako requires only the <code>storage</code> permission. This allows the extension to save your
+        preferences (clock style, quick links, background settings, etc.) locally in your browser.
+        No other browser permissions are requested — Yako cannot access your tabs, history,
+        bookmarks, cookies, or browsing data.
+      </p>
+    </section>
+
+    <section>
+      <h2>Data stored locally</h2>
+      <p>All data Yako stores lives entirely in your browser's local storage. This includes:</p>
+      <ul>
+        <li><strong>Your preferences</strong> — layout, clock, background, quick links, and other settings</li>
+        <li><strong>Cached portal data</strong> — a local copy of cmd.ms commands and MSPortals.io entries, refreshed periodically</li>
+        <li><strong>Cached icons</strong> — favicons for your quick links, stored locally to avoid repeated fetches</li>
+        <li><strong>Notes</strong> — if you use the notes widget, your text is stored locally</li>
+        <li><strong>Greeting name</strong> — if you set a greeting, the name is stored locally and never transmitted</li>
+      </ul>
+      <p>
+        If you use a Chromium-based browser (Edge, Chrome) with browser sync enabled, your
+        preferences may sync across your devices via your browser's built-in sync mechanism.
+        This is a standard browser feature — Yako does not control or have access to this sync process.
+      </p>
+    </section>
+
+    <section>
+      <h2>Network requests</h2>
+      <p>
+        Yako makes a small number of read-only network requests to keep portal data and backgrounds current.
+        No personal information, identifiers, or usage data is included in any of these requests.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Destination</th>
+            <th>Purpose</th>
+            <th>Frequency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>raw.githubusercontent.com</code></td>
+            <td>Fetch cmd.ms commands and MSPortals.io portal data</td>
+            <td>Once per day (cached locally)</td>
+          </tr>
+          <tr>
+            <td><code>api.github.com</code></td>
+            <td>Browse Microsoft Cloud Logos for the icon picker</td>
+            <td>On demand when browsing icons</td>
+          </tr>
+          <tr>
+            <td><code>services.bonjourr.fr</code></td>
+            <td>Fetch curated background images (screen dimensions sent for image sizing, no identifiers)</td>
+            <td>When backgrounds refresh</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        All requests are <strong>GET-only</strong> data fetches. No cookies, tokens, or user identifiers are sent.
+        The only parameters included are screen dimensions (width and height) when fetching background images,
+        so the service can return an appropriately sized photo.
+      </p>
+    </section>
+
+    <section>
+      <h2>Third-party services</h2>
+      <p>Yako does not integrate with any analytics, advertising, or tracking services. Specifically:</p>
+      <ul>
+        <li>No Google Analytics, Mixpanel, Sentry, or similar services</li>
+        <li>No advertising networks or ad trackers</li>
+        <li>No fingerprinting or device identification</li>
+        <li>No social media tracking pixels</li>
+      </ul>
+      <p>
+        Background images are sourced from a curated collection served by
+        <a href="https://bonjourr.fr" rel="noreferrer noopener">Bonjourr's</a> image service,
+        which uses Unsplash as the upstream provider.
+      </p>
+    </section>
+
+    <section>
+      <h2>Data you can control</h2>
+      <ul>
+        <li><strong>Export settings</strong> — download all your settings as a JSON file from the Settings panel</li>
+        <li><strong>Import settings</strong> — restore settings from a previously exported file</li>
+        <li><strong>Reset</strong> — clear all stored data and return Yako to its default state</li>
+        <li><strong>Uninstall</strong> — removing the extension deletes all locally stored data</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Open source</h2>
+      <p>
+        Yako is open source under the
+        <a href="https://github.com/merill/yako/blob/main/LICENSE.md" rel="noreferrer noopener">GPL-3.0 license</a>.
+        You can inspect the full source code on
+        <a href="https://github.com/merill/yako" rel="noreferrer noopener">GitHub</a>
+        to verify every claim on this page.
+      </p>
+    </section>
+
+    <section>
+      <h2>Changes to this policy</h2>
+      <p>
+        If this policy changes, the update will be reflected on this page with a revised date.
+        Since Yako has no account system or contact information, we cannot notify you directly —
+        but as an open source project, all changes are visible in the
+        <a href="https://github.com/merill/yako/commits/main" rel="noreferrer noopener">commit history</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>
+        If you have questions about this privacy policy, you can
+        <a href="https://github.com/merill/yako/issues" rel="noreferrer noopener">open an issue on GitHub</a>.
+      </p>
+    </section>
+  </div>
+
+  <Footer slot="footer" />
+</Base>
+
+<style>
+  .privacy-page {
+    max-width: 720px;
+    padding-top: 64px;
+    padding-bottom: 96px;
+  }
+
+  .privacy-page h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 48px;
+  }
+
+  .privacy-page section {
+    margin-bottom: 40px;
+  }
+
+  .privacy-page h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .privacy-page p {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .privacy-page ul {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    padding-left: 24px;
+    margin-bottom: 12px;
+  }
+
+  .privacy-page li {
+    margin-bottom: 6px;
+  }
+
+  .privacy-page a {
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s;
+  }
+
+  .privacy-page a:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .privacy-page code {
+    font-size: 0.9em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border-light);
+  }
+
+  .privacy-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.85rem;
+  }
+
+  .privacy-page th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text);
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--color-border-light);
+  }
+
+  .privacy-page td {
+    color: var(--color-text-secondary);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-light);
+    line-height: 1.5;
+  }
+
+  .privacy-page td code {
+    font-size: 0.85em;
+  }
+</style>

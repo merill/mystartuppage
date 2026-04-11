@@ -7,7 +7,7 @@ Microsoft services. It puts the portals you need front and center, with zero clu
 Key features: Fast & lightweight! Search bar with instant suggestions for 200+ Microsoft portals Quick Links to your
 most-used portals Clock with analog and digital modes Greeting with your name Dark mode Solid color or local image
 backgrounds Notes widget Custom CSS styling Privacy focused - only storage permission required, no data collection, no
-accounts, no external API calls
+accounts
 
 Yako aims to look and feel minimal, while giving you fast access to the tools you need. Add Quick Links from a curated
 catalog of Microsoft portals, or type in the search bar to instantly find any portal by name or URL.
@@ -30,9 +30,9 @@ liking.
 
 Dark mode Yako includes automatic dark mode that adapts to your system preference.
 
-Privacy focused Yako only requires the storage permission. It makes no external API calls, collects no data, has no
-account system, and relies on no third-party services. All portal catalog data is bundled locally with the extension.
-Being open source means you can verify these claims yourself.
+Privacy focused Yako only requires the storage permission. It collects no data, has no account system, and no personal
+information is ever sent. Portal data is fetched from GitHub to stay up to date. Being open source means you can verify
+these claims yourself.
 
 Custom CSS styling Have a specific look in mind? The custom CSS section lets you fully customise the appearance of your
 new tab page.
