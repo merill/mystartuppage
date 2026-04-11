@@ -36,7 +36,7 @@
     ],
     "browser_specific_settings": {
         "gecko": {
-            "id": "{4f391a9e-8717-4ba6-a5b1-488a34931fcb}",
+            "id": "{579125a9-456a-4d39-8f8e-fb273fe52ea0}",
             "strict_min_version": "109.0",
             "data_collection_permissions": {
                 "required": ["none"]
