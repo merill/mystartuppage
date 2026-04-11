@@ -1,5 +1,8 @@
 name: ci
-on: push
+on:
+    push:
+        paths-ignore:
+            - 'website/**'
 
 jobs:
     builds:
@@ -8,6 +11,23 @@ jobs:
             - uses: actions/checkout@v3
             - uses: ./.github/actions/deno
             - run: deno run build
+
+            - name: Package browser ZIPs
+              run: |
+                  mkdir -p dist
+                  for platform in chrome edge firefox; do
+                      if [ -d "release/$platform" ]; then
+                          cd "release/$platform"
+                          zip -r "../../dist/yako-${platform}.zip" .
+                          cd ../..
+                      fi
+                  done
+
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: yako-extensions
+                  path: dist/*.zip
 
     tests:
         runs-on: ubuntu-latest

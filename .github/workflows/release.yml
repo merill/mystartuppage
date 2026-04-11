@@ -24,7 +24,7 @@ jobs:
             - name: Update version in manifests
               run: |
                   VERSION="${{ steps.version.outputs.version }}"
-                  for f in src/manifests/chrome.json src/manifests/edge.json src/manifests/firefox.json src/manifests/safari.json; do
+                  for f in src/manifests/chrome.json src/manifests/edge.json src/manifests/firefox.json; do
                       jq --arg v "$VERSION" '.version = $v' "$f" > tmp.json && mv tmp.json "$f"
                   done
 
@@ -39,7 +39,7 @@ jobs:
             - name: Package browser ZIPs
               run: |
                   mkdir -p dist
-                  for platform in chrome edge firefox safari; do
+                  for platform in chrome edge firefox; do
                       if [ -d "release/$platform" ]; then
                           cd "release/$platform"
                           zip -r "../../dist/yako-${platform}-v${{ steps.version.outputs.version }}.zip" .
@@ -62,7 +62,6 @@ jobs:
                       | Microsoft Edge | `yako-edge-v${{ steps.version.outputs.version }}.zip` |
                       | Google Chrome | `yako-chrome-v${{ steps.version.outputs.version }}.zip` |
                       | Mozilla Firefox | `yako-firefox-v${{ steps.version.outputs.version }}.zip` |
-                      | Safari | `yako-safari-v${{ steps.version.outputs.version }}.zip` |
 
                       ---
 
@@ -93,10 +92,3 @@ jobs:
                       5. Open a new tab to see Yako
 
                       > **Note:** Temporary add-ons in Firefox are removed when the browser is closed. For a permanent install, the extension needs to be signed via [addons.mozilla.org](https://addons.mozilla.org).
-
-                      #### Safari
-
-                      1. Download `yako-safari-v${{ steps.version.outputs.version }}.zip` and extract it to a folder
-                      2. Safari extensions require an Xcode project wrapper. See Apple's [guide on converting web extensions](https://developer.apple.com/documentation/safariservices/converting-a-web-extension-for-safari) for details
-                      3. Run `xcrun safari-web-extension-converter` on the extracted folder to generate an Xcode project
-                      4. Build and run the project in Xcode, then enable the extension in Safari → Settings → Extensions

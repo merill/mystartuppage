@@ -10,7 +10,6 @@ Use Deno when running tasks.
   - Chrome: `deno task chrome`
   - Firefox: `deno task firefox`
   - Edge: `deno task edge`
-  - Safari: `deno task safari`
   - Online (Web version): `deno task online`
 - Serve Locally: `deno task serve` (runs on port 8000 by default)
 
@@ -231,7 +230,7 @@ Light and dark themes are handled via data attributes:
 
 - Use `@supports` for feature detection
 - Provide fallbacks for modern CSS features
-- Only target modern Chromium, Firefox, and Safari. No IE or Opera Mini.
+- Only target modern Chromium and Firefox. No IE or Opera Mini.
 
 #### 2. Responsive Design
 
@@ -288,5 +287,5 @@ Light and dark themes are handled via data attributes:
 
 ### Browser Support
 
-- Modern browsers (Chrome 90+, Firefox 88+, Safari 14+)
+- Modern browsers (Chrome 90+, Firefox 88+)
 - No polyfills or shims for older browser support

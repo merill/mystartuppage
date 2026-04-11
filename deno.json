@@ -5,7 +5,6 @@
         "edge": "deno run --allow-all ./tasks/build.ts edge dev",
         "chrome": "deno run --allow-all ./tasks/build.ts chrome dev",
         "firefox": "deno run --allow-all ./tasks/build.ts firefox dev",
-        "safari": "deno run --allow-all ./tasks/build.ts safari dev",
         "online": "deno run --allow-all ./tasks/build.ts online dev",
         "serve": "deno run --allow-net --allow-read ./tasks/serve.ts 8000",
         "test": "deno test --allow-read --reporter=dot --unstable-broadcast-channel",

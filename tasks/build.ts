@@ -2,10 +2,10 @@ import { ensureDirSync, existsSync } from '@std/fs'
 import { buildSync } from 'esbuild'
 import { httpServer } from './serve.ts'
 
-type Platform = 'chrome' | 'firefox' | 'safari' | 'edge' | 'online'
+type Platform = 'chrome' | 'firefox' | 'edge' | 'online'
 type Env = 'dev' | 'prod' | 'test'
 
-const PLATFORMS: Platform[] = ['chrome', 'firefox', 'safari', 'edge', 'online']
+const PLATFORMS: Platform[] = ['chrome', 'firefox', 'edge', 'online']
 const ENVS: Env[] = ['dev', 'prod', 'test']
 
 const args = Deno.args
