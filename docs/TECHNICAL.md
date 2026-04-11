@@ -13,6 +13,30 @@ Use Deno when running tasks.
   - Online (Web version): `deno task online`
 - Serve Locally: `deno task serve` (runs on port 8000 by default)
 
+### Versioning & Releases
+
+Yako uses a `VERSION` file at the repository root to track the current version (e.g. `1.0.3`).
+The format is `MAJOR.MINOR.PATCH`.
+
+**Automatic patch releases:** Every push to `main` (that changes extension code, not `website/`)
+triggers the release workflow (`.github/workflows/release.yml`). The workflow:
+
+1. Reads the current version from `VERSION`
+2. Increments the patch number (e.g. `1.0.3` → `1.0.4`)
+3. Writes the new version into `VERSION`, all browser manifests (`src/manifests/*.json`), and `src/settings.html`
+4. Builds all platforms via `deno task build`
+5. Packages browser ZIPs (Chrome, Edge, Firefox)
+6. Commits the updated `VERSION` file back to `main` with message `release: v1.0.4`
+7. Creates a git tag `v1.0.4` and a GitHub Release with the ZIPs attached
+
+**Manual major/minor bumps:** To increment the major or minor version, edit the `VERSION` file
+directly. For example, to go from `1.0.12` to `1.1.0` or `2.0.0`, update the file and commit.
+The next release workflow run will increment the patch from there (e.g. `1.1.0` → `1.1.1`).
+
+**Infinite loop prevention:** The release commit only changes `VERSION`. Both `ci.yml` and
+`release.yml` have `VERSION` in their `paths-ignore` list, so the commit does not re-trigger
+either workflow.
+
 ### Linting & Formatting
 
 Yako strictly follows Deno's built-in formatting and linting rules.

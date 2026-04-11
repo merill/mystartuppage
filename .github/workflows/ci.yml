@@ -3,6 +3,7 @@ on:
     push:
         paths-ignore:
             - 'website/**'
+            - 'VERSION'
     workflow_dispatch:
 
 jobs:
