@@ -75,11 +75,7 @@ deno task build    # Production build for all platforms
 
 Yako is a modified version of [Bonjourr](https://bonjourr.fr), an open source new tab browser extension created by [Victor Azevedo](https://github.com/victrme) and [Tahoe Beetschen](https://github.com/morceaudebois). The original source code is available at [github.com/victrme/Bonjourr](https://github.com/victrme/Bonjourr).
 
-This project removes Bonjourr's external API dependencies (weather, dynamic backgrounds, quotes, web fonts) and replaces the search bar with a Microsoft portal search powered by locally cached data from [merill/cmd](https://github.com/merill/cmd) and [msportals.io](https://github.com/adamfowlerit/msportals.io).
-
-### Translations
-
-The translations included in this project were contributed to the original Bonjourr project by its community. We gratefully acknowledge all the translators listed in the [Bonjourr repository](https://github.com/victrme/Bonjourr#-contributors-and-translations).
+This project adds a Microsoft portal search powered by locally cached data from [merill/cmd](https://github.com/merill/cmd) and [msportals.io](https://github.com/adamfowlerit/msportals.io).
 
 ## License
 
