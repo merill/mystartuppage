@@ -471,9 +471,10 @@ function createPortalRow(
     urlSpan.className = 'msportals-portal-url'
     const urlLink = document.createElement('a')
     urlLink.href = portal.primaryURL
-    urlLink.target = '_blank'
+    urlLink.target = '_self'
     urlLink.rel = 'noopener noreferrer'
     urlLink.textContent = stripProtocol(portal.primaryURL)
+    urlLink.addEventListener('click', () => document.documentElement.classList.add('navigating'))
     urlSpan.appendChild(urlLink)
     details.appendChild(urlSpan)
 
@@ -491,9 +492,10 @@ function createPortalRow(
             const badge = document.createElement('a')
             badge.className = 'msportals-btn-secondary'
             badge.href = sec.url
-            badge.target = '_blank'
+            badge.target = '_self'
             badge.rel = 'noopener noreferrer'
             badge.textContent = sec.icon
+            badge.addEventListener('click', () => document.documentElement.classList.add('navigating'))
             secondarySpan.appendChild(badge)
         }
 

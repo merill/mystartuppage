@@ -551,7 +551,8 @@ function handleRowClick(idx: number): void {
     selectedIdx = idx
     const url = filtered[idx]?.url
     if (url) {
-        globalThis.open(url, '_blank', 'noopener,noreferrer')
+        document.documentElement.classList.add('navigating')
+        globalThis.location.href = url
     }
 }
 
@@ -598,7 +599,10 @@ function handleKeydown(e: KeyboardEvent): void {
         e.preventDefault()
         if (selectedIdx >= 0 && selectedIdx < filtered.length) {
             const url = filtered[selectedIdx].url
-            if (url) globalThis.open(url, '_blank', 'noopener,noreferrer')
+            if (url) {
+                document.documentElement.classList.add('navigating')
+                globalThis.location.href = url
+            }
         }
         return
     }

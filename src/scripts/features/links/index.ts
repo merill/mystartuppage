@@ -303,6 +303,12 @@ function createElem(link: LinkElem, openInNewtab: boolean, style: Sync['linkstyl
         anchor.target = '_blank'
     }
 
+    anchor.addEventListener('click', () => {
+        if (!anchor.target || anchor.target === '_self') {
+            document.documentElement.classList.add('navigating')
+        }
+    })
+
     return li
 }
 

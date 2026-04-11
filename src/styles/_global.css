@@ -280,3 +280,8 @@ textarea::-webkit-scrollbar-thumb,
     border: solid 3px transparent;
     border-radius: 10px;
 }
+
+html.navigating,
+html.navigating body {
+    opacity: 0 !important;
+}
