@@ -436,10 +436,14 @@ function initOptionsEvents(): void {
 
     onclickdown(paramId('b_removelinks-apply'), async () => {
         const data = await storage.sync.get()
+        const deletedDefaults: string[] = data.linkgroups.deletedDefaults ?? []
 
         // Delete all links and folders from data
         for (const [key, value] of Object.entries(data)) {
             if (isLink(value)) {
+                if (key.startsWith('linksDefault') && !deletedDefaults.includes(key)) {
+                    deletedDefaults.push(key)
+                }
                 delete data[key]
             }
         }
@@ -451,6 +455,7 @@ function initOptionsEvents(): void {
             groups: [],
             pinned: [],
             synced: [],
+            deletedDefaults,
         }
 
         // Persist and rebuild UI

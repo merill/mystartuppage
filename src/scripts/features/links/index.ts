@@ -709,11 +709,16 @@ function moveOutFolder({ ids, group }: { ids: string[]; group: string }, data: S
 }
 
 function deleteLinks(ids: string[], data: Sync): Sync {
+    const deletedDefaults = data.linkgroups.deletedDefaults ?? []
+
     for (const id of ids) {
         const link = data[id] as Link
 
         if (link.folder) {
             for (const child of getLinksInFolder(data, link._id)) {
+                if (child._id.startsWith('linksDefault') && !deletedDefaults.includes(child._id)) {
+                    deletedDefaults.push(child._id)
+                }
                 delete data[child._id]
             }
         }
@@ -724,8 +729,14 @@ function deleteLinks(ids: string[], data: Sync): Sync {
             }
         }
 
+        if (id.startsWith('linksDefault') && !deletedDefaults.includes(id)) {
+            deletedDefaults.push(id)
+        }
+
         delete data[id]
     }
+
+    data.linkgroups = { ...data.linkgroups, deletedDefaults }
 
     storage.sync.clear()
     const correctdata = correctLinksOrder(data)

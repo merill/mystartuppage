@@ -456,10 +456,16 @@ export function isStorageDefault(data: Sync): boolean {
 }
 
 function verifyDataAsSync(data: Partial<Sync> = {}): Sync {
-    return {
+    const result = {
         ...SYNC_DEFAULT,
         ...data,
     }
+
+    for (const id of result.linkgroups?.deletedDefaults ?? []) {
+        delete result[id]
+    }
+
+    return result
 }
 
 function verifyDataAsLocal(data: Partial<Local> = {}): Local {

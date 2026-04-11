@@ -66,6 +66,7 @@ export interface LinkGroups {
     groups: string[]
     pinned: string[]
     synced: string[]
+    deletedDefaults?: string[]
 }
 
 export interface Hide {
