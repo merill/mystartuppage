@@ -23,6 +23,7 @@ import { tabsTracking } from './startup/tabstracking.ts'
 import { settingsInit } from './settings.ts'
 import { userActions } from './events.ts'
 import { filterData } from './compatibility/apply.ts'
+import { eventDebounce } from './utils/debounce.ts'
 import { storage } from './storage.ts'
 
 import { BROWSER, CURRENT_VERSION, LOCAL_DEFAULT, PLATFORM, SYNC_DEFAULT, SYSTEM_OS } from './defaults.ts'
@@ -34,6 +35,16 @@ try {
 } catch (_) {
     console.warn('Startup failed')
 }
+
+// Flush any pending debounced saves before the page unloads.
+// This ensures edits like clearing notes text are persisted even
+// if the user opens a new tab before the 400ms debounce fires.
+globalThis.addEventListener('beforeunload', () => eventDebounce.flush())
+globalThis.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        eventDebounce.flush()
+    }
+})
 
 async function startup(): Promise<void> {
     let { sync, local } = await storage.init()

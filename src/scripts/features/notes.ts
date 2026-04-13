@@ -17,6 +17,13 @@ type NotesEvent = {
 
 const container = document.getElementById('notes_container')
 
+// In-memory cache of the notes object, populated during initNotes.
+// Text changes write through this cache directly to storage without
+// debounce, because Chromium new-tab pages are torn down instantly
+// when the user navigates via the address bar (no beforeunload fires).
+let notesCache: Notes | undefined
+let editor: PocketEditor | undefined
+
 export function notes(init?: Notes, event?: NotesEvent): void {
     if (event) {
         updateNotes(event)
@@ -28,33 +35,52 @@ export function notes(init?: Notes, event?: NotesEvent): void {
     }
 }
 
-async function updateNotes(event: NotesEvent): Promise<void> {
-    const notes = (await storage.sync.get('notes'))?.notes
-
-    if (!notes) {
+function updateNotes(event: NotesEvent): void {
+    if (!notesCache) {
         return
     }
 
+    // Text changes bypass debounce entirely — write to storage immediately
+    // so the save completes before the page can be torn down.
     if (event?.text !== undefined) {
-        notes.text = event.text
+        notesCache.text = event.text
+        storage.sync.set({ notes: notesCache })
+
+        // PocketEditor's removeLines dispatches a synthetic input event
+        // before its MutationObserver updates the internal lines array,
+        // so toMarkdown() can return stale content after multi-line
+        // deletion. Schedule a second save after the observer runs to
+        // capture the correct value.
+        if (editor) {
+            const ed = editor
+            queueMicrotask(() => {
+                const fresh = ed.value
+                if (fresh !== notesCache?.text) {
+                    notesCache!.text = fresh
+                    storage.sync.set({ notes: notesCache })
+                }
+            })
+        }
+
+        return
     }
 
     if (event?.align !== undefined) {
-        notes.align = event.align
-        handleAlign(notes.align)
+        notesCache.align = event.align
+        handleAlign(notesCache.align)
     }
 
     if (event?.width !== undefined) {
-        notes.width = Number.parseInt(event.width)
-        handleWidth(notes.width)
+        notesCache.width = Number.parseInt(event.width)
+        handleWidth(notesCache.width)
     }
 
     if (event?.background) {
-        notes.background = hexColorFromSplitRange('notes-background-range')
-        handleBackground(notes.background)
+        notesCache.background = hexColorFromSplitRange('notes-background-range')
+        handleBackground(notesCache.background)
     }
 
-    eventDebounce({ notes })
+    eventDebounce({ notes: notesCache })
 }
 
 //
@@ -70,8 +96,10 @@ function initNotes(init: Notes): void {
     handleToggle(init.on)
 
     init.text = init.text ?? translateNotesText()
+    notesCache = init
 
-    new PocketEditor('#notes_container', { text: init.text, id: 'pocket-editor' }).oninput((content) => {
+    editor = new PocketEditor('#notes_container', { text: init.text, id: 'pocket-editor' })
+    editor.oninput((content) => {
         updateNotes({ text: content })
     })
 }
