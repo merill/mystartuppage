@@ -314,6 +314,12 @@ function createElem(link: LinkElem, openInNewtab: boolean, style: Sync['linkstyl
 
 function createIcons(local: Local): void {
     for (const [img, url] of initIconList) {
+        img.addEventListener('load', () => img.classList.add('loaded'))
+        img.addEventListener('error', () => {
+            img.src = FALLBACK_ICON
+            img.classList.add('loaded')
+        })
+
         if (url.startsWith('link')) {
             img.src = local[`x-icon-${url}`] ?? ''
         } else {
@@ -331,6 +337,7 @@ function createIcons(local: Local): void {
         // if images still haven't loaded after 400ms
         for (const [img, url] of incomplete) {
             img.src = 'src/assets/interface/loading.svg'
+            img.classList.add('loaded')
 
             const newimg = document.createElement('img')
 
@@ -597,6 +604,7 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
             let url = getDefaultIcon(link.url)
 
             icondom.src = 'src/assets/interface/loading.svg'
+            icondom.classList.add('loaded')
 
             img.onload = () => {
                 icondom.src = img.src
