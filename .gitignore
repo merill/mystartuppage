@@ -23,8 +23,7 @@ website/dist/
 website/node_modules/
 website/.astro/
 website/public/themes/
-website/public/icons/microsoft-cloud-logos/
-website/public/icons/microsoft-cloud-logos-tree.json
+website/public/ms/
 website/public/data/
 
 package-lock.json

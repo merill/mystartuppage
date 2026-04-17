@@ -1,0 +1,812 @@
+---
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+---
+
+<Base
+  title="Microsoft Cloud Icons - Yako"
+  description="Browse, search, and copy URLs for Microsoft Cloud logos and icons. The same icon library used by the Yako browser extension."
+>
+  <Nav slot="nav" />
+
+  <div class="container icons-page">
+    <header class="icons-header">
+      <h1>Microsoft Cloud Icons</h1>
+      <p class="icons-sub">
+        Browse and search the full Microsoft Cloud Logos icon set. Click any icon to copy its URL.
+        These are the same icons used inside the Yako browser extension's icon library.
+      </p>
+      <p class="icons-credit">
+        Source:
+        <a href="https://github.com/merill/MicrosoftCloudLogos" rel="noreferrer noopener">
+          merill/MicrosoftCloudLogos
+        </a>
+      </p>
+    </header>
+
+    <div class="icon-viewer-topbar">
+      <input
+        id="icon-viewer-search"
+        type="text"
+        placeholder="Search icons..."
+        maxlength="100"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div id="icon-viewer-category" class="icon-viewer-select" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="icon-viewer-category-menu" tabindex="0">
+        <span class="icon-viewer-select-label">All categories</span>
+        <svg class="icon-viewer-select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+        <div id="icon-viewer-category-menu" class="icon-viewer-select-menu" role="listbox" aria-label="Category filter"></div>
+      </div>
+    </div>
+
+    <div id="icon-viewer-loading" class="icon-viewer-loading">
+      <div class="icon-viewer-spinner"></div>
+      <span>Loading icons...</span>
+    </div>
+
+    <div id="icon-viewer-grid" class="icon-viewer-grid"></div>
+
+    <div id="icon-viewer-toast" class="icon-viewer-toast" aria-live="polite"></div>
+  </div>
+
+  <Footer slot="footer" />
+</Base>
+
+<style is:global>
+  .icons-page {
+    max-width: 1200px;
+    padding-top: 48px;
+    padding-bottom: 96px;
+  }
+
+  .icons-header {
+    max-width: 720px;
+    margin: 0 auto 32px;
+    text-align: center;
+  }
+
+  .icons-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .icons-header h1 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .icons-sub {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .icons-credit {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+  }
+
+  .icons-credit a {
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .icons-credit a:hover {
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── Top bar ─── */
+  .icon-viewer-topbar {
+    position: sticky;
+    top: calc(var(--nav-height) + 8px);
+    z-index: 10;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto 24px;
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  #icon-viewer-search {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  #icon-viewer-search:focus {
+    border-color: var(--color-primary);
+  }
+
+  #icon-viewer-category {
+    position: relative;
+  }
+
+  .icon-viewer-select {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .icon-viewer-select:hover {
+    border-color: color-mix(in srgb, var(--color-border) 60%, var(--color-text));
+  }
+
+  .icon-viewer-select:focus-visible,
+  .icon-viewer-select.open {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+
+  .icon-viewer-select-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .icon-viewer-select-chevron {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    transition: transform 0.15s;
+  }
+
+  .icon-viewer-select.open .icon-viewer-select-chevron {
+    transform: rotate(180deg);
+  }
+
+  .icon-viewer-select-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: auto;
+    min-width: 100%;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 4px;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.25), 0 4px 12px -2px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.12s, transform 0.12s;
+    z-index: 20;
+  }
+
+  .icon-viewer-select.open .icon-viewer-select-menu {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .icon-viewer-select-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px 8px 30px;
+    border-radius: calc(var(--radius) - 2px);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    transition: background-color 0.1s;
+  }
+
+  .icon-viewer-select-option:hover,
+  .icon-viewer-select-option.highlighted {
+    background: var(--color-bg-alt);
+  }
+
+  .icon-viewer-select-option.selected::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translateY(-50%);
+    background: currentColor;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') no-repeat center / contain;
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') no-repeat center / contain;
+    color: var(--color-primary);
+  }
+
+  /* ─── Loading ─── */
+  .icon-viewer-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 96px 24px;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .icon-viewer-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: icon-viewer-spin 0.8s linear infinite;
+  }
+
+  @keyframes icon-viewer-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ─── Groups ─── */
+  .icon-viewer-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .icon-viewer-group {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    padding: 20px;
+  }
+
+  .icon-viewer-group h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+    color: var(--color-text);
+  }
+
+  .icon-viewer-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .icon-viewer-items {
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    }
+  }
+
+  /* ─── Tile ─── */
+  .icon-viewer-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 6px 4px 6px;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.12s, border-color 0.12s;
+    text-align: center;
+  }
+
+  .icon-viewer-item:hover {
+    background: var(--color-bg-alt);
+    border-color: var(--color-primary);
+  }
+
+  .icon-viewer-item-icon {
+    width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    padding: 8%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .icon-viewer-item-icon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .icon-viewer-item-name {
+    font-size: 0.72rem;
+    line-height: 1.3;
+    color: var(--color-text-secondary);
+    opacity: 0.85;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    width: 100%;
+  }
+
+  /* ─── Copy button (appears on hover) ─── */
+  .icon-viewer-copy-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s, background-color 0.12s, color 0.12s;
+  }
+
+  .icon-viewer-item:hover .icon-viewer-copy-btn,
+  .icon-viewer-copy-btn:focus-visible {
+    opacity: 1;
+  }
+
+  .icon-viewer-copy-btn:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+  }
+
+  .icon-viewer-copy-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .icon-viewer-copy-btn.copied {
+    opacity: 1;
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+  }
+
+  /* ─── No results ─── */
+  .icon-viewer-no-results {
+    text-align: center;
+    padding: 64px 24px;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+
+  /* ─── Toast ─── */
+  .icon-viewer-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    background: var(--color-text);
+    color: var(--color-bg);
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .icon-viewer-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+
+<script>
+  // ─── Config ───
+  const CATALOG_URL = '/ms/catalog.json'
+  const ICON_BASE_URL = '/ms/'
+
+  // ─── Types ───
+  interface CatalogEntry {
+    id: string
+    name: string
+    altnames: string
+    group: string
+    icon: string
+    source: 'product' | 'icon'
+    type?: string
+    prodfamilies?: string[]
+  }
+
+  // ─── Group ordering ───
+  const GROUP_ORDER = [
+    'Microsoft 365',
+    'Azure',
+    'Entra',
+    'Power Platform',
+    'Dynamics 365',
+    'Viva Suite',
+    'Viva',
+    'Fabric',
+    'Copilot',
+    'Other',
+    'Azure Services',
+    'Fabric Services',
+    'Intune Services',
+  ]
+
+  // ─── State ───
+  let products: CatalogEntry[] = []
+  let activeGroup = 'All'
+  let toastTimer: number | null = null
+
+  // ─── DOM ───
+  const searchEl = document.getElementById('icon-viewer-search') as HTMLInputElement | null
+  const categoryEl = document.getElementById('icon-viewer-category') as HTMLDivElement | null
+  const categoryMenuEl = document.getElementById('icon-viewer-category-menu') as HTMLDivElement | null
+  const categoryLabelEl = categoryEl?.querySelector<HTMLSpanElement>('.icon-viewer-select-label') ?? null
+  const loadingEl = document.getElementById('icon-viewer-loading') as HTMLDivElement | null
+  const gridEl = document.getElementById('icon-viewer-grid') as HTMLDivElement | null
+  const toastEl = document.getElementById('icon-viewer-toast') as HTMLDivElement | null
+
+  searchEl?.addEventListener('input', () => renderGrid())
+  setupCategoryCombobox()
+
+  // ─── Boot ───
+  loadProducts()
+
+  async function loadProducts(): Promise<void> {
+    try {
+      const response = await fetch(CATALOG_URL)
+      if (!response.ok) {
+        showError('Failed to load icons (HTTP ' + response.status + ').')
+        return
+      }
+
+      const data = await response.json() as { entries: CatalogEntry[] }
+      products = data.entries ?? []
+    } catch (err) {
+      console.error('Icon viewer: failed to load products manifest', err)
+      showError('Failed to load icons.')
+      return
+    }
+
+    if (loadingEl) loadingEl.style.display = 'none'
+    populateCategoryDropdown()
+    renderGrid()
+  }
+
+  function showError(message: string): void {
+    if (!loadingEl) return
+    loadingEl.innerHTML = ''
+    const span = document.createElement('span')
+    span.textContent = message
+    loadingEl.appendChild(span)
+  }
+
+  // ─── Category combobox (shadcn-style) ───
+
+  function setupCategoryCombobox(): void {
+    if (!categoryEl || !categoryMenuEl) return
+
+    categoryEl.addEventListener('click', (e) => {
+      // Don't toggle when clicking inside the open menu
+      if (categoryMenuEl.contains(e.target as Node)) return
+      toggleCategoryMenu()
+    })
+
+    categoryEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        toggleCategoryMenu()
+      } else if (e.key === 'Escape' && isCategoryOpen()) {
+        closeCategoryMenu()
+      } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !isCategoryOpen()) {
+        e.preventDefault()
+        openCategoryMenu()
+      }
+    })
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!isCategoryOpen()) return
+      if (categoryEl.contains(e.target as Node)) return
+      closeCategoryMenu()
+    })
+  }
+
+  function isCategoryOpen(): boolean {
+    return categoryEl?.classList.contains('open') ?? false
+  }
+
+  function toggleCategoryMenu(): void {
+    if (isCategoryOpen()) closeCategoryMenu()
+    else openCategoryMenu()
+  }
+
+  function openCategoryMenu(): void {
+    if (!categoryEl) return
+    categoryEl.classList.add('open')
+    categoryEl.setAttribute('aria-expanded', 'true')
+  }
+
+  function closeCategoryMenu(): void {
+    if (!categoryEl) return
+    categoryEl.classList.remove('open')
+    categoryEl.setAttribute('aria-expanded', 'false')
+  }
+
+  function populateCategoryDropdown(): void {
+    if (!categoryEl || !categoryMenuEl || !categoryLabelEl) return
+
+    categoryMenuEl.innerHTML = ''
+
+    const groups = ['All', ...getGroups()]
+
+    for (const cat of groups) {
+      const opt = document.createElement('div')
+      opt.className = 'icon-viewer-select-option'
+      opt.setAttribute('role', 'option')
+      opt.dataset.value = cat
+      opt.textContent = cat === 'All' ? 'All categories' : cat
+      if (cat === activeGroup) {
+        opt.classList.add('selected')
+        opt.setAttribute('aria-selected', 'true')
+      }
+
+      opt.addEventListener('click', () => {
+        setActiveGroup(cat)
+        closeCategoryMenu()
+      })
+
+      categoryMenuEl.appendChild(opt)
+    }
+
+    updateCategoryLabel()
+  }
+
+  function setActiveGroup(value: string): void {
+    if (activeGroup === value) return
+    activeGroup = value
+
+    // Update selected marker
+    if (categoryMenuEl) {
+      for (const opt of categoryMenuEl.querySelectorAll<HTMLDivElement>('.icon-viewer-select-option')) {
+        const isSel = opt.dataset.value === value
+        opt.classList.toggle('selected', isSel)
+        if (isSel) opt.setAttribute('aria-selected', 'true')
+        else opt.removeAttribute('aria-selected')
+      }
+    }
+
+    updateCategoryLabel()
+    renderGrid()
+  }
+
+  function updateCategoryLabel(): void {
+    if (!categoryLabelEl) return
+    categoryLabelEl.textContent = activeGroup === 'All' ? 'All categories' : activeGroup
+  }
+
+  function getGroups(): string[] {
+    const set = new Set<string>()
+    for (const p of products) set.add(p.group)
+
+    const ordered: string[] = []
+    for (const g of GROUP_ORDER) {
+      if (set.has(g)) {
+        ordered.push(g)
+        set.delete(g)
+      }
+    }
+
+    const remaining = Array.from(set).sort()
+    return [...ordered, ...remaining]
+  }
+
+  // ─── Render ───
+
+  function renderGrid(): void {
+    if (!gridEl) return
+
+    gridEl.innerHTML = ''
+
+    const query = (searchEl?.value ?? '').toLowerCase().trim()
+    const tokens = query ? query.split(/\s+/).filter(Boolean) : []
+
+    let filtered = products
+
+    if (tokens.length > 0) {
+      filtered = filtered.filter((p) => {
+        const fams = p.prodfamilies ? p.prodfamilies.join(' ') : ''
+        const haystack = (p.name + ' ' + p.altnames + ' ' + p.group + ' ' + fams).toLowerCase()
+        return tokens.every((token) => haystack.includes(token))
+      })
+    }
+
+    if (activeGroup !== 'All') {
+      filtered = filtered.filter((p) => p.group === activeGroup)
+    }
+
+    if (filtered.length === 0) {
+      const noRes = document.createElement('div')
+      noRes.className = 'icon-viewer-no-results'
+      noRes.textContent = 'No icons found.'
+      gridEl.appendChild(noRes)
+      return
+    }
+
+    const groups = new Map<string, CatalogEntry[]>()
+    for (const p of filtered) {
+      const list = groups.get(p.group)
+      if (list) list.push(p)
+      else groups.set(p.group, [p])
+    }
+
+    const orderedGroups = getGroups()
+
+    for (const g of orderedGroups) {
+      const groupProducts = groups.get(g)
+      if (!groupProducts || groupProducts.length === 0) continue
+
+      groupProducts.sort((a, b) => a.name.localeCompare(b.name))
+
+      const panel = document.createElement('div')
+      panel.className = 'icon-viewer-group'
+
+      const titleEl = document.createElement('h2')
+      titleEl.textContent = g + ' (' + groupProducts.length + ')'
+      panel.appendChild(titleEl)
+
+      const itemsContainer = document.createElement('div')
+      itemsContainer.className = 'icon-viewer-items'
+
+      for (const product of groupProducts) {
+        itemsContainer.appendChild(createIconTile(product))
+      }
+
+      panel.appendChild(itemsContainer)
+      gridEl.appendChild(panel)
+    }
+  }
+
+  function createIconTile(product: CatalogEntry): HTMLDivElement {
+    const item = document.createElement('div')
+    item.className = 'icon-viewer-item'
+    const altLabel = product.altnames ? ' (' + product.altnames + ')' : ''
+    item.title = 'Click to copy URL - ' + product.name + altLabel
+    item.setAttribute('role', 'button')
+    item.setAttribute('tabindex', '0')
+
+    const relativeUrl = ICON_BASE_URL + encodeURI(product.icon)
+    const absoluteUrl = new URL(relativeUrl, location.origin).href
+
+    const iconWrap = document.createElement('div')
+    iconWrap.className = 'icon-viewer-item-icon'
+
+    const img = document.createElement('img')
+    img.src = relativeUrl
+    img.alt = product.name
+    img.loading = 'lazy'
+    iconWrap.appendChild(img)
+
+    const nameEl = document.createElement('span')
+    nameEl.className = 'icon-viewer-item-name'
+    nameEl.textContent = product.name
+
+    const copyBtn = document.createElement('button')
+    copyBtn.type = 'button'
+    copyBtn.className = 'icon-viewer-copy-btn'
+    copyBtn.setAttribute('aria-label', 'Copy icon URL')
+    copyBtn.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>' +
+      '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+      '</svg>'
+
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      copyUrl(absoluteUrl, copyBtn)
+    })
+
+    item.appendChild(iconWrap)
+    item.appendChild(nameEl)
+    item.appendChild(copyBtn)
+
+    item.addEventListener('click', () => copyUrl(absoluteUrl, copyBtn))
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        copyUrl(absoluteUrl, copyBtn)
+      }
+    })
+
+    return item
+  }
+
+  // ─── Copy ───
+
+  function copyUrl(url: string, btn: HTMLButtonElement): void {
+    const done = () => {
+      btn.classList.add('copied')
+      setTimeout(() => btn.classList.remove('copied'), 1200)
+      showToast('Copied: ' + url)
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(done).catch(() => fallbackCopy(url, done))
+    } else {
+      fallbackCopy(url, done)
+    }
+  }
+
+  function fallbackCopy(text: string, done: () => void): void {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed'
+    textarea.style.opacity = '0'
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      document.execCommand('copy')
+      done()
+    } catch (err) {
+      console.error('Copy failed', err)
+    }
+    document.body.removeChild(textarea)
+  }
+
+  function showToast(message: string): void {
+    if (!toastEl) return
+    toastEl.textContent = message
+    toastEl.classList.add('visible')
+
+    if (toastTimer !== null) {
+      clearTimeout(toastTimer)
+    }
+    toastTimer = window.setTimeout(() => {
+      toastEl.classList.remove('visible')
+      toastTimer = null
+    }, 1800)
+  }
+</script>
+

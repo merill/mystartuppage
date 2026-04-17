@@ -1,43 +1,52 @@
 import { getHTMLTemplate } from '../../shared/dom.ts'
 
-const ICON_BASE_URL = 'https://getyako.com/icons/microsoft-cloud-logos/'
-const TREE_MANIFEST_URL = 'https://getyako.com/icons/microsoft-cloud-logos-tree.json'
-const CACHE_KEY = 'icon-picker-tree-v3'
+const ICON_BASE_URL = 'https://getyako.com/ms/'
+const CATALOG_URL = 'https://getyako.com/ms/catalog.json'
+const CACHE_KEY = 'icon-picker-catalog-v1'
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000 // 24 hours
 
 // ─── Types ───
 
-interface IconEntry {
-    path: string
+interface CatalogEntry {
+    id: string
     name: string
-    category: string
+    altnames: string
+    group: string
+    icon: string
+    source: 'product' | 'icon'
+    type?: string
+    prodfamilies?: string[]
 }
 
-interface TreeCache {
+interface CatalogCache {
     timestamp: number
-    entries: IconEntry[]
+    entries: CatalogEntry[]
 }
 
 // ─── State ───
 
 let dialog: HTMLDialogElement | null = null
-let iconEntries: IconEntry[] = []
+let products: CatalogEntry[] = []
 let loaded = false
-let activeCategory = 'All'
+let activeGroup = 'All'
 let onSelectCallback: ((iconUrl: string) => void) | null = null
 
-// ─── Category ordering ───
+// ─── Group ordering ───
 
-const CATEGORY_ORDER = [
+const GROUP_ORDER = [
     'Microsoft 365',
     'Azure',
     'Entra',
     'Power Platform',
     'Dynamics 365',
+    'Viva Suite',
     'Viva',
     'Fabric',
     'Copilot',
-    'other',
+    'Other',
+    'Azure Services',
+    'Fabric Services',
+    'Intune Services',
 ]
 
 // ─── Public API ───
@@ -58,7 +67,7 @@ export async function openIconPicker(onSelect: (iconUrl: string) => void): Promi
 
     if (!loaded) {
         showLoading(true)
-        iconEntries = await loadIconTree()
+        products = await loadProducts()
         loaded = true
         showLoading(false)
     }
@@ -115,7 +124,7 @@ function createDialog(): HTMLDialogElement {
 
     const select = dlg.querySelector<HTMLSelectElement>('#icon-picker-category')
     select?.addEventListener('change', () => {
-        activeCategory = select.value
+        activeGroup = select.value
         renderGrid()
     })
 
@@ -124,147 +133,32 @@ function createDialog(): HTMLDialogElement {
 
 // ─── Data loading ───
 
-async function loadIconTree(): Promise<IconEntry[]> {
-    // Check localStorage cache
+async function loadProducts(): Promise<CatalogEntry[]> {
     const cached = readCache()
     if (cached) return cached
 
-    const entries = await fetchIconTree()
-    writeCache(entries)
-    return entries
+    const fetched = await fetchProducts()
+    writeCache(fetched)
+    return fetched
 }
 
-async function fetchIconTree(): Promise<IconEntry[]> {
-    const response = await fetch(TREE_MANIFEST_URL)
+async function fetchProducts(): Promise<CatalogEntry[]> {
+    const response = await fetch(CATALOG_URL)
 
     if (!response.ok) {
-        console.warn('Icon picker: failed to fetch tree manifest, status', response.status)
+        console.warn('Icon picker: failed to fetch catalog manifest, status', response.status)
         return []
     }
 
     const data = await response.json()
-    const files = data.files as string[]
-    const all: IconEntry[] = []
-
-    for (const filePath of files) {
-        const lower = filePath.toLowerCase()
-        if (!lower.endsWith('.png') && !lower.endsWith('.svg')) continue
-
-        // Skip legacy/devcontainer/github files
-        if (lower.startsWith('zzlegacy') || lower.startsWith('.')) continue
-
-        const category = extractCategory(filePath)
-        const name = extractName(filePath)
-
-        all.push({ path: filePath, name, category })
-    }
-
-    return deduplicateIcons(all)
+    return (data.entries ?? []) as CatalogEntry[]
 }
 
-function extractCategory(path: string): string {
-    const firstSlash = path.indexOf('/')
-    if (firstSlash === -1) return 'other'
-    const topDir = path.substring(0, firstSlash)
-
-    if (topDir === 'Copilot (not M365)') return 'Copilot'
-    return topDir
-}
-
-function extractName(path: string): string {
-    const parts = path.split('/')
-    let filename = parts[parts.length - 1]
-
-    // Remove file extension
-    filename = filename.replace(/\.(png|svg)$/i, '')
-
-    // Remove size suffixes like _256x256, _128x128, _512, etc.
-    filename = filename.replace(/[_ ]\d+x\d+/g, '')
-    filename = filename.replace(/[_ ]\d{2,}$/g, '')
-
-    // Remove parenthetical notes like "(2025 unofficial)", "(general)"
-    filename = filename.replace(/\s*\([^)]*\)\s*/g, ' ')
-
-    // Remove Azure icon prefixes like "10166-icon-service-"
-    filename = filename.replace(/^\d+-icon-service-/i, '')
-
-    // Replace hyphens/underscores with spaces
-    filename = filename.replace(/[-_]/g, ' ')
-
-    // Clean up multiple spaces
-    filename = filename.replace(/\s+/g, ' ').trim()
-
-    return filename || parts[parts.length - 1]
-}
-
-function deduplicateIcons(entries: IconEntry[]): IconEntry[] {
-    // Group entries by a normalised dedup key (lowercase name + category)
-    const groups = new Map<string, IconEntry[]>()
-
-    for (const entry of entries) {
-        const key = `${entry.category}::${entry.name.toLowerCase()}`
-        const list = groups.get(key)
-        if (list) {
-            list.push(entry)
-        } else {
-            groups.set(key, [entry])
-        }
-    }
-
-    // Pick the best variant from each group
-    const result: IconEntry[] = []
-
-    for (const variants of groups.values()) {
-        if (variants.length === 1) {
-            result.push(variants[0])
-            continue
-        }
-
-        // Score each variant: prefer 256x256 PNG > scalable PNG > SVG > other PNGs
-        let best = variants[0]
-        let bestScore = variantScore(best.path)
-
-        for (let i = 1; i < variants.length; i++) {
-            const score = variantScore(variants[i].path)
-            if (score > bestScore) {
-                best = variants[i]
-                bestScore = score
-            }
-        }
-
-        result.push(best)
-    }
-
-    return result
-}
-
-function variantScore(path: string): number {
-    const lower = path.toLowerCase()
-
-    // Penalise "padded" variants (they have large transparent borders)
-    const padded = lower.includes('padded') ? -50 : 0
-
-    // Penalise subdirectory variants (they tend to have internal padding)
-    const depth = (path.match(/\//g) || []).length
-    const subdirPenalty = depth > 2 ? -20 : 0
-
-    if (lower.includes('512')) return 100 + padded + subdirPenalty
-    if (lower.includes('300x300')) return 95 + padded + subdirPenalty
-    if (lower.includes('256x256')) return 90 + padded + subdirPenalty
-    if (lower.includes('scalable')) return 85 + padded + subdirPenalty
-    if (lower.includes('128x128') || lower.includes('128')) return 70 + padded + subdirPenalty
-    if (lower.endsWith('.svg')) return 65 + padded + subdirPenalty
-    if (lower.includes('64x64') || lower.includes('64')) return 50 + padded + subdirPenalty
-
-    // Any other image
-    return 40 + padded + subdirPenalty
-}
-
-function readCache(): IconEntry[] | null {
+function readCache(): CatalogEntry[] | null {
     try {
         const raw = localStorage.getItem(CACHE_KEY)
         if (!raw) return null
-        const cache: TreeCache = JSON.parse(raw)
+        const cache: CatalogCache = JSON.parse(raw)
         if (Date.now() - cache.timestamp > CACHE_TTL_MS) return null
         return cache.entries
     } catch {
@@ -272,9 +166,9 @@ function readCache(): IconEntry[] | null {
     }
 }
 
-function writeCache(entries: IconEntry[]): void {
+function writeCache(list: CatalogEntry[]): void {
     try {
-        const cache: TreeCache = { timestamp: Date.now(), entries }
+        const cache: CatalogCache = { timestamp: Date.now(), entries: list }
         localStorage.setItem(CACHE_KEY, JSON.stringify(cache))
     } catch {
         // Storage full or unavailable — ignore
@@ -293,33 +187,29 @@ function populateCategoryDropdown(): void {
         select.remove(1)
     }
 
-    for (const cat of getCategories()) {
+    for (const g of getGroups()) {
         const option = document.createElement('option')
-        option.value = cat
-        option.textContent = cat
+        option.value = g
+        option.textContent = g
         select.appendChild(option)
     }
 
-    select.value = activeCategory
+    select.value = activeGroup
 }
 
-function getCategories(): string[] {
-    const catSet = new Set<string>()
-
-    for (const entry of iconEntries) {
-        catSet.add(entry.category)
-    }
+function getGroups(): string[] {
+    const set = new Set<string>()
+    for (const p of products) set.add(p.group)
 
     const ordered: string[] = []
-
-    for (const cat of CATEGORY_ORDER) {
-        if (catSet.has(cat)) {
-            ordered.push(cat)
-            catSet.delete(cat)
+    for (const g of GROUP_ORDER) {
+        if (set.has(g)) {
+            ordered.push(g)
+            set.delete(g)
         }
     }
 
-    const remaining = Array.from(catSet).sort()
+    const remaining = Array.from(set).sort()
     return [...ordered, ...remaining]
 }
 
@@ -337,18 +227,18 @@ function renderGrid(): void {
     const query = (search?.value ?? '').toLowerCase().trim()
     const tokens = query ? query.split(/\s+/).filter(Boolean) : []
 
-    // Filter
-    let filtered = iconEntries
+    let filtered = products
 
     if (tokens.length > 0) {
-        filtered = filtered.filter((entry) => {
-            const haystack = `${entry.name} ${entry.path} ${entry.category}`.toLowerCase()
+        filtered = filtered.filter((p) => {
+            const fams = p.prodfamilies ? p.prodfamilies.join(' ') : ''
+            const haystack = `${p.name} ${p.altnames} ${p.group} ${fams}`.toLowerCase()
             return tokens.every((token) => haystack.includes(token))
         })
     }
 
-    if (activeCategory !== 'All') {
-        filtered = filtered.filter((entry) => entry.category === activeCategory)
+    if (activeGroup !== 'All') {
+        filtered = filtered.filter((p) => p.group === activeGroup)
     }
 
     if (filtered.length === 0) {
@@ -359,38 +249,37 @@ function renderGrid(): void {
         return
     }
 
-    // Group by category
-    const groups = new Map<string, IconEntry[]>()
+    const groups = new Map<string, CatalogEntry[]>()
 
-    for (const entry of filtered) {
-        const list = groups.get(entry.category)
+    for (const p of filtered) {
+        const list = groups.get(p.group)
         if (list) {
-            list.push(entry)
+            list.push(p)
         } else {
-            groups.set(entry.category, [entry])
+            groups.set(p.group, [p])
         }
     }
 
-    const orderedCategories = getCategories()
+    const orderedGroups = getGroups()
 
-    for (const cat of orderedCategories) {
-        const catEntries = groups.get(cat)
-        if (!catEntries || catEntries.length === 0) continue
+    for (const g of orderedGroups) {
+        const groupProducts = groups.get(g)
+        if (!groupProducts || groupProducts.length === 0) continue
 
-        catEntries.sort((a, b) => a.name.localeCompare(b.name))
+        groupProducts.sort((a, b) => a.name.localeCompare(b.name))
 
         const panel = document.createElement('div')
         panel.className = 'icon-picker-group'
 
         const titleEl = document.createElement('h2')
-        titleEl.textContent = cat
+        titleEl.textContent = g
         panel.appendChild(titleEl)
 
         const itemsContainer = document.createElement('div')
         itemsContainer.className = 'icon-picker-items'
 
-        for (const entry of catEntries) {
-            const item = createIconTile(entry)
+        for (const product of groupProducts) {
+            const item = createIconTile(product)
             itemsContainer.appendChild(item)
         }
 
@@ -399,12 +288,12 @@ function renderGrid(): void {
     }
 }
 
-function createIconTile(entry: IconEntry): HTMLDivElement {
+function createIconTile(product: CatalogEntry): HTMLDivElement {
     const item = document.createElement('div')
     item.className = 'icon-picker-item'
-    item.title = entry.path
+    item.title = product.altnames ? `${product.name} (${product.altnames})` : product.name
 
-    const iconUrl = ICON_BASE_URL + encodeURI(entry.path)
+    const iconUrl = ICON_BASE_URL + encodeURI(product.icon)
 
     const iconWrap = document.createElement('div')
     iconWrap.className = 'icon-picker-item-icon'
@@ -418,7 +307,7 @@ function createIconTile(entry: IconEntry): HTMLDivElement {
 
     const nameEl = document.createElement('span')
     nameEl.className = 'icon-picker-item-name'
-    nameEl.textContent = entry.name
+    nameEl.textContent = product.name
 
     item.appendChild(iconWrap)
     item.appendChild(nameEl)
