@@ -39,14 +39,9 @@ import Footer from '../components/Footer.astro'
         autocomplete="off"
         spellcheck="false"
       />
-      <div id="icon-viewer-category" class="icon-viewer-select" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="icon-viewer-category-menu" tabindex="0">
-        <span class="icon-viewer-select-label">All categories</span>
-        <svg class="icon-viewer-select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="m6 9 6 6 6-6" />
-        </svg>
-        <div id="icon-viewer-category-menu" class="icon-viewer-select-menu" role="listbox" aria-label="Category filter"></div>
-      </div>
     </div>
+
+    <div id="icon-viewer-filters" class="icon-viewer-filters" role="group" aria-label="Filter icons by category"></div>
 
     <div id="icon-viewer-loading" class="icon-viewer-loading">
       <div class="icon-viewer-spinner"></div>
@@ -171,112 +166,64 @@ import Footer from '../components/Footer.astro'
     border-color: var(--color-primary);
   }
 
-  #icon-viewer-category {
-    position: relative;
+  /* ─── Category filter pills (shadcn-style) ─── */
+  .icon-viewer-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 1200px;
+    margin: 0 auto 20px;
+    padding: 0 4px;
   }
 
-  .icon-viewer-select {
+  .icon-viewer-filter {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-width: 180px;
-    padding: 10px 14px;
-    border-radius: var(--radius);
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 9999px;
     border: 1px solid var(--color-border);
     background: var(--color-bg);
     color: var(--color-text);
-    font-size: 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 500;
     font-family: inherit;
     cursor: pointer;
-    outline: none;
     user-select: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-
-  .icon-viewer-select:hover {
-    border-color: color-mix(in srgb, var(--color-border) 60%, var(--color-text));
-  }
-
-  .icon-viewer-select:focus-visible,
-  .icon-viewer-select.open {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
-  }
-
-  .icon-viewer-select-label {
-    flex: 1;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    transition: background-color 0.12s, border-color 0.12s, color 0.12s, transform 0.08s;
   }
 
-  .icon-viewer-select-chevron {
-    flex-shrink: 0;
-    color: var(--color-text-muted);
-    transition: transform 0.15s;
-  }
-
-  .icon-viewer-select.open .icon-viewer-select-chevron {
-    transform: rotate(180deg);
-  }
-
-  .icon-viewer-select-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    left: auto;
-    min-width: 100%;
-    max-height: 320px;
-    overflow-y: auto;
-    padding: 4px;
-    border-radius: var(--radius);
-    border: 1px solid var(--color-border);
-    background: var(--color-bg);
-    box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.25), 0 4px 12px -2px rgba(0, 0, 0, 0.12);
-    opacity: 0;
-    transform: translateY(-4px) scale(0.98);
-    pointer-events: none;
-    transition: opacity 0.12s, transform 0.12s;
-    z-index: 20;
-  }
-
-  .icon-viewer-select.open .icon-viewer-select-menu {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
-
-  .icon-viewer-select-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px 8px 30px;
-    border-radius: calc(var(--radius) - 2px);
-    color: var(--color-text);
-    font-size: 0.88rem;
-    cursor: pointer;
-    white-space: nowrap;
-    position: relative;
-    transition: background-color 0.1s;
-  }
-
-  .icon-viewer-select-option:hover,
-  .icon-viewer-select-option.highlighted {
+  .icon-viewer-filter:hover {
+    border-color: color-mix(in srgb, var(--color-border) 40%, var(--color-text));
     background: var(--color-bg-alt);
   }
 
-  .icon-viewer-select-option.selected::before {
-    content: '';
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    width: 12px;
-    height: 12px;
-    transform: translateY(-50%);
-    background: currentColor;
-    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') no-repeat center / contain;
-    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') no-repeat center / contain;
-    color: var(--color-primary);
+  .icon-viewer-filter:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent);
+    border-color: var(--color-primary);
+  }
+
+  .icon-viewer-filter:active {
+    transform: scale(0.97);
+  }
+
+  .icon-viewer-filter.active {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .icon-viewer-filter-count {
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+    opacity: 0.7;
+    font-size: 0.78rem;
+  }
+
+  .icon-viewer-filter.active .icon-viewer-filter-count {
+    opacity: 0.75;
   }
 
   /* ─── Loading ─── */
@@ -378,6 +325,11 @@ import Footer from '../components/Footer.astro'
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  /* Monochrome (black-only) SVGs are invisible on dark backgrounds — flip them white. */
+  [data-theme='dark'] .icon-viewer-item.monochrome .icon-viewer-item-icon img {
+    filter: invert(1);
   }
 
   .icon-viewer-item-name {
@@ -484,24 +436,23 @@ import Footer from '../components/Footer.astro'
     source: 'product' | 'icon'
     type?: string
     prodfamilies?: string[]
+    monochrome?: boolean
   }
 
   // ─── State ───
   let products: CatalogEntry[] = []
+  // 'All' (or empty string) means no filtering; otherwise only that one group is shown
   let activeGroup = 'All'
   let toastTimer: number | null = null
 
   // ─── DOM ───
   const searchEl = document.getElementById('icon-viewer-search') as HTMLInputElement | null
-  const categoryEl = document.getElementById('icon-viewer-category') as HTMLDivElement | null
-  const categoryMenuEl = document.getElementById('icon-viewer-category-menu') as HTMLDivElement | null
-  const categoryLabelEl = categoryEl?.querySelector<HTMLSpanElement>('.icon-viewer-select-label') ?? null
+  const filtersEl = document.getElementById('icon-viewer-filters') as HTMLDivElement | null
   const loadingEl = document.getElementById('icon-viewer-loading') as HTMLDivElement | null
   const gridEl = document.getElementById('icon-viewer-grid') as HTMLDivElement | null
   const toastEl = document.getElementById('icon-viewer-toast') as HTMLDivElement | null
 
   searchEl?.addEventListener('input', () => renderGrid())
-  setupCategoryCombobox()
 
   // ─── Boot ───
   loadProducts()
@@ -523,7 +474,7 @@ import Footer from '../components/Footer.astro'
     }
 
     if (loadingEl) loadingEl.style.display = 'none'
-    populateCategoryDropdown()
+    renderCategoryFilters()
     renderGrid()
   }
 
@@ -535,108 +486,62 @@ import Footer from '../components/Footer.astro'
     loadingEl.appendChild(span)
   }
 
-  // ─── Category combobox (shadcn-style) ───
+  // ─── Category filter pills ───
 
-  function setupCategoryCombobox(): void {
-    if (!categoryEl || !categoryMenuEl) return
+  function renderCategoryFilters(): void {
+    if (!filtersEl) return
 
-    categoryEl.addEventListener('click', (e) => {
-      // Don't toggle when clicking inside the open menu
-      if (categoryMenuEl.contains(e.target as Node)) return
-      toggleCategoryMenu()
-    })
+    filtersEl.innerHTML = ''
 
-    categoryEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        toggleCategoryMenu()
-      } else if (e.key === 'Escape' && isCategoryOpen()) {
-        closeCategoryMenu()
-      } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !isCategoryOpen()) {
-        e.preventDefault()
-        openCategoryMenu()
-      }
-    })
+    // "All" pill
+    filtersEl.appendChild(createFilterPill('All', products.length, activeGroup === 'All', () => {
+      setActiveGroup('All')
+    }))
 
-    // Close on outside click
-    document.addEventListener('click', (e) => {
-      if (!isCategoryOpen()) return
-      if (categoryEl.contains(e.target as Node)) return
-      closeCategoryMenu()
-    })
-  }
-
-  function isCategoryOpen(): boolean {
-    return categoryEl?.classList.contains('open') ?? false
-  }
-
-  function toggleCategoryMenu(): void {
-    if (isCategoryOpen()) closeCategoryMenu()
-    else openCategoryMenu()
-  }
-
-  function openCategoryMenu(): void {
-    if (!categoryEl) return
-    categoryEl.classList.add('open')
-    categoryEl.setAttribute('aria-expanded', 'true')
-  }
-
-  function closeCategoryMenu(): void {
-    if (!categoryEl) return
-    categoryEl.classList.remove('open')
-    categoryEl.setAttribute('aria-expanded', 'false')
-  }
-
-  function populateCategoryDropdown(): void {
-    if (!categoryEl || !categoryMenuEl || !categoryLabelEl) return
-
-    categoryMenuEl.innerHTML = ''
-
-    const groups = ['All', ...getGroups()]
-
-    for (const cat of groups) {
-      const opt = document.createElement('div')
-      opt.className = 'icon-viewer-select-option'
-      opt.setAttribute('role', 'option')
-      opt.dataset.value = cat
-      opt.textContent = cat === 'All' ? 'All categories' : cat
-      if (cat === activeGroup) {
-        opt.classList.add('selected')
-        opt.setAttribute('aria-selected', 'true')
-      }
-
-      opt.addEventListener('click', () => {
-        setActiveGroup(cat)
-        closeCategoryMenu()
-      })
-
-      categoryMenuEl.appendChild(opt)
+    // One pill per category with its icon count
+    for (const g of getGroups()) {
+      const count = products.reduce((n, p) => p.group === g ? n + 1 : n, 0)
+      filtersEl.appendChild(createFilterPill(g, count, activeGroup === g, () => {
+        setActiveGroup(g)
+      }))
     }
-
-    updateCategoryLabel()
   }
 
-  function setActiveGroup(value: string): void {
-    if (activeGroup === value) return
-    activeGroup = value
-
-    // Update selected marker
-    if (categoryMenuEl) {
-      for (const opt of categoryMenuEl.querySelectorAll<HTMLDivElement>('.icon-viewer-select-option')) {
-        const isSel = opt.dataset.value === value
-        opt.classList.toggle('selected', isSel)
-        if (isSel) opt.setAttribute('aria-selected', 'true')
-        else opt.removeAttribute('aria-selected')
-      }
-    }
-
-    updateCategoryLabel()
+  function setActiveGroup(group: string): void {
+    if (activeGroup === group) return
+    activeGroup = group
+    updateFilterActiveStates()
     renderGrid()
   }
 
-  function updateCategoryLabel(): void {
-    if (!categoryLabelEl) return
-    categoryLabelEl.textContent = activeGroup === 'All' ? 'All categories' : activeGroup
+  function createFilterPill(label: string, count: number, active: boolean, onClick: () => void): HTMLButtonElement {
+    const btn = document.createElement('button')
+    btn.type = 'button'
+    btn.className = 'icon-viewer-filter' + (active ? ' active' : '')
+    btn.dataset.group = label
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false')
+
+    const labelEl = document.createElement('span')
+    labelEl.textContent = label
+    btn.appendChild(labelEl)
+
+    const countEl = document.createElement('span')
+    countEl.className = 'icon-viewer-filter-count'
+    countEl.textContent = String(count)
+    btn.appendChild(countEl)
+
+    btn.addEventListener('click', onClick)
+    return btn
+  }
+
+  function updateFilterActiveStates(): void {
+    if (!filtersEl) return
+    for (const btn of filtersEl.querySelectorAll<HTMLButtonElement>('.icon-viewer-filter')) {
+      const g = btn.dataset.group ?? ''
+      const isActive = g === activeGroup
+      btn.classList.toggle('active', isActive)
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+    }
   }
 
   function getGroups(): string[] {
@@ -713,7 +618,7 @@ import Footer from '../components/Footer.astro'
 
   function createIconTile(product: CatalogEntry): HTMLDivElement {
     const item = document.createElement('div')
-    item.className = 'icon-viewer-item'
+    item.className = 'icon-viewer-item' + (product.monochrome ? ' monochrome' : '')
     const altLabel = product.altnames ? ' (' + product.altnames + ')' : ''
     item.title = 'Click to copy URL - ' + product.name + altLabel
     item.setAttribute('role', 'button')

@@ -1,22 +1,21 @@
 import { storage } from '../storage.ts'
-import { BUNDLED_CATEGORIES } from '../../data/bundled-portals.ts'
 import type { MsPortalGroup } from '../../types/local.ts'
 
 // --- Constants ---
 
-const GITHUB_BASE = 'https://getyako.com/data/portals/'
+const PORTALS_BY_CATEGORY_URL = 'https://getyako.com/data/portals-by-category.json'
 
-const CATEGORY_FILES: Record<string, string> = {
-    admin: 'admin.json',
-    user: 'user.json',
-    thirdparty: 'thirdparty.json',
-    edu: 'edu.json',
-    'us-govt': 'us-govt.json',
-    china: 'china.json',
-    training: 'training.json',
-    licensing: 'licensing.json',
-    consumer: 'consumer.json',
-}
+const CATEGORY_KEYS = [
+    'admin',
+    'user',
+    'thirdparty',
+    'edu',
+    'us-govt',
+    'china',
+    'training',
+    'licensing',
+    'consumer',
+] as const
 
 const CATEGORY_LABELS: Record<string, string> = {
     admin: 'Admin',
@@ -154,56 +153,43 @@ function isFavorite(portalName: string): boolean {
 // --- Data Loading ---
 
 async function loadPortals(): Promise<void> {
-    // Start with bundled data immediately
-    categories = { ...BUNDLED_CATEGORIES }
-    buildView()
-    renderContent()
-
-    // Try cache for fresher data
+    // Try cache first — if fresh, show it immediately.
     const local = await storage.local.get('msportalsCache')
     const cache = local.msportalsCache
 
     if (cache && cache.categories && Date.now() - cache.lastFetch < 24 * 60 * 60 * 1000) {
         categories = cache.categories
+        buildView()
         renderContent()
         return
     }
 
-    // Fetch fresh data in background
-    fetchAllCategories()
+    // Otherwise, show stale cache (if any) while fetching fresh.
+    if (cache && cache.categories) {
+        categories = cache.categories
+        buildView()
+        renderContent()
+    } else {
+        // First-ever load: render an empty shell so the UI isn't blank.
+        buildView()
+        renderContent()
+    }
+
+    await fetchAllCategories()
 }
 
 async function fetchAllCategories(): Promise<void> {
     try {
-        const fetched: Record<string, MsPortalGroup[]> = {}
+        const resp = await fetch(PORTALS_BY_CATEGORY_URL)
 
-        const results = await Promise.allSettled(
-            Object.entries(CATEGORY_FILES).map(async ([key, file]) => {
-                const resp = await fetch(GITHUB_BASE + file)
-
-                if (!resp.ok) {
-                    throw new Error(`HTTP ${resp.status}`)
-                }
-
-                const json = (await resp.json()) as MsPortalGroup[]
-                return { key, json }
-            }),
-        )
-
-        for (const result of results) {
-            if (result.status === 'fulfilled') {
-                fetched[result.value.key] = result.value.json
-            }
+        if (!resp.ok) {
+            throw new Error(`HTTP ${resp.status}`)
         }
 
-        // Only update if we got at least some data
-        if (Object.keys(fetched).length > 0) {
-            // Merge: keep bundled data for any categories that failed to fetch
-            for (const key of Object.keys(CATEGORY_FILES)) {
-                if (fetched[key]) {
-                    categories[key] = fetched[key]
-                }
-            }
+        const fetched = (await resp.json()) as Record<string, MsPortalGroup[]>
+
+        if (fetched && Object.keys(fetched).length > 0) {
+            categories = fetched
 
             storage.local.set({
                 msportalsCache: { lastFetch: Date.now(), categories },
@@ -255,7 +241,7 @@ function buildView(): void {
     nav.appendChild(homeBtn)
 
     // Category buttons
-    for (const key of Object.keys(CATEGORY_FILES)) {
+    for (const key of CATEGORY_KEYS) {
         const btn = createNavBtn(CATEGORY_LABELS[key], key)
         nav.appendChild(btn)
     }
@@ -364,7 +350,7 @@ function renderContent(): void {
     } else if (activeCategory === 'home') {
         // Show all categories combined
         groups = []
-        for (const key of Object.keys(CATEGORY_FILES)) {
+        for (const key of CATEGORY_KEYS) {
             const catGroups = categories[key] ?? []
             groups = groups.concat(catGroups)
         }
@@ -544,7 +530,7 @@ function getFavoriteGroups(): MsPortalGroup[] {
         { portalName: string; primaryURL: string; secondaryURLs?: { icon: string; url: string }[]; note?: string }[]
     > = {}
 
-    for (const key of Object.keys(CATEGORY_FILES)) {
+    for (const key of CATEGORY_KEYS) {
         const catGroups = categories[key] ?? []
 
         for (const group of catGroups) {
@@ -578,7 +564,7 @@ function stripProtocol(url: string): string {
 function countAllPortals(): number {
     let count = 0
 
-    for (const key of Object.keys(CATEGORY_FILES)) {
+    for (const key of CATEGORY_KEYS) {
         const catGroups = categories[key] ?? []
 
         for (const group of catGroups) {

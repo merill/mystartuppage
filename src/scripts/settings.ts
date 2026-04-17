@@ -198,6 +198,7 @@ function initOptionsValues(data: Sync, _local: Local): void {
     setInput('i_timezone', data.clock?.timezone || 'auto')
     setCheckbox('i_showall', data.showall)
     setCheckbox('i_settingshide', data.hide?.settingsicon ?? false)
+    setCheckbox('i_syncstorage', storage.type.get() === 'webext-sync')
     setCheckbox('i_background-mute-videos', data.backgrounds.mute ?? true)
     setCheckbox('i_quicklinks', data.quicklinks)
     setCheckbox('i_linkgroups', data?.linkgroups?.on)
@@ -367,6 +368,13 @@ function initOptionsEvents(): void {
 
     onclickdown(paramId('i_settingshide'), (_, target) => {
         hideElements({ settingsicon: target.checked }, { isEvent: true })
+    })
+
+    onclickdown(paramId('i_syncstorage'), async (_, target) => {
+        // Migrate storage: when enabled, use chrome.storage.sync (synced via browser profile).
+        // When disabled, keep all sync-shape data in chrome.storage.local under `syncStorage`.
+        const data = await storage.sync.get()
+        storage.type.change(target.checked ? 'sync' : 'local', data)
     })
 
     // Quick links

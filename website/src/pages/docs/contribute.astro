@@ -35,6 +35,60 @@ import DocsLayout from '../../layouts/DocsLayout.astro'
     Please run <code>deno task format</code> and <code>deno task types</code> before submitting.
   </p>
 
+  <h2>Updating data sources</h2>
+  <p>
+    Yako ships no bundled Microsoft data. Portals, commands, and icons are all
+    pulled hourly from upstream repositories, re-processed, and re-cached on
+    <a href="https://getyako.com" rel="noreferrer noopener">getyako.com</a>. See
+    <a href="/docs/architecture/">Architecture</a> for the full pipeline. When a
+    portal is missing, wrong, or has no icon, open a PR on the appropriate
+    upstream repo — changes flow into Yako automatically within an hour.
+  </p>
+
+  <h3>Portal URLs, names, categories</h3>
+  <p>
+    Edit the relevant category file in
+    <a href="https://github.com/adamfowlerit/msportals.io" rel="noreferrer noopener">
+      adamfowlerit/msportals.io
+    </a>
+    under <code>_data/portals/</code>. Changes flow into Yako's next hourly sync.
+  </p>
+
+  <h3>Product logos and icons</h3>
+  <p>
+    Add or update images in
+    <a href="https://github.com/merill/MicrosoftCloudLogos" rel="noreferrer noopener">
+      merill/MicrosoftCloudLogos
+    </a>
+    (an append-only mirror of
+    <a href="https://github.com/loryanstrant/MicrosoftCloudLogos" rel="noreferrer noopener">
+      loryanstrant/MicrosoftCloudLogos
+    </a>). Ensure each product directory has a <code>metadata.md</code> with
+    <code>name</code>, <code>altnames</code>, <code>status: Active</code>, and a
+    <code>prodfamilies</code> entry — those fields drive the icon picker's
+    groupings and Yako's fuzzy icon matching.
+  </p>
+
+  <h3>cmd.ms commands</h3>
+  <p>
+    Edit
+    <a href="https://github.com/merill/cmd/blob/main/website/config/commands.csv" rel="noreferrer noopener">
+      <code>website/config/commands.csv</code>
+    </a>
+    in <a href="https://github.com/merill/cmd" rel="noreferrer noopener">merill/cmd</a>.
+    See the
+    <a href="https://cmd.ms/docs/docs/contributing" rel="noreferrer noopener">
+      cmd.ms contributing guide
+    </a>.
+  </p>
+
+  <p>
+    Propagation: hourly poll plus instant
+    <code>repository_dispatch</code> hooks where each upstream has opted in.
+    In practice new content is live on getyako.com within a few minutes of the
+    upstream merge.
+  </p>
+
   <h2>🦘 Key Open Source Projects</h2>
   <p>
     Yako is proudly Aussie powered. These community projects make the extension possible:

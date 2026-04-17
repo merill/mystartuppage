@@ -4,6 +4,7 @@ import { openContextMenu } from '../contextmenu.ts'
 import { storeIconFile } from './fileicons.ts'
 import { folderClick } from './folders.ts'
 import { startDrag } from './drag.ts'
+import { cacheIconForLink, getCachedIcon, purgeOrphanedIconCache, removeCachedIcon } from './urliconcache.ts'
 import {
     createTitle,
     getDefaultIcon,
@@ -25,8 +26,7 @@ import type { Link, LinkElem, LinkFolder, LinkIcon } from '../../../types/shared
 import type { Local } from '../../../types/local.ts'
 import type { Sync } from '../../../types/sync.ts'
 
-const FALLBACK_ICON =
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%23888' stroke-width='2'/%3E%3Cpath d='M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z' fill='none' stroke='%23888' stroke-width='2'/%3E%3C/svg%3E"
+const FALLBACK_ICON = 'src/assets/interface/link-fallback.png'
 
 type AddLinks = {
     title: string
@@ -108,7 +108,7 @@ type LinksInit = {
 }
 
 const domlinkblocks = document.getElementById('linkblocks') as HTMLDivElement
-let initIconList: [HTMLImageElement, string][] = []
+let initIconList: [HTMLImageElement, string, string][] = []
 let selectallTimer = 0
 
 export function quickLinks(init?: LinksInit, event?: LinksUpdate): void {
@@ -132,6 +132,14 @@ export function quickLinks(init?: LinksInit, event?: LinksUpdate): void {
     initGroups(sync, !!init)
     initRows(sync.linksrow, sync.linkstyle)
     initblocks(sync, local)
+
+    // Drop cached icon bytes for links that no longer exist
+    const validLinkIds = new Set(
+        Object.values(sync)
+            .filter((val) => isLink(val))
+            .map((l) => (l as Link)._id),
+    )
+    purgeOrphanedIconCache(validLinkIds)
 }
 
 // Initialisation
@@ -274,7 +282,7 @@ function createFolder(link: LinkFolder, folderChildren: Link[], style: Sync['lin
         const isIconShown = img && isElem(elem) && style !== 'text'
 
         if (isIconShown) {
-            initIconList.push([img, getIconFromLinkElem(elem)])
+            initIconList.push([img, getIconFromLinkElem(elem), elem._id])
         }
     }
 
@@ -296,7 +304,7 @@ function createElem(link: LinkElem, openInNewtab: boolean, style: Sync['linkstyl
     span.textContent = createTitle(link)
 
     if (style !== 'text') {
-        initIconList.push([img, getIconFromLinkElem(link)])
+        initIconList.push([img, getIconFromLinkElem(link), link._id])
     }
 
     if (openInNewtab) {
@@ -313,7 +321,7 @@ function createElem(link: LinkElem, openInNewtab: boolean, style: Sync['linkstyl
 }
 
 function createIcons(local: Local): void {
-    for (const [img, url] of initIconList) {
+    for (const [img, url, linkId] of initIconList) {
         img.addEventListener('load', () => img.classList.add('loaded'))
         img.addEventListener('error', () => {
             img.src = FALLBACK_ICON
@@ -323,7 +331,20 @@ function createIcons(local: Local): void {
         if (url.startsWith('link')) {
             img.src = local[`x-icon-${url}`] ?? ''
         } else {
-            img.src = url
+            const cached = getCachedIcon(linkId, url, local)
+            if (cached) {
+                img.src = cached
+            } else {
+                img.src = url
+                // Cache in background once the network load succeeds
+                img.addEventListener(
+                    'load',
+                    () => {
+                        cacheIconForLink(linkId, url)
+                    },
+                    { once: true },
+                )
+            }
         }
     }
 
@@ -335,7 +356,7 @@ function createIcons(local: Local): void {
         )
 
         // if images still haven't loaded after 400ms
-        for (const [img, url] of incomplete) {
+        for (const [img, url, linkId] of incomplete) {
             img.src = 'src/assets/interface/loading.svg'
             img.classList.add('loaded')
 
@@ -343,6 +364,7 @@ function createIcons(local: Local): void {
 
             newimg.addEventListener('load', () => {
                 img.src = url
+                cacheIconForLink(linkId, url)
             })
 
             // if obvious error (dead link...), shows fallback
@@ -548,6 +570,20 @@ function linkSubmission(args: SubmitLink | SubmitFolder, data: Sync): Sync {
 
     const newsync = correctLinksOrder(data)
 
+    // Pre-warm icon cache for newly added URL/auto links
+    for (const link of newlinks) {
+        if (link.folder) {
+            continue
+        }
+        const elem = link as LinkElem
+        const iconType = elem.icon?.type
+        if (iconType === 'url' && elem.icon?.value) {
+            cacheIconForLink(elem._id, elem.icon.value)
+        } else if (!iconType || iconType === 'auto') {
+            cacheIconForLink(elem._id, getDefaultIcon(elem.url))
+        }
+    }
+
     storage.local.get().then((local) => {
         initblocks(newsync, local)
     })
@@ -603,6 +639,9 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
             const currentSrc = icondom.src
             let url = getDefaultIcon(link.url)
 
+            // Icon is changing — drop any cached bytes for this link
+            removeCachedIcon(id)
+
             icondom.src = 'src/assets/interface/loading.svg'
             icondom.classList.add('loaded')
 
@@ -619,6 +658,8 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
                 if (icon.value && stringMaxSize(icon.value, 7500)) {
                     url = icon.value
                     img.src = url
+                    // Pre-warm the cache for the new URL icon
+                    cacheIconForLink(id, url)
                 } else {
                     console.error(`There was a problem with this icon URL: ${icon.value}`)
                 }
@@ -741,6 +782,7 @@ function deleteLinks(ids: string[], data: Sync): Sync {
             if (link.icon?.type === 'file') {
                 storage.local.remove(`x-icon-${id}`)
             }
+            removeCachedIcon(id)
         }
 
         if (id.startsWith('linksDefault') && !deletedDefaults.includes(id)) {

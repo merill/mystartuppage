@@ -11,6 +11,7 @@ export interface CatalogEntry {
     keywords: string
     category: string
     source: 'cmd' | 'msportals'
+    iconUrl?: string
 }
 
 export interface CatalogCache {
@@ -50,6 +51,28 @@ export interface MsPortalsCache {
     categories: Record<string, MsPortalGroup[]>
 }
 
+export interface IconPickerCacheEntry {
+    id: string
+    name: string
+    altnames: string
+    group: string
+    icon: string
+    source: 'product' | 'icon'
+    type?: string
+    prodfamilies?: string[]
+    monochrome?: boolean
+}
+
+export interface IconPickerCache {
+    lastFetch: number
+    entries: IconPickerCacheEntry[]
+}
+
+export interface UrlIconCacheEntry {
+    url: string
+    dataUri: string
+}
+
 export interface Local {
     operaExplained?: true
 
@@ -78,6 +101,9 @@ export interface Local {
 
     // msportals.io
     msportalsCache?: MsPortalsCache
+
+    // Icon picker (Microsoft Cloud Logos catalog)
+    iconPickerCache?: IconPickerCache
 
     // Links
     [key: `x-icon-${string}`]: string

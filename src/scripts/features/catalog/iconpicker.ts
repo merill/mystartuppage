@@ -1,27 +1,12 @@
 import { getHTMLTemplate } from '../../shared/dom.ts'
+import { storage } from '../../storage.ts'
+import type { IconPickerCacheEntry as CatalogEntry } from '../../../types/local.ts'
 
 const ICON_BASE_URL = 'https://getyako.com/ms/'
 const CATALOG_URL = 'https://getyako.com/ms/catalog.json'
-const CACHE_KEY = 'icon-picker-catalog-v1'
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000 // 24 hours
 
 // ─── Types ───
-
-interface CatalogEntry {
-    id: string
-    name: string
-    altnames: string
-    group: string
-    icon: string
-    source: 'product' | 'icon'
-    type?: string
-    prodfamilies?: string[]
-}
-
-interface CatalogCache {
-    timestamp: number
-    entries: CatalogEntry[]
-}
 
 // ─── State ───
 
@@ -54,7 +39,7 @@ export async function openIconPicker(onSelect: (iconUrl: string) => void): Promi
         showLoading(false)
     }
 
-    populateCategoryDropdown()
+    renderCategoryFilters()
     renderGrid()
 
     const search = dialog.querySelector<HTMLInputElement>('#icon-picker-search')
@@ -104,78 +89,82 @@ function createDialog(): HTMLDialogElement {
         renderGrid()
     })
 
-    setupCategoryCombobox(dlg)
-
     return dlg
 }
 
-// ─── Category combobox (shadcn-style) ───
+// ─── Category filter pills ───
 
-function setupCategoryCombobox(dlg: HTMLDialogElement): void {
-    const combo = dlg.querySelector<HTMLDivElement>('#icon-picker-category')
-    const menu = dlg.querySelector<HTMLDivElement>('#icon-picker-category-menu')
-    if (!combo || !menu) return
-
-    combo.addEventListener('click', (e) => {
-        if (menu.contains(e.target as Node)) return
-        toggleCategoryMenu(dlg)
-    })
-
-    combo.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            toggleCategoryMenu(dlg)
-        } else if (e.key === 'Escape' && isCategoryOpen(dlg)) {
-            e.stopPropagation()
-            closeCategoryMenu(dlg)
-        } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !isCategoryOpen(dlg)) {
-            e.preventDefault()
-            openCategoryMenu(dlg)
-        }
-    })
-
-    // Close on outside click (within the dialog)
-    dlg.addEventListener('click', (e) => {
-        if (!isCategoryOpen(dlg)) return
-        if (combo.contains(e.target as Node)) return
-        closeCategoryMenu(dlg)
-    })
-}
-
-function isCategoryOpen(dlg: HTMLDialogElement): boolean {
-    return dlg.querySelector('#icon-picker-category')?.classList.contains('open') ?? false
-}
-
-function toggleCategoryMenu(dlg: HTMLDialogElement): void {
-    if (isCategoryOpen(dlg)) closeCategoryMenu(dlg)
-    else openCategoryMenu(dlg)
-}
-
-function openCategoryMenu(dlg: HTMLDialogElement): void {
-    const combo = dlg.querySelector<HTMLDivElement>('#icon-picker-category')
-    if (!combo) return
-    combo.classList.add('open')
-    combo.setAttribute('aria-expanded', 'true')
-}
-
-function closeCategoryMenu(dlg: HTMLDialogElement): void {
-    const combo = dlg.querySelector<HTMLDivElement>('#icon-picker-category')
-    if (!combo) return
-    combo.classList.remove('open')
-    combo.setAttribute('aria-expanded', 'false')
-}
-
-function updateCategoryLabel(): void {
+function renderCategoryFilters(): void {
     if (!dialog) return
-    const label = dialog.querySelector<HTMLSpanElement>('.icon-picker-select-label')
-    if (!label) return
-    label.textContent = activeGroup === 'All' ? 'All categories' : activeGroup
+
+    const filtersEl = dialog.querySelector<HTMLDivElement>('#icon-picker-filters')
+    if (!filtersEl) return
+
+    filtersEl.innerHTML = ''
+
+    // "All" pill
+    filtersEl.appendChild(createFilterPill('All', products.length, activeGroup === 'All', () => {
+        setActiveGroup('All')
+    }))
+
+    // One pill per category with its icon count
+    for (const g of getGroups()) {
+        const count = products.reduce((n, p) => p.group === g ? n + 1 : n, 0)
+        filtersEl.appendChild(createFilterPill(g, count, activeGroup === g, () => {
+            setActiveGroup(g)
+        }))
+    }
+}
+
+function createFilterPill(label: string, count: number, active: boolean, onClick: () => void): HTMLButtonElement {
+    const btn = document.createElement('button')
+    btn.type = 'button'
+    btn.className = 'icon-picker-filter' + (active ? ' active' : '')
+    btn.dataset.group = label
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false')
+
+    const labelEl = document.createElement('span')
+    labelEl.textContent = label
+    btn.appendChild(labelEl)
+
+    const countEl = document.createElement('span')
+    countEl.className = 'icon-picker-filter-count'
+    countEl.textContent = String(count)
+    btn.appendChild(countEl)
+
+    btn.addEventListener('click', onClick)
+    return btn
+}
+
+function updateFilterActiveStates(): void {
+    if (!dialog) return
+    const filtersEl = dialog.querySelector<HTMLDivElement>('#icon-picker-filters')
+    if (!filtersEl) return
+    for (const btn of filtersEl.querySelectorAll<HTMLButtonElement>('.icon-picker-filter')) {
+        const g = btn.dataset.group ?? ''
+        const isActive = g === activeGroup
+        btn.classList.toggle('active', isActive)
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+    }
+}
+
+function setActiveGroup(value: string): void {
+    if (activeGroup === value) return
+    activeGroup = value
+    updateFilterActiveStates()
+    renderGrid()
+}
+
+function getGroups(): string[] {
+    const set = new Set<string>()
+    for (const p of products) set.add(p.group)
+    return Array.from(set).sort((a, b) => a.localeCompare(b))
 }
 
 // ─── Data loading ───
 
 async function loadProducts(): Promise<CatalogEntry[]> {
-    const cached = readCache()
+    const cached = await readCache()
     if (cached) return cached
 
     const fetched = await fetchProducts()
@@ -195,12 +184,12 @@ async function fetchProducts(): Promise<CatalogEntry[]> {
     return (data.entries ?? []) as CatalogEntry[]
 }
 
-function readCache(): CatalogEntry[] | null {
+async function readCache(): Promise<CatalogEntry[] | null> {
     try {
-        const raw = localStorage.getItem(CACHE_KEY)
-        if (!raw) return null
-        const cache: CatalogCache = JSON.parse(raw)
-        if (Date.now() - cache.timestamp > CACHE_TTL_MS) return null
+        const local = await storage.local.get('iconPickerCache')
+        const cache = local.iconPickerCache
+        if (!cache) return null
+        if (Date.now() - cache.lastFetch > CACHE_TTL_MS) return null
         return cache.entries
     } catch {
         return null
@@ -209,71 +198,12 @@ function readCache(): CatalogEntry[] | null {
 
 function writeCache(list: CatalogEntry[]): void {
     try {
-        const cache: CatalogCache = { timestamp: Date.now(), entries: list }
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cache))
+        storage.local.set({
+            iconPickerCache: { lastFetch: Date.now(), entries: list },
+        })
     } catch {
         // Storage full or unavailable — ignore
     }
-}
-
-// ─── Category dropdown ───
-
-function populateCategoryDropdown(): void {
-    if (!dialog) return
-
-    const menu = dialog.querySelector<HTMLDivElement>('#icon-picker-category-menu')
-    if (!menu) return
-
-    menu.innerHTML = ''
-
-    const groups = ['All', ...getGroups()]
-
-    for (const g of groups) {
-        const opt = document.createElement('div')
-        opt.className = 'icon-picker-select-option'
-        opt.setAttribute('role', 'option')
-        opt.dataset.value = g
-        opt.textContent = g === 'All' ? 'All categories' : g
-        if (g === activeGroup) {
-            opt.classList.add('selected')
-            opt.setAttribute('aria-selected', 'true')
-        }
-
-        opt.addEventListener('click', () => {
-            setActiveGroup(g)
-            if (dialog) closeCategoryMenu(dialog)
-        })
-
-        menu.appendChild(opt)
-    }
-
-    updateCategoryLabel()
-}
-
-function setActiveGroup(value: string): void {
-    if (activeGroup === value) return
-    activeGroup = value
-
-    if (dialog) {
-        const menu = dialog.querySelector<HTMLDivElement>('#icon-picker-category-menu')
-        if (menu) {
-            for (const opt of menu.querySelectorAll<HTMLDivElement>('.icon-picker-select-option')) {
-                const isSel = opt.dataset.value === value
-                opt.classList.toggle('selected', isSel)
-                if (isSel) opt.setAttribute('aria-selected', 'true')
-                else opt.removeAttribute('aria-selected')
-            }
-        }
-    }
-
-    updateCategoryLabel()
-    renderGrid()
-}
-
-function getGroups(): string[] {
-    const set = new Set<string>()
-    for (const p of products) set.add(p.group)
-    return Array.from(set).sort((a, b) => a.localeCompare(b))
 }
 
 // ─── Rendering ───
@@ -353,7 +283,7 @@ function renderGrid(): void {
 
 function createIconTile(product: CatalogEntry): HTMLDivElement {
     const item = document.createElement('div')
-    item.className = 'icon-picker-item'
+    item.className = 'icon-picker-item' + (product.monochrome ? ' monochrome' : '')
     item.title = product.altnames ? `${product.name} (${product.altnames})` : product.name
 
     const iconUrl = ICON_BASE_URL + encodeURI(product.icon)

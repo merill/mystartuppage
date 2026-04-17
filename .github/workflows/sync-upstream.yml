@@ -7,8 +7,12 @@ on:
         - cron: '17 * * * *' # Every hour at :17 (offset avoids the :00 rush)
     workflow_dispatch: # Manual trigger
     repository_dispatch:
-        # Fired by merill/MicrosoftCloudLogos on push to main
-        types: [upstream-logos-changed]
+        # Fired by upstream repos on push to their default branch — see
+        # .github/upstream-notify-yako.md for the template.
+        types:
+            - upstream-logos-changed
+            - upstream-cmd-changed
+            - upstream-portals-changed
 
 jobs:
     check:

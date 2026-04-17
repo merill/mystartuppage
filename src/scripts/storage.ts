@@ -81,16 +81,22 @@ function storageTypeFn(): StorageTypeReturn {
         return type
     }
 
-    function change(type: 'sync' | 'local', data: Sync): void {
+    function change(target: 'sync' | 'local', data: Sync): void {
         if (globalThis.chrome?.storage === undefined) {
             return
         }
 
-        if (type === 'local') {
-            chrome.storage.local.set({ syncStorage: data })
+        if (target === 'local') {
+            type = 'webext-local'
+            // Move data to local.syncStorage and clear the sync backing store
+            chrome.storage.local.set({ syncStorage: data }).then(() => {
+                chrome.storage.sync.clear()
+            })
         }
 
-        if (type === 'sync') {
+        if (target === 'sync') {
+            type = 'webext-sync'
+            // Move data to sync and clear the local.syncStorage key
             chrome.storage.local.remove('syncStorage').then(() => {
                 chrome.storage.sync.set(data)
             })

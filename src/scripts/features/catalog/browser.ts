@@ -3,11 +3,8 @@ import { quickLinks } from '../links/index.ts'
 import { isElem, isLink } from '../links/helpers.ts'
 import { getHTMLTemplate } from '../../shared/dom.ts'
 import { storage } from '../../storage.ts'
-import portalIconMap from '../../../data/portal-icons.json' with { type: 'json' }
 import type { CatalogEntry } from '../../../types/local.ts'
 import type { LinkElem, LinkIcon } from '../../../types/shared.ts'
-
-const ICON_BASE_URL = 'https://getyako.com/icons/microsoft-cloud-logos/'
 
 // ─── Constants ───
 
@@ -285,23 +282,16 @@ function renderGrid(): void {
     }
 }
 
-function getPortalIconUrl(name: string): string | undefined {
-    const iconMap = portalIconMap as Record<string, string>
-    const path = iconMap[name]
-    if (!path || path.startsWith('_')) return undefined
-    return ICON_BASE_URL + encodeURI(path)
-}
-
 function createItemTile(entry: CatalogEntry): HTMLDivElement {
     const item = document.createElement('div')
     item.className = 'catalog-browser-item'
     item.title = entry.url
 
-    // Icon: use real icon from mapping if available, otherwise pastel initials
+    // Icon: use resolved iconUrl from the manifest if present, otherwise pastel initials
     const iconWrap = document.createElement('div')
     iconWrap.className = 'catalog-browser-item-icon'
 
-    const iconUrl = getPortalIconUrl(entry.name)
+    const iconUrl = entry.iconUrl
 
     if (iconUrl) {
         const img = document.createElement('img')
@@ -352,10 +342,9 @@ function createItemTile(entry: CatalogEntry): HTMLDivElement {
                 url: entry.url,
             }
 
-            // Auto-apply portal icon from the mapping if available
-            const portalIconUrl = getPortalIconUrl(entry.name)
-            if (portalIconUrl) {
-                addLink.icon = { type: 'url', value: portalIconUrl }
+            // Auto-apply portal icon from the manifest if available
+            if (iconUrl) {
+                addLink.icon = { type: 'url', value: iconUrl }
             }
 
             quickLinks(undefined, {

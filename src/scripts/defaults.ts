@@ -159,7 +159,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://portal.office.com/onedrive',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Microsoft%20365/OneDrive/OneDrive_512.png',
+            value: 'https://getyako.com/ms/logos/onedrive/onedrive-512.png',
         },
     },
     linksDefault02: {
@@ -170,7 +170,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://outlook.cloud.microsoft',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Microsoft%20365/Outlook/Outlook_512.png',
+            value: 'https://getyako.com/ms/logos/outlook/outlook-512.png',
         },
     },
     linksDefault03: {
@@ -181,7 +181,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://loop.cloud.microsoft',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Microsoft%20365/Loop/Loop%20icon.png',
+            value: 'https://getyako.com/ms/logos/loop/loop-icon.png',
         },
     },
     linksDefault04: {
@@ -192,8 +192,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://copilot.microsoft.com',
         icon: {
             type: 'url',
-            value:
-                'https://getyako.com/icons/microsoft-cloud-logos/Copilot%20(not%20M365)/Copilot%20(general)%20-%20250x250.png',
+            value: 'https://getyako.com/ms/logos/copilot/copilot-general-250x250.png',
         },
     },
     linksDefault05: {
@@ -204,8 +203,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://app.powerbi.com',
         icon: {
             type: 'url',
-            value:
-                'https://getyako.com/icons/microsoft-cloud-logos/Power%20Platform/Power%20BI/Power%20BI%20300x300.png',
+            value: 'https://getyako.com/ms/logos/power-bi/powerbi-scalable.svg',
         },
     },
     linksDefault06: {
@@ -216,7 +214,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://to-do.office.com',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Microsoft%20365/To%20Do/To_Do.png',
+            value: 'https://getyako.com/ms/logos/to-do/to-do.svg',
         },
     },
 
@@ -229,7 +227,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://portal.azure.com',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Azure/Azure.png',
+            value: 'https://getyako.com/ms/logos/azure/azure-256x256-padded.png',
         },
     },
     linksDefault08: {
@@ -240,7 +238,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://entra.microsoft.com',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Entra/Microsoft-Entra-ID-color-icon.png',
+            value: 'https://getyako.com/ms/logos/entra-id/microsoft-entra-id-color-icon.svg',
         },
     },
     linksDefault09: {
@@ -251,7 +249,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://intune.microsoft.com',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/other/Intune.png',
+            value: 'https://getyako.com/ms/logos/intune/intune.png',
         },
     },
     linksDefault10: {
@@ -262,7 +260,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://security.microsoft.com',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/other/Defender_512.png',
+            value: 'https://getyako.com/ms/logos/defender/defender-512.png',
         },
     },
     linksDefault11: {
@@ -273,7 +271,7 @@ export const SYNC_DEFAULT: Sync = {
         url: 'https://admin.microsoft.com',
         icon: {
             type: 'url',
-            value: 'https://getyako.com/icons/microsoft-cloud-logos/Microsoft%20365/Microsoft%20365%20Admin.png',
+            value: 'https://getyako.com/ms/logos/microsoft-365-admin-center/microsoft-365-admin.png',
         },
     },
 }

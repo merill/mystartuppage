@@ -1,0 +1,236 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+---
+
+<DocsLayout
+  title="Architecture - Yako Docs"
+  description="How Yako's data pipeline, CDN, and browser extension fit together."
+>
+  <h1>Architecture</h1>
+  <p class="subtitle">
+    How Yako sources Microsoft cloud data, caches it on getyako.com, and serves it to
+    the browser extension.
+  </p>
+
+  <h2>Overview</h2>
+  <p>
+    Yako has two deliverables:
+  </p>
+  <ul>
+    <li>A browser extension (Edge, Chrome, Firefox) that renders the new tab.</li>
+    <li>
+      The <a href="https://getyako.com" rel="noreferrer noopener">getyako.com</a> website,
+      which doubles as a <strong>CDN for cached Microsoft data and assets</strong>.
+    </li>
+  </ul>
+  <p>
+    The extension <strong>only ever talks to getyako.com</strong>. It never fetches from
+    GitHub, msportals.io, cmd.ms, or any other origin at runtime. This gives us:
+  </p>
+  <ul>
+    <li>Stable URLs that survive upstream repo reorganisations.</li>
+    <li>A single, auditable domain in the extension manifest.</li>
+    <li>Lower latency (Cloudflare edge-cached) and no rate-limiting risk.</li>
+  </ul>
+
+  <h2>Upstream data sources</h2>
+  <p>Three community-maintained repositories feed the pipeline:</p>
+  <ul>
+    <li>
+      <strong>Microsoft Cloud Logos</strong> —
+      <a href="https://github.com/merill/MicrosoftCloudLogos" rel="noreferrer noopener">
+        merill/MicrosoftCloudLogos
+      </a>
+      (an append-only fork of
+      <a href="https://github.com/loryanstrant/MicrosoftCloudLogos" rel="noreferrer noopener">
+        loryanstrant/MicrosoftCloudLogos
+      </a>). Product logos and per-service icons.
+    </li>
+    <li>
+      <strong>Microsoft Portals</strong> —
+      <a href="https://github.com/adamfowlerit/msportals.io" rel="noreferrer noopener">
+        adamfowlerit/msportals.io
+      </a>. Curated directory of every Microsoft admin, end-user, and specialty portal.
+    </li>
+    <li>
+      <strong>cmd.ms commands</strong> —
+      <a href="https://github.com/merill/cmd" rel="noreferrer noopener">merill/cmd</a>.
+      The <code>commands.csv</code> that powers the cmd.ms keyword shortcuts.
+    </li>
+  </ul>
+
+  <h2>Sync pipeline</h2>
+  <p>
+    A single Deno task, <code>tasks/sync-icons.ts</code>, orchestrates everything:
+  </p>
+  <ol>
+    <li>
+      Downloads the <code>MicrosoftCloudLogos</code> tarball, extracts only the
+      <code>logos/</code> and <code>icons/</code> trees, and writes them to
+      <code>website/public/ms/</code>.
+    </li>
+    <li>
+      Builds <code>website/public/ms/catalog.json</code> — a unified index of
+      every product (from <code>metadata.md</code>) plus every loose icon, with
+      the best-quality image picked per product (SVG &gt; 512px PNG &gt; smaller).
+    </li>
+    <li>Downloads <code>commands.csv</code> to <code>website/public/data/commands.csv</code>.</li>
+    <li>
+      Downloads the nine msportals.io category files to
+      <code>website/public/data/portals/*.json</code>.
+    </li>
+    <li>
+      Derives two server-side manifests the extension actually consumes:
+      <ul>
+        <li>
+          <code>portals-by-category.json</code> — single file bundling all nine
+          msportals categories. Replaces nine HTTP requests with one.
+        </li>
+        <li>
+          <code>portals.json</code> — a flat, deduplicated list of
+          searchable entries (cmd.ms + msportals) with <code>iconUrl</code>
+          already resolved by fuzzy-matching portal names against the logos
+          catalog (exact normalised name, altname, then substring).
+        </li>
+      </ul>
+    </li>
+  </ol>
+
+  <h2>Build + deploy</h2>
+  <p>
+    Cloudflare Pages runs on every push to <code>main</code> and on every deploy
+    hook trigger. The build command installs Deno, runs
+    <code>deno task sync-icons</code> (populating <code>website/public/</code>),
+    then <code>npm run build</code> for the Astro site. The generated <code>ms/</code>
+    and <code>data/</code> trees are <code>.gitignored</code> — only upstream SHAs are
+    committed.
+  </p>
+
+  <h2>Change detection</h2>
+  <p>
+    <code>.github/workflows/sync-upstream.yml</code> runs hourly (cron at <code>:17</code>)
+    and also reacts to <code>repository_dispatch</code> events from upstream forks. It:
+  </p>
+  <ol>
+    <li>Fetches the current <code>HEAD</code> SHA of each upstream branch (via GitHub API).</li>
+    <li>Compares against a cached SHA snapshot from the previous run.</li>
+    <li>If any SHA changed, POSTs the Cloudflare Pages deploy hook.</li>
+  </ol>
+  <p>
+    This is the <strong>only</strong> trigger that rebuilds cached data. No change, no
+    deploy. Upstream repos can additionally fire instant rebuilds by posting a
+    <code>repository_dispatch</code> with type <code>upstream-logos-changed</code>
+    (see each source's <code>notify-yako.yml</code>).
+  </p>
+
+  <h2>Public URL contract</h2>
+  <p>
+    These URLs are stable. Extension versions currently shipping depend on them.
+  </p>
+  <ul>
+    <li><code>https://getyako.com/ms/catalog.json</code> — logos + icons index.</li>
+    <li><code>https://getyako.com/ms/logos/&hellip;</code> — product logo assets.</li>
+    <li><code>https://getyako.com/ms/icons/&hellip;</code> — per-service icon assets.</li>
+    <li><code>https://getyako.com/data/commands.csv</code> — raw cmd.ms commands.</li>
+    <li><code>https://getyako.com/data/portals/&lt;category&gt;.json</code> — raw msportals category files.</li>
+    <li><code>https://getyako.com/data/portals-by-category.json</code> — bundled msportals view.</li>
+    <li><code>https://getyako.com/data/portals.json</code> — unified searchable manifest with resolved <code>iconUrl</code>.</li>
+  </ul>
+
+  <h2>Extension consumption</h2>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Endpoint</th><th>Cache</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>cmd.ms terminal</td>
+        <td><code>/data/commands.csv</code></td>
+        <td><code>chrome.storage.local</code>, 24h</td>
+      </tr>
+      <tr>
+        <td>msportals.io view</td>
+        <td><code>/data/portals-by-category.json</code></td>
+        <td><code>chrome.storage.local</code>, 24h</td>
+      </tr>
+      <tr>
+        <td>Add-portal dialog</td>
+        <td><code>/data/portals.json</code></td>
+        <td><code>chrome.storage.local</code>, 24h</td>
+      </tr>
+      <tr>
+        <td>Icon picker</td>
+        <td><code>/ms/catalog.json</code> + <code>/ms/&hellip;</code></td>
+        <td><code>chrome.storage.local</code>, 24h</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Flow diagram</h2>
+  <pre><code>  upstream repos                   yako repo / CF Pages                 extension
+  ──────────────                   ────────────────────                 ─────────
+  merill/MicrosoftCloudLogos ─┐
+                              │    sync-upstream.yml (hourly)
+  merill/cmd ─────────────────┼─▶  ├── poll SHAs
+                              │    └── deploy hook ──▶ CF Pages build
+  adamfowlerit/msportals.io ──┘                         │
+                                                        │  deno task sync-icons
+                                                        │   ├── download tarballs
+                                                        │   ├── build catalog.json
+                                                        │   ├── build portals.json
+                                                        │   └── build by-category.json
+                                                        ▼
+                                               getyako.com/&#123;ms,data&#125;/&hellip;
+                                                        │
+                                                        ▼
+                                                new tab ──▶ fetch + 24h cache
+</code></pre>
+
+  <h2>Stability guarantees</h2>
+  <ul>
+    <li>
+      <strong>Icon URLs never 404</strong> as long as a product exists in the logos fork.
+      Upstream reorganisations are absorbed in the extension's next launch — icon
+      paths resolve fresh from <code>/ms/catalog.json</code>.
+    </li>
+    <li>
+      <strong>Extension never hard-fails</strong> when upstream is down. Each data
+      endpoint falls back to its cached copy in <code>chrome.storage.local</code>;
+      entries without a matched icon fall back to pastel initials.
+    </li>
+    <li>
+      <strong>No client-side override files.</strong> Icon matching is fuzzy but
+      entirely server-side. Unmatched portals are logged during sync so upstream
+      gaps can be fixed at the source rather than patched per-client.
+    </li>
+  </ul>
+</DocsLayout>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+  }
+
+  th, td {
+    border: 1px solid var(--color-border);
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 0.92rem;
+  }
+
+  th {
+    background: var(--color-bg-card);
+  }
+
+  pre {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+</style>

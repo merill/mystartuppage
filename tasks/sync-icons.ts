@@ -33,14 +33,26 @@ const MSPORTALS_FILES = [
     'user.json',
 ]
 
+// ─── Unified manifests (for the Yako extension) ───
+
+const PORTALS_MANIFEST_PATH = 'website/public/data/portals.json'
+const PORTALS_BY_CATEGORY_PATH = 'website/public/data/portals-by-category.json'
+const MS_PUBLIC_PREFIX = 'https://getyako.com/ms/'
+
 // ─── Main ───
 
 async function syncAll(): Promise<void> {
+    // Step 1: pull the three upstream sources in parallel.
     await Promise.all([
         syncLogos(),
         syncCmdCsv(),
         syncMsPortals(),
     ])
+
+    // Step 2: derive the two unified manifests the extension actually consumes.
+    // These depend on the outputs of step 1, so they must run afterwards.
+    syncPortalsByCategory()
+    syncPortalsManifest()
 }
 
 // ─── Microsoft Cloud Logos ───
@@ -104,9 +116,12 @@ async function syncLogos(): Promise<void> {
         // Build the unified catalog:
         //   - Active products from logos/ (metadata-driven, one per metadata.md)
         //   - Loose icons from icons/ (one entry per file)
-        const products = buildProductIndex(repoPath, allImages)
+        REPO_PATH_FOR_DETECTION = repoPath
+        const productDirSet = new Set(findProductDirs(repoPath))
+        const products = buildProductIndex(repoPath, allImages, productDirSet)
+        const orphanLogos = buildOrphanLogoIndex(repoPath, allImages, productDirSet)
         const looseIcons = buildLooseIconIndex(allImages)
-        const entries = [...products, ...looseIcons]
+        const entries = [...products, ...orphanLogos, ...looseIcons]
 
         entries.sort((a, b) => {
             const g = a.group.localeCompare(b.group)
@@ -119,7 +134,7 @@ async function syncLogos(): Promise<void> {
 
         console.log(`Synced ${allImages.length} images to ${MS_OUTPUT_DIR}`)
         console.log(
-            `Catalog written to ${MS_CATALOG_PATH} (${products.length} products + ${looseIcons.length} loose icons = ${entries.length} entries)`,
+            `Catalog written to ${MS_CATALOG_PATH} (${products.length} products + ${orphanLogos.length} orphan logos + ${looseIcons.length} loose icons = ${entries.length} entries)`,
         )
 
         // Cleanup temp dir
@@ -176,6 +191,9 @@ interface CatalogEntry {
     // Only populated for products
     type?: string
     prodfamilies?: string[]
+    // True when the icon is a single-colour black SVG (fills/strokes are black/currentColor/none)
+    // — these need theme-aware recolouring (e.g. invert in dark mode) to stay visible.
+    monochrome?: boolean
 }
 
 interface Metadata {
@@ -188,12 +206,9 @@ interface Metadata {
 
 // ─── Products (from logos/*/metadata.md) ───
 
-function buildProductIndex(repoPath: string, tree: string[]): CatalogEntry[] {
-    // Find every directory under `logos/` that contains a metadata.md
-    const productDirs = findProductDirs(repoPath)
-
-    // Fast lookup: set of all product dirs (relative paths) to stop subtree walks
-    const productDirSet = new Set(productDirs)
+function buildProductIndex(repoPath: string, tree: string[], productDirSet: Set<string>): CatalogEntry[] {
+    // productDirSet is the set of directories under logos/ containing a metadata.md.
+    const productDirs = Array.from(productDirSet)
 
     // Set of all image paths that were copied (for existence checks)
     const imageSet = new Set(tree)
@@ -233,10 +248,102 @@ function buildProductIndex(repoPath: string, tree: string[]): CatalogEntry[] {
             source: 'product',
             type: meta.type,
             prodfamilies: meta.prodfamilies,
+            monochrome: detectMonochrome(repoPath, bestIcon),
         })
     }
 
     return products
+}
+
+// ─── Orphan logos (logos/* folders without metadata.md) ───
+//
+// Not every folder under `logos/` carries a metadata.md (e.g. `logos/copilot/`
+// has 25+ images but no metadata). Those files are still copied to the CDN,
+// but the product index skips them and they become invisible to the icon
+// picker / fuzzy search. This pass recovers them: for every image under
+// `logos/` not claimed by a product, group sibling variants by their base
+// filename (`foo-(general)---250x250.png`, `foo-(general).png`, ... →
+// one entry) and pick the best variant.
+
+function buildOrphanLogoIndex(
+    repoPath: string,
+    tree: string[],
+    productDirSet: Set<string>,
+): CatalogEntry[] {
+    const imageSet = new Set(tree)
+
+    // Compute the set of images already claimed by some product.
+    const claimed = new Set<string>()
+    for (const dir of productDirSet) {
+        for (const icon of collectProductIcons(dir, productDirSet, imageSet)) {
+            claimed.add(icon)
+        }
+    }
+
+    const orphans = tree.filter((p) => p.startsWith('logos/') && !claimed.has(p))
+    if (orphans.length === 0) return []
+
+    // Group orphans by (folder + base-filename-without-variant-suffix).
+    const groups = new Map<string, string[]>()
+    for (const path of orphans) {
+        const lastSlash = path.lastIndexOf('/')
+        const folder = path.substring(0, lastSlash)
+        const filename = path.substring(lastSlash + 1)
+        const base = stripVariantSuffix(filename)
+        const key = `${folder}|${base}`
+        const list = groups.get(key)
+        if (list) {
+            list.push(path)
+        } else {
+            groups.set(key, [path])
+        }
+    }
+
+    const entries: CatalogEntry[] = []
+    for (const [key, paths] of groups) {
+        const [folder, base] = key.split('|')
+        const best = pickBestIcon(paths)
+        const name = cleanIconFilename(`${base}.png`)
+        if (!name) continue
+
+        // Group = title-cased top-level folder under logos/ (e.g. 'copilot' → 'Copilot')
+        const topFolder = folder.split('/')[1] ?? 'Other'
+        const group = titleCaseSlug(topFolder)
+
+        entries.push({
+            id: `orphan:${folder}/${base}`,
+            name,
+            altnames: '',
+            group,
+            icon: best,
+            source: 'product',
+            monochrome: detectMonochrome(repoPath, best),
+        })
+    }
+
+    return entries
+}
+
+// Strips the upstream repo's variant markers from a filename so sibling
+// variants collapse into a single catalog entry:
+//   'copilot-(general)---250x250.png' → 'copilot-(general)'
+//   'github-copilot---256x256-padded.png' → 'github-copilot'
+//   'github-copilot-monochrome.png' → 'github-copilot'
+function stripVariantSuffix(filename: string): string {
+    let name = filename.replace(/\.(png|svg)$/i, '')
+    // '---...' is the upstream's variant separator.
+    name = name.replace(/-{2,}.*$/, '')
+    // Trailing -monochrome / -padded modifier.
+    name = name.replace(/-(monochrome|padded)$/i, '')
+    return name
+}
+
+function titleCaseSlug(slug: string): string {
+    return slug
+        .split(/[-_]/)
+        .filter(Boolean)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(' ')
 }
 
 function findProductDirs(repoPath: string): string[] {
@@ -319,21 +426,25 @@ function variantScore(path: string): number {
 
     // Penalise padded variants (large transparent borders)
     const padded = lower.includes('padded') ? -50 : 0
+    // Penalise monochrome variants — we want the colour logo by default.
+    const monochrome = lower.includes('monochrome') ? -60 : 0
     // Penalise deeply nested variants
     const depth = (path.match(/\//g) || []).length
     const subdirPenalty = depth > 2 ? -20 : 0
 
+    const penalty = padded + monochrome + subdirPenalty
+
     // SVG always wins over PNG (vector scales perfectly)
-    if (lower.endsWith('.svg')) return 1000 + padded + subdirPenalty
+    if (lower.endsWith('.svg')) return 1000 + penalty
 
-    if (lower.includes('512')) return 100 + padded + subdirPenalty
-    if (lower.includes('300x300')) return 95 + padded + subdirPenalty
-    if (lower.includes('256x256')) return 90 + padded + subdirPenalty
-    if (lower.includes('scalable')) return 85 + padded + subdirPenalty
-    if (lower.includes('128x128') || lower.includes('128')) return 70 + padded + subdirPenalty
-    if (lower.includes('64x64') || lower.includes('64')) return 50 + padded + subdirPenalty
+    if (lower.includes('512')) return 100 + penalty
+    if (lower.includes('300x300')) return 95 + penalty
+    if (lower.includes('256x256')) return 90 + penalty
+    if (lower.includes('scalable')) return 85 + penalty
+    if (lower.includes('128x128') || lower.includes('128')) return 70 + penalty
+    if (lower.includes('64x64') || lower.includes('64')) return 50 + penalty
 
-    return 40 + padded + subdirPenalty
+    return 40 + penalty
 }
 
 function pickGroup(meta: Metadata): string {
@@ -399,10 +510,75 @@ function buildLooseIconIndex(tree: string[]): CatalogEntry[] {
             group: looseIconGroup(topSubfolder),
             icon: path,
             source: 'icon',
+            monochrome: detectMonochrome(REPO_PATH_FOR_DETECTION, path),
         })
     }
 
     return entries
+}
+
+// ─── Monochrome detection ───
+//
+// A catalog entry is flagged `monochrome: true` when every fill/stroke token in
+// its SVG resolves to black (or currentColor/none/transparent). These icons get
+// a `.monochrome` class in consumers so dark-theme CSS can invert them.
+// PNGs and anything with gradients or embedded rasters are never flagged.
+
+// Set by the main build function before buildLooseIconIndex runs, so we can
+// read SVG files off disk without changing the loose-icon function signature.
+let REPO_PATH_FOR_DETECTION = ''
+
+function detectMonochrome(repoPath: string, relativePath: string): boolean {
+    if (!repoPath) return false
+    if (!relativePath.toLowerCase().endsWith('.svg')) return false
+
+    let text: string
+    try {
+        text = Deno.readTextFileSync(`${repoPath}/${relativePath}`)
+    } catch {
+        return false
+    }
+
+    return isMonochromeSvg(text)
+}
+
+function isMonochromeSvg(text: string): boolean {
+    // Reject any raster content or colour gradients — they carry colour info we can't flatten.
+    if (/<image\b/i.test(text)) return false
+    if (/<linearGradient\b|<radialGradient\b/i.test(text)) return false
+
+    // Collect every fill / stroke colour token, from both attributes and inline styles.
+    const tokens: string[] = []
+    for (const m of text.matchAll(/(?:fill|stroke)\s*=\s*["']([^"']+)["']/gi)) {
+        tokens.push(m[1])
+    }
+    for (const m of text.matchAll(/(?:fill|stroke)\s*:\s*([^;"'}\s]+)/gi)) {
+        tokens.push(m[1])
+    }
+
+    if (tokens.length === 0) return false // no colour info to judge — play it safe
+
+    const blackLike = new Set(['black', '#000', '#000000', 'currentcolor'])
+    const neutral = new Set(['none', 'transparent', 'inherit', ''])
+
+    let sawBlack = false
+    for (const raw of tokens) {
+        const norm = raw.trim().toLowerCase().replace(/\s+/g, '')
+
+        if (blackLike.has(norm)) {
+            sawBlack = true
+            continue
+        }
+        if (neutral.has(norm)) continue
+        if (norm === 'rgb(0,0,0)' || /^rgba\(0,0,0,/.test(norm)) {
+            sawBlack = true
+            continue
+        }
+        // Any other colour (hex, rgb, named) disqualifies the SVG.
+        return false
+    }
+
+    return sawBlack
 }
 
 function looseIconGroup(topSubfolder: string): string {
@@ -502,6 +678,267 @@ async function syncMsPortals(): Promise<void> {
     }
 
     console.log(`Synced ${count}/${MSPORTALS_FILES.length} msportals.io files to ${MSPORTALS_OUTPUT_DIR}`)
+}
+
+// ─── Unified portals manifests ───
+
+// Shape emitted in portals-by-category.json (matches the extension's MsPortalGroup).
+interface PortalGroupJson {
+    groupName: string
+    portals: {
+        portalName: string
+        primaryURL: string
+        shortURL?: string
+        secondaryURLs?: { icon: string; url: string }[]
+        note?: string
+    }[]
+}
+
+// Shape emitted in portals.json (matches the extension's CatalogEntry).
+interface ExtCatalogEntry {
+    name: string
+    url: string
+    description: string
+    keywords: string
+    category: string
+    source: 'cmd' | 'msportals'
+    iconUrl?: string
+}
+
+/**
+ * Writes website/public/data/portals-by-category.json — a single bundle of all
+ * msportals.io categories keyed by category slug (admin, user, ...). Lets the
+ * extension fetch 1 file instead of 9.
+ */
+function syncPortalsByCategory(): void {
+    const bundle: Record<string, PortalGroupJson[]> = {}
+
+    for (const file of MSPORTALS_FILES) {
+        const key = file.replace(/\.json$/, '')
+        const path = `${MSPORTALS_OUTPUT_DIR}/${file}`
+
+        if (!existsSync(path)) {
+            console.warn(`portals-by-category: ${file} missing, skipping`)
+            continue
+        }
+
+        try {
+            bundle[key] = JSON.parse(Deno.readTextFileSync(path)) as PortalGroupJson[]
+        } catch (err) {
+            console.warn(`portals-by-category: failed to parse ${file}: ${err}`)
+        }
+    }
+
+    Deno.writeTextFileSync(PORTALS_BY_CATEGORY_PATH, JSON.stringify(bundle))
+    console.log(`Wrote ${PORTALS_BY_CATEGORY_PATH} with ${Object.keys(bundle).length} categories`)
+}
+
+/**
+ * Writes website/public/data/portals.json — a flat, deduplicated list of
+ * searchable entries combining cmd.ms commands and msportals.io portals, with
+ * iconUrl resolved against the Microsoft Cloud Logos catalog. This is what the
+ * settings "Add Microsoft Portal link" dialog consumes.
+ *
+ * Icon matching is fuzzy (exact normalised name, then altname, then substring).
+ * Unmatched entries get `iconUrl: undefined` and the extension falls back to
+ * pastel initials. Unmatched entries are logged so upstream gaps can be fixed.
+ */
+function syncPortalsManifest(): void {
+    const iconIndex = buildIconIndex()
+
+    const cmdEntries = parseCmdEntriesForManifest(iconIndex)
+    const portalEntries = parsePortalEntriesForManifest(iconIndex)
+
+    const combined = dedupeByUrl([...cmdEntries, ...portalEntries])
+
+    const unmatched = combined.filter((e) => !e.iconUrl)
+    console.log(`portals.json: ${combined.length} entries (${combined.length - unmatched.length} with icon)`)
+
+    if (unmatched.length > 0) {
+        console.warn(`portals.json: ${unmatched.length} entries without a matched icon:`)
+        const sample = unmatched.slice(0, 30)
+        for (const e of sample) console.warn(`  - ${e.name} [${e.source}]`)
+        if (unmatched.length > sample.length) {
+            console.warn(`  ...and ${unmatched.length - sample.length} more`)
+        }
+    }
+
+    Deno.writeTextFileSync(PORTALS_MANIFEST_PATH, JSON.stringify(combined))
+    console.log(`Wrote ${PORTALS_MANIFEST_PATH}`)
+}
+
+// ─── Icon matching ───
+
+const STOPWORDS = new Set(['portal', 'portals', 'admin', 'center', 'microsoft', 'the', 'ms'])
+
+function normaliseName(s: string): string {
+    return s
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w && !STOPWORDS.has(w))
+        .join(' ')
+        .trim()
+}
+
+function buildIconIndex(): Map<string, string> {
+    const map = new Map<string, string>()
+
+    if (!existsSync(MS_CATALOG_PATH)) {
+        console.warn('ms catalog.json missing — iconUrl resolution will be empty')
+        return map
+    }
+
+    const catalog = JSON.parse(Deno.readTextFileSync(MS_CATALOG_PATH)) as { entries: CatalogEntry[] }
+
+    for (const entry of catalog.entries) {
+        // Skip loose icons for primary matches — they have cleaned filenames which are noisy.
+        // They still act as fallback via altnames/substring below.
+        const primary = normaliseName(entry.name)
+        if (primary && !map.has(primary)) map.set(primary, entry.icon)
+
+        if (entry.altnames) {
+            for (const alt of entry.altnames.split(/[,;]/).map((s) => s.trim()).filter(Boolean)) {
+                const n = normaliseName(alt)
+                if (n && !map.has(n)) map.set(n, entry.icon)
+            }
+        }
+    }
+
+    return map
+}
+
+function resolveIconUrl(name: string, iconIndex: Map<string, string>): string | undefined {
+    const normalised = normaliseName(name)
+    if (!normalised) return undefined
+
+    // 1. Exact normalised match.
+    const exact = iconIndex.get(normalised)
+    if (exact) return MS_PUBLIC_PREFIX + encodeURI(exact)
+
+    // 2. Substring match (either direction, minimum 4-char key to avoid noise).
+    for (const [key, icon] of iconIndex) {
+        if (key.length < 4) continue
+        if (normalised.includes(key) || key.includes(normalised)) {
+            return MS_PUBLIC_PREFIX + encodeURI(icon)
+        }
+    }
+
+    return undefined
+}
+
+// ─── CSV parsing (mirrors the extension's parser) ───
+
+function parseCmdEntriesForManifest(iconIndex: Map<string, string>): ExtCatalogEntry[] {
+    const text = Deno.readTextFileSync(CMD_OUTPUT_PATH)
+    const lines = text.split('\n')
+    const entries: ExtCatalogEntry[] = []
+
+    // Skip header row
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim()
+        if (!line) continue
+
+        const fields = parseCsvLine(line)
+        if (fields.length < 6) continue
+
+        const [command, alias, description, keywords, category, url] = fields
+        if (!url || !description) continue
+
+        const searchKeywords = [command, alias, keywords].filter(Boolean).join(' ')
+
+        entries.push({
+            name: description,
+            url,
+            description,
+            keywords: searchKeywords,
+            category: category || 'Other',
+            source: 'cmd',
+            iconUrl: resolveIconUrl(description, iconIndex),
+        })
+    }
+
+    return entries
+}
+
+function parsePortalEntriesForManifest(iconIndex: Map<string, string>): ExtCatalogEntry[] {
+    const entries: ExtCatalogEntry[] = []
+
+    for (const file of MSPORTALS_FILES) {
+        const path = `${MSPORTALS_OUTPUT_DIR}/${file}`
+        if (!existsSync(path)) continue
+
+        let groups: PortalGroupJson[]
+        try {
+            groups = JSON.parse(Deno.readTextFileSync(path)) as PortalGroupJson[]
+        } catch (err) {
+            console.warn(`portals.json: failed to parse ${file}: ${err}`)
+            continue
+        }
+
+        for (const group of groups) {
+            for (const portal of group.portals) {
+                entries.push({
+                    name: portal.portalName,
+                    url: portal.primaryURL,
+                    description: portal.note ? `${portal.portalName} - ${portal.note}` : portal.portalName,
+                    keywords: [group.groupName, portal.note ?? ''].filter(Boolean).join(' '),
+                    category: group.groupName,
+                    source: 'msportals',
+                    iconUrl: resolveIconUrl(portal.portalName, iconIndex),
+                })
+            }
+        }
+    }
+
+    return entries
+}
+
+function parseCsvLine(line: string): string[] {
+    const fields: string[] = []
+    let current = ''
+    let inQuotes = false
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i]
+
+        if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+                current += '"'
+                i++
+            } else {
+                inQuotes = !inQuotes
+            }
+        } else if (char === ',' && !inQuotes) {
+            fields.push(current.trim())
+            current = ''
+        } else {
+            current += char
+        }
+    }
+
+    fields.push(current.trim())
+    return fields
+}
+
+function dedupeByUrl(entries: ExtCatalogEntry[]): ExtCatalogEntry[] {
+    const seen = new Map<string, ExtCatalogEntry>()
+
+    for (const entry of entries) {
+        const key = entry.url.replace(/\/?\??$/, '').toLowerCase()
+        const existing = seen.get(key)
+
+        // Prefer cmd entries (richer keywords); otherwise prefer entries with an iconUrl.
+        if (!existing) {
+            seen.set(key, entry)
+        } else if (entry.source === 'cmd' && existing.source !== 'cmd') {
+            seen.set(key, entry)
+        } else if (!existing.iconUrl && entry.iconUrl) {
+            seen.set(key, { ...existing, iconUrl: entry.iconUrl })
+        }
+    }
+
+    return Array.from(seen.values())
 }
 
 await syncAll()
