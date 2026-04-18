@@ -1,5 +1,6 @@
 import { populateDialogWithEditLink } from './links/edit.ts'
 import { openCatalogBrowser } from './catalog/browser.ts'
+import { removeAllQuickLinks } from './links/helpers.ts'
 import { IS_MOBILE, SYSTEM_OS } from '../defaults.ts'
 import { transitioner } from '../utils/transitioner.ts'
 import { debounce } from '../utils/debounce.ts'
@@ -129,6 +130,11 @@ export function openContextMenu(event: Event): void {
         if (!document.querySelector('#linkblocks.hidden')) {
             populateDialogWithAction('add-new-link')
             populateDialogWithAction('add-portal-link')
+
+            // only show "remove all" if there are actually links
+            if (document.querySelector('#linkblocks .link')) {
+                populateDialogWithAction('remove-all-links')
+            }
         }
 
         showTheseElements('#background-actions')
@@ -266,6 +272,28 @@ queueMicrotask(() => {
         openCatalogBrowser()
     })
 
+    const removeAllLinksButton = domdialog.querySelector<HTMLButtonElement>(`[data-action="remove-all-links"]`)
+    removeAllLinksButton?.addEventListener('click', () => {
+        closeContextMenu()
+        openRemoveAllLinksDialog()
+    })
+
+    const removeConfirmDialog = document.getElementById('confirm-remove-links') as HTMLDialogElement | null
+    const removeConfirmApply = document.getElementById('confirm-remove-links-apply')
+    const removeConfirmCancel = document.getElementById('confirm-remove-links-cancel')
+
+    removeConfirmCancel?.addEventListener('click', () => removeConfirmDialog?.close())
+    removeConfirmApply?.addEventListener('click', async () => {
+        await removeAllQuickLinks()
+        removeConfirmDialog?.close()
+    })
+    removeConfirmDialog?.addEventListener('click', (event) => {
+        // Click outside the dialog body closes it (backdrop click)
+        if (event.target === removeConfirmDialog) {
+            removeConfirmDialog.close()
+        }
+    })
+
     if (SYSTEM_OS === 'ios' || !IS_MOBILE) {
         const handleLongPress = debounce((event: TouchEvent) => {
             openContextMenu(event)
@@ -282,6 +310,11 @@ queueMicrotask(() => {
         globalThis.addEventListener('resize', closeContextMenu)
     }
 })
+
+function openRemoveAllLinksDialog(): void {
+    const dialog = document.getElementById('confirm-remove-links') as HTMLDialogElement | null
+    dialog?.showModal()
+}
 
 export function closeContextMenu(): void {
     if (domdialog.open) {

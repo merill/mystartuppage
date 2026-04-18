@@ -1,8 +1,59 @@
 import { stringMaxSize } from '../../shared/generic.ts'
 import { tradThis } from '../../utils/translations.ts'
+import { storage } from '../../storage.ts'
 
 import type { Link, LinkElem, LinkIconType } from '../../../types/shared.ts'
 import type { Sync } from '../../../types/sync.ts'
+
+// Removes every quick link / folder / link group from storage and the DOM.
+// Shared by Settings ("Remove all quick links") and the right-click context menu.
+export async function removeAllQuickLinks(): Promise<void> {
+    const data = await storage.sync.get()
+    const deletedDefaults: string[] = data.linkgroups.deletedDefaults ?? []
+
+    // Delete all links and folders from data
+    for (const [key, value] of Object.entries(data)) {
+        if (isLink(value)) {
+            if (key.startsWith('linksDefault') && !deletedDefaults.includes(key)) {
+                deletedDefaults.push(key)
+            }
+            delete data[key]
+        }
+    }
+
+    // Reset link groups to defaults
+    data.linkgroups = {
+        on: false,
+        selected: '',
+        groups: [],
+        pinned: [],
+        synced: [],
+        deletedDefaults,
+    }
+
+    // Persist and rebuild UI
+    storage.sync.clear()
+    storage.sync.set(data)
+
+    // Remove link elements from DOM
+    for (const li of document.querySelectorAll('#linkblocks .link')) {
+        li.remove()
+    }
+
+    for (const group of document.querySelectorAll('#linkblocks .link-group')) {
+        group.remove()
+    }
+
+    for (const btn of document.querySelectorAll('#link-mini button')) {
+        btn.remove()
+    }
+
+    // Uncheck the groups toggle in settings
+    const groupsCheckbox = document.getElementById('i_linkgroups') as HTMLInputElement | null
+    if (groupsCheckbox) {
+        groupsCheckbox.checked = false
+    }
+}
 
 export function getDefaultIcon(url: string): string {
     try {

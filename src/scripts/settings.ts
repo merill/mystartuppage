@@ -2,7 +2,7 @@ import { darkmode, favicon, pageControl, tabTitle, textShadow } from './features
 import { backgroundUpdate, initBackgroundOptions, toggleMuteStatus } from './features/backgrounds/index.ts'
 import { moveElements } from './features/move/index.ts'
 import { hideElements } from './features/hide.ts'
-import { isLink } from './features/links/helpers.ts'
+import { removeAllQuickLinks } from './features/links/helpers.ts'
 import { quickLinks } from './features/links/index.ts'
 import { openCatalogBrowser } from './features/catalog/browser.ts'
 import { cmdmsToggle } from './features/cmdms.ts'
@@ -443,51 +443,7 @@ function initOptionsEvents(): void {
     })
 
     onclickdown(paramId('b_removelinks-apply'), async () => {
-        const data = await storage.sync.get()
-        const deletedDefaults: string[] = data.linkgroups.deletedDefaults ?? []
-
-        // Delete all links and folders from data
-        for (const [key, value] of Object.entries(data)) {
-            if (isLink(value)) {
-                if (key.startsWith('linksDefault') && !deletedDefaults.includes(key)) {
-                    deletedDefaults.push(key)
-                }
-                delete data[key]
-            }
-        }
-
-        // Reset link groups to defaults
-        data.linkgroups = {
-            on: false,
-            selected: '',
-            groups: [],
-            pinned: [],
-            synced: [],
-            deletedDefaults,
-        }
-
-        // Persist and rebuild UI
-        storage.sync.clear()
-        storage.sync.set(data)
-
-        // Remove link elements from DOM
-        for (const li of document.querySelectorAll('#linkblocks .link')) {
-            li.remove()
-        }
-
-        for (const group of document.querySelectorAll('#linkblocks .link-group')) {
-            group.remove()
-        }
-
-        for (const btn of document.querySelectorAll('#link-mini button')) {
-            btn.remove()
-        }
-
-        // Uncheck the groups toggle in settings
-        const groupsCheckbox = document.getElementById('i_linkgroups') as HTMLInputElement | null
-        if (groupsCheckbox) {
-            groupsCheckbox.checked = false
-        }
+        await removeAllQuickLinks()
 
         // Toggle back to initial state
         document.getElementById('removelinks-conf')?.classList.remove('shown')

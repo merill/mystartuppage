@@ -55,3 +55,80 @@ dialog button.btn-red:hover {
 dialog option {
     padding-inline-start: 0;
 }
+
+/* ─── Shadcn-style confirmation dialog ─── */
+dialog.confirm-dialog {
+    width: min(440px, calc(100% - 32px));
+    padding: 0;
+    border: 1px solid var(--color-dialog-border);
+    border-radius: 12px;
+    background-color: var(--color-dialog);
+    color: var(--color-text);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+}
+
+dialog.confirm-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.confirm-dialog-body {
+    padding: 24px 24px 16px;
+}
+
+.confirm-dialog-title {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.confirm-dialog-description {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-light-text, var(--color-text));
+    opacity: 0.75;
+}
+
+.confirm-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 24px 20px;
+}
+
+dialog.confirm-dialog .confirm-dialog-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid var(--color-dialog-border);
+    background-color: transparent;
+    color: var(--color-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+dialog.confirm-dialog .confirm-dialog-btn:hover,
+dialog.confirm-dialog .confirm-dialog-btn:focus-visible {
+    background-color: var(--color-dialog-border);
+    color: var(--color-text);
+    border-color: var(--color-dialog-border);
+}
+
+dialog.confirm-dialog .confirm-dialog-btn-danger {
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+    color: white;
+}
+
+dialog.confirm-dialog .confirm-dialog-btn-danger:hover,
+dialog.confirm-dialog .confirm-dialog-btn-danger:focus-visible {
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+    color: white;
+    filter: brightness(0.9);
+}
