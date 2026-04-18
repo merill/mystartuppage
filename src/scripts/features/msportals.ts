@@ -1,9 +1,11 @@
 import { storage } from '../storage.ts'
-import type { MsPortalGroup } from '../../types/local.ts'
+import type { MsPortal, MsPortalGroup } from '../../types/local.ts'
 
 // --- Constants ---
 
 const PORTALS_BY_CATEGORY_URL = 'https://getyako.com/data/portals-by-category.json'
+
+const FALLBACK_ICON = 'src/assets/interface/link-fallback.png'
 
 const CATEGORY_KEYS = [
     'admin',
@@ -401,7 +403,7 @@ function renderContent(): void {
 }
 
 function createPortalRow(
-    portal: { portalName: string; primaryURL: string; secondaryURLs?: { icon: string; url: string }[]; note?: string },
+    portal: MsPortal,
 ): HTMLElement {
     const row = document.createElement('div')
     row.className = 'msportals-portal'
@@ -409,6 +411,20 @@ function createPortalRow(
     // Portal name area
     const nameArea = document.createElement('span')
     nameArea.className = 'msportals-portal-name'
+
+    // Icon (or placeholder on error)
+    const icon = document.createElement('img')
+    icon.className = 'msportals-portal-icon'
+    icon.alt = ''
+    icon.loading = 'lazy'
+    icon.decoding = 'async'
+    icon.src = portal.iconUrl || FALLBACK_ICON
+    icon.addEventListener('error', () => {
+        if (icon.src !== FALLBACK_ICON && !icon.src.endsWith(FALLBACK_ICON)) {
+            icon.src = FALLBACK_ICON
+        }
+    })
+    nameArea.appendChild(icon)
 
     // Favorite heart
     const heart = document.createElement('span')
@@ -525,10 +541,7 @@ function filterGroups(groups: MsPortalGroup[], query: string): MsPortalGroup[] {
 function getFavoriteGroups(): MsPortalGroup[] {
     if (favorites.length === 0) return []
 
-    const grouped: Record<
-        string,
-        { portalName: string; primaryURL: string; secondaryURLs?: { icon: string; url: string }[]; note?: string }[]
-    > = {}
+    const grouped: Record<string, MsPortal[]> = {}
 
     for (const key of CATEGORY_KEYS) {
         const catGroups = categories[key] ?? []

@@ -1,9 +1,12 @@
 import { storage } from '../storage.ts'
+import { getCatalog } from './catalog/index.ts'
 import type { CmdCommand } from '../../types/local.ts'
 
 // ─── Constants ───
 
 const CMD_CSV_URL = 'https://getyako.com/data/commands.csv'
+
+const FALLBACK_ICON = 'src/assets/interface/link-fallback.png'
 
 const ASCII_LOGO =
     ` \u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2557   \u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2557    \u2588\u2588\u2588\u2557   \u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557
@@ -55,6 +58,7 @@ let _hoveredIdx = -1
 let sortCol: 'command' | 'name' | 'alias' | null = null
 let sortDir: 'asc' | 'desc' = 'asc'
 let isActive = false
+let iconByUrl: Map<string, string> = new Map()
 
 // ─── Public API ───
 
@@ -100,6 +104,7 @@ function show(): void {
 
     buildTerminal(container)
     loadCommands()
+    loadIconMap()
 }
 
 function hide(): void {
@@ -124,6 +129,51 @@ function hide(): void {
 }
 
 // ─── Data Loading ───
+
+async function loadIconMap(): Promise<void> {
+    // The catalog manifest (portals.json) is pre-built with iconUrl resolved for
+    // every cmd.ms command (source: 'cmd'). Use it to pair icons with commands
+    // keyed by url. Updates are applied in-place once the catalog arrives.
+    try {
+        const entries = await getCatalog()
+        const map = new Map<string, string>()
+
+        for (const entry of entries) {
+            if (entry.iconUrl) {
+                map.set(entry.url, entry.iconUrl)
+            }
+        }
+
+        iconByUrl = map
+
+        // If the table is already on screen, swap placeholders for real icons.
+        if (isActive) {
+            refreshRowIcons()
+        }
+    } catch (err) {
+        console.warn('cmd.ms: failed to load icon catalog', err)
+    }
+}
+
+function refreshRowIcons(): void {
+    const rows = document.querySelectorAll<HTMLElement>('#cmdms-rows .cmdms-table-row')
+
+    for (const row of rows) {
+        const idx = Number(row.dataset.index)
+        const cmd = filtered[idx]
+        const img = row.querySelector<HTMLImageElement>('.cmdms-col-icon-img')
+
+        if (!cmd || !img) {
+            continue
+        }
+
+        const iconUrl = iconByUrl.get(cmd.url)
+
+        if (iconUrl && img.src !== iconUrl) {
+            img.src = iconUrl
+        }
+    }
+}
 
 async function loadCommands(): Promise<void> {
     // Try cache first
@@ -491,6 +541,25 @@ function renderTable(): void {
         }
 
         row.dataset.index = String(i)
+
+        // Icon (absolutely positioned; reserved by CSS padding-left so columns
+        // stay character-aligned with the monospace header/separator).
+        const iconWrap = document.createElement('span')
+        iconWrap.className = 'cmdms-col-icon'
+
+        const iconImg = document.createElement('img')
+        iconImg.className = 'cmdms-col-icon-img'
+        iconImg.alt = ''
+        iconImg.loading = 'lazy'
+        iconImg.decoding = 'async'
+        iconImg.src = iconByUrl.get(cmd.url) ?? FALLBACK_ICON
+        iconImg.addEventListener('error', () => {
+            if (!iconImg.src.endsWith(FALLBACK_ICON)) {
+                iconImg.src = FALLBACK_ICON
+            }
+        })
+        iconWrap.appendChild(iconImg)
+        row.appendChild(iconWrap)
 
         const colCmd = document.createElement('span')
         colCmd.className = 'cmdms-col-cmd'

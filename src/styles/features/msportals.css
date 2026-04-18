@@ -173,10 +173,20 @@
 /* --- Portal name area --- */
 .msportals-portal-name {
     display: flex;
-    align-items: baseline;
-    gap: 4px;
+    align-items: center;
+    gap: 8px;
     flex: 1 1 auto;
     min-width: 0;
+}
+
+/* Portal icon */
+.msportals-portal-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    object-fit: contain;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.04);
 }
 
 /* Favorite heart */

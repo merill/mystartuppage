@@ -183,6 +183,8 @@
     color: var(--cmdms-accent-blue);
     font-weight: 600;
     letter-spacing: 0;
+    padding-left: 22px;
+    text-align: left;
 }
 
 .cmdms-sortable {
@@ -200,9 +202,12 @@
     font-size: inherit;
     line-height: 1.2;
     color: var(--cmdms-separator);
+    padding-left: 22px;
+    text-align: left;
 }
 
 .cmdms-table-row {
+    position: relative;
     white-space: pre;
     font-family: inherit;
     font-size: inherit;
@@ -211,6 +216,31 @@
     border-radius: 3px;
     transition: background 0.1s;
     color: var(--cmdms-text-dim);
+    padding-left: 22px;
+    text-align: left;
+}
+
+/* Row icon (absolutely positioned so it does not disturb monospace columns) */
+.cmdms-col-icon {
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.cmdms-col-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .cmdms-table-row:hover {

@@ -39,6 +39,7 @@ export interface MsPortal {
     shortURL?: string
     secondaryURLs?: { icon: string; url: string }[]
     note?: string
+    iconUrl?: string
 }
 
 export interface MsPortalGroup {
