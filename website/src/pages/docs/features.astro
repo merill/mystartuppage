@@ -1,105 +1,34 @@
 ---
-import DocsLayout from '../../layouts/DocsLayout.astro'
+import Base from '../../layouts/Base.astro'
 ---
 
-<DocsLayout title="Features Overview - Yako Docs" description="A complete overview of Yako's features.">
-  <h1>Features Overview</h1>
-  <p class="subtitle">Everything Yako has to offer.</p>
+<Base title="Features Moved - Yako Docs" description="Yako features are now part of the overview page.">
+  <Fragment slot="head">
+    <meta http-equiv="refresh" content="0; url=/docs/overview/" />
+    <link rel="canonical" href="/docs/overview/" />
+  </Fragment>
 
-  <h2>Views</h2>
-  <p>Yako offers three distinct views you can switch between in Settings:</p>
-  <ul>
-    <li><strong>Classic</strong> — A clean new tab page with backgrounds, clock, quick links, and more.</li>
-    <li><strong>MSPortals.io</strong> — A searchable directory of Microsoft admin portals, sourced from the <a href="https://msportals.io" rel="noreferrer noopener">MSPortals.io</a> community project.</li>
-    <li><strong>cmd.ms</strong> — A command-line style interface to quickly jump to any Microsoft admin portal using <a href="https://cmd.ms" rel="noreferrer noopener">cmd.ms</a> shortcuts.</li>
-  </ul>
+  <main class="redirect-page">
+    <h1>Features Moved</h1>
+    <p>The features overview is now part of the <a href="/docs/overview/">Yako overview</a>.</p>
+  </main>
+</Base>
 
-  <h2>Portal Search</h2>
-  <p>
-    The integrated search bar provides instant suggestions from a catalog of 900+ Microsoft portals sourced from
-    <a href="https://cmd.ms" rel="noreferrer noopener">cmd.ms</a> and
-    <a href="https://msportals.io" rel="noreferrer noopener">MSPortals.io</a>.
-    Find any portal by name, URL, or category. Results appear as you type — just press Enter or click to open.
-  </p>
+<script>
+  window.location.replace('/docs/overview/')
+</script>
 
-  <h2>Quick Links</h2>
-  <p>
-    Quick Links give you one-click access to your most-used portals. By default, Yako comes pre-configured with
-    popular Microsoft portals including Entra, Intune, M365 Admin Center, Azure, and Defender.
-  </p>
-  <p>You can:</p>
-  <ul>
-    <li>Add links manually or from the built-in portal catalog</li>
-    <li>Organize links into groups and pages</li>
-    <li>Choose from multiple display styles: large, medium, small, inline, or text</li>
-    <li>Rearrange links by dragging</li>
-  </ul>
+<style>
+  .redirect-page {
+    min-height: 60vh;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 96px 24px;
+    text-align: center;
+  }
 
-  <h2>Clock & Date</h2>
-  <p>
-    A clean clock display with multiple options:
-  </p>
-  <ul>
-    <li>Digital or analog display</li>
-    <li>Show seconds, 12/24 hour format</li>
-    <li>Multiple analog clock face styles</li>
-    <li>World clocks for multiple time zones</li>
-    <li>Customizable date format</li>
-  </ul>
-
-  <h2>Greetings</h2>
-  <p>
-    Set your name and Yako will greet you with a personalized message that changes throughout the day —
-    Good morning, Good afternoon, Good evening.
-  </p>
-
-  <h2>Backgrounds</h2>
-  <p>
-    Customize your new tab background with:
-  </p>
-  <ul>
-    <li>Solid colors</li>
-    <li>Local images from your computer</li>
-    <li>Local videos</li>
-    <li>Background blur and brightness controls</li>
-  </ul>
-
-  <h2>Notes</h2>
-  <p>
-    A built-in notes widget that supports basic Markdown, including headings, lists, and checkboxes.
-    Always accessible from your new tab.
-  </p>
-
-  <h2>Dark Mode</h2>
-  <p>
-    Yako supports automatic dark mode that follows your system preference. You can also set it
-    to always on, always off, or switch based on time of day.
-  </p>
-
-  <h2>Custom CSS</h2>
-  <p>
-    For advanced customization, Yako includes a built-in CSS editor with syntax highlighting.
-    Change fonts, colors, spacing, layouts — the full extension UI is yours to customize.
-    See the <a href="/docs/styles/">CSS Snippets</a> page for ready-made examples.
-  </p>
-
-  <h2>Page Layout</h2>
-  <p>
-    Control how widgets are arranged on the page. Adjust the page width, gap between elements,
-    and rearrange widgets using the layout editor.
-  </p>
-
-  <h2>Settings Management</h2>
-  <p>
-    Export and import your settings as a JSON file. Transfer your configuration between browsers
-    or share it with others.
-  </p>
-
-  <h2>Privacy</h2>
-  <p>
-    Yako only requires the <code>storage</code> permission. It collects no data,
-    has no account system, and no personal information is ever sent.
-    Portal data is fetched from GitHub to stay up to date.
-    For full details, see the <a href="/privacy/">Privacy Policy</a>.
-  </p>
-</DocsLayout>
+  .redirect-page p {
+    margin-top: 16px;
+    color: var(--color-text-secondary);
+  }
+</style>

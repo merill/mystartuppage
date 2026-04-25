@@ -1,0 +1,176 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+---
+
+<DocsLayout title="Overview - Yako Docs" description="Why Yako exists, what it does, and how to customize it.">
+  <h1>Overview</h1>
+  <p class="subtitle">Why Yako exists, what it does, and how to make it yours.</p>
+
+  <p>
+    Yako was created because I was fed up with major browsers showing ads, news, clickbait, and other unwanted
+    content whenever I opened a new tab. It kept distracting me from the reason I opened the tab in the first place.
+  </p>
+  <p>
+    <a href="https://bonjourr.fr" rel="noreferrer noopener">Bonjourr</a> was the perfect new tab replacement, and I
+    had been a happy user for many years. With Yako, I wanted to bring the best of Bonjourr together with some special
+    sauce for Microsoft 365 power users, admins, and developers: built-in ready-made links to Microsoft portals,
+    admin centers, and cloud services.
+  </p>
+  <p>
+    Yako integrates with <a href="https://msportals.io" rel="noreferrer noopener">MSPortals.io</a> and
+    <a href="https://www.mscloudlogos.com/" rel="noreferrer noopener">Microsoft Cloud Logos</a>. I was thrilled to
+    collaborate with fellow Aussies Adam Fowler from MSPortals.io and Loryan Strant from Microsoft Cloud Logos on
+    these integrations.
+  </p>
+  <h2 id="views">Views</h2>
+  <p>Yako gives you three distinct views from the same new tab page:</p>
+  <ul>
+    <li><strong>Classic</strong> - A clean start page with backgrounds, clock, quick links, notes, and customization.</li>
+    <li><strong>MSPortals.io</strong> - A searchable directory of Microsoft admin portals, powered by the MSPortals.io community project.</li>
+    <li><strong>cmd.ms</strong> - A command-line style interface for jumping to Microsoft portals and blades with cmd.ms shortcuts.</li>
+  </ul>
+
+  <h2 id="portal-search">Portal search</h2>
+  <p>
+    The integrated search bar provides instant suggestions from a catalog of 900+ Microsoft portals sourced from
+    <a href="https://cmd.ms" rel="noreferrer noopener">cmd.ms</a> and
+    <a href="https://msportals.io" rel="noreferrer noopener">MSPortals.io</a>. Find portals by name, URL, or category,
+    then press Enter or select a result to open it.
+  </p>
+
+  <h2 id="interface">Main interface</h2>
+  <p>
+    Yako is designed around quick access from your new tab page. It keeps the page calm, useful, and focused on the
+    Microsoft tools you actually need.
+  </p>
+  <p>
+    The page also has a custom right-click menu on most of the interface. Use it to add quick links, open relevant
+    settings, and adjust parts of the page without hunting through the full settings panel. If you need the browser's
+    default context menu, use <code>Alt</code> + right click.
+  </p>
+
+  <h2 id="settings">Settings</h2>
+  <p>
+    Open Settings by selecting the settings icon in the bottom-right corner, pressing <code>Esc</code> while the page
+    is focused, or using the right-click context menu.
+  </p>
+  <p>
+    Yako keeps advanced options available without making the first-run experience overwhelming. Turn on
+    <strong>Show all settings</strong> at the top of the settings panel when you want to see every option.
+  </p>
+  <p>
+    If you hide the settings icon, the bottom-right corner remains clickable so you can still get back to Settings.
+  </p>
+
+  <h2 id="tab-appearance">Tab appearance</h2>
+  <p>
+    You can customize the browser tab title and tab icon from Settings. The title is limited by the browser, and the
+    icon field is intended for short emoji-style values where supported.
+  </p>
+  <p>
+    Browser support for custom tab icons varies. Firefox may render emoji icons differently, and some Chromium-based
+    browsers do not expose the same level of new tab customization.
+  </p>
+
+  <h2 id="quick-links">Quick Links</h2>
+  <p>
+    Quick Links are the shortcuts shown on the Classic new tab page. By default, Yako includes popular Microsoft
+    portals such as Entra, Intune, Microsoft 365 Admin Center, Azure, and Defender.
+  </p>
+  <p>
+    You can edit a link by right-clicking it, or by long-pressing on touch devices. Links can be renamed, moved,
+    deleted, assigned custom icons, and organized into groups or pages depending on your layout.
+  </p>
+  <ul>
+    <li>Add links manually or from the built-in portal catalog</li>
+    <li>Choose display styles such as large, medium, small, inline, or text</li>
+    <li>Use Microsoft Cloud Logos-powered icons for Microsoft services</li>
+    <li>Rearrange links by dragging</li>
+  </ul>
+
+  <h2 id="clock-date">Clock and date</h2>
+  <p>
+    Yako includes a clean clock and date display with digital and analog modes. You can show seconds, choose 12 or 24
+    hour time, pick from multiple analog clock styles, add world clocks for multiple time zones, and customize the date
+    format.
+  </p>
+
+  <h2 id="greetings">Greetings</h2>
+  <p>
+    Set your name and Yako can greet you throughout the day with messages such as Good morning, Good afternoon, and
+    Good evening.
+  </p>
+
+  <h2 id="backgrounds">Backgrounds</h2>
+  <p>
+    Yako supports solid colors and local image or video backgrounds. Local files are stored by the browser for the
+    current device and are not synced between devices because browser extensions cannot safely sync local file data.
+  </p>
+  <p>
+    You can adjust background blur, brightness, positioning, and related visual settings to keep the page readable
+    while still making the new tab feel personal.
+  </p>
+
+  <h2 id="dark-mode">Dark mode</h2>
+  <p>
+    Yako supports automatic dark mode that follows your system preference. You can also set it to always on, always
+    off, or switch based on time of day.
+  </p>
+
+  <h2 id="notes">Notes</h2>
+  <p>
+    Notes use a small Markdown-compatible syntax for common note-taking patterns. Add these characters at the start
+    of a line to format it:
+  </p>
+  <ul>
+    <li><code>#</code> for a large heading</li>
+    <li><code>##</code> for a medium heading</li>
+    <li><code>###</code> for a small heading</li>
+    <li><code>-</code> for a list item</li>
+    <li><code>[ ]</code> for an unchecked task</li>
+    <li><code>[x]</code> for a checked task</li>
+  </ul>
+  <p>
+    While editing notes, use <code>Ctrl</code> or <code>Cmd</code> with <code>Shift</code> and numbers <code>1</code>
+    through <code>5</code> to apply the heading, list, and task formats quickly.
+  </p>
+
+  <h2 id="page-layouts">Page layouts</h2>
+  <p>
+    Page layouts control where widgets appear on the Classic view. You can choose single, double, or triple column
+    layouts, then use the layout toolbox to adjust widget placement, width, spacing, and alignment.
+  </p>
+  <p>
+    Layout options apply to the current layout, so you can keep different arrangements for different column modes.
+  </p>
+
+  <h2 id="custom-css">Custom CSS</h2>
+  <p>
+    For advanced customization, Yako includes a CSS editor with syntax highlighting. You can adjust fonts, colors,
+    spacing, layouts, and other interface details. See <a href="/docs/styles/">CSS Snippets</a> for ready-made examples.
+  </p>
+
+  <h2 id="settings-management">Settings management</h2>
+  <p>
+    Export your settings to a JSON file when you want a backup, need to move your setup to another browser, or want
+    to share a known-good configuration. Importing a settings file reloads Yako with those settings applied.
+  </p>
+  <p>
+    Browser sync can keep settings aligned between devices that use the same browser profile. Local files, such as
+    uploaded backgrounds and local icons, are not synced by browsers.
+  </p>
+
+  <h2 id="privacy">Privacy</h2>
+  <p>
+    Yako only requires the <code>storage</code> permission. It collects no data, has no account system, and does not
+    send personal information. Portal and icon data is fetched from getyako.com so the extension can stay up to date
+    without contacting multiple upstream projects at runtime. For details, see the <a href="/privacy/">Privacy Policy</a>.
+  </p>
+
+  <h2 id="opera">Opera</h2>
+  <p>
+    Opera does not allow extensions to directly replace its new tab page. If you use Opera, the practical workaround
+    is to use a separate new tab redirect extension that points to a custom page, or use a Chromium-based browser
+    such as Brave or Vivaldi that supports Chrome Web Store extensions more directly.
+  </p>
+</DocsLayout>

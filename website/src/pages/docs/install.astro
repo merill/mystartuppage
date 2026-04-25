@@ -1,64 +1,63 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro'
+
+const storeLinks = {
+  edge: 'https://microsoftedge.microsoft.com/addons/detail/yako/llaljgjhibbinmnhaahepfocpiakphbd',
+  chrome: 'https://chromewebstore.google.com/detail/yako/hiipeaipmomejiiapfjldkanihokcjcg',
+  firefox: 'https://addons.mozilla.org/en-US/firefox/addon/yako/',
+}
 ---
 
 <DocsLayout title="Installation - Yako Docs" description="Install Yako on Edge, Chrome, or Firefox.">
   <h1>Installation</h1>
-  <p class="subtitle">Get Yako installed in your browser.</p>
+  <p class="subtitle">Install Yako from your browser's official extension store.</p>
 
   <p>
-    Download the latest release from the
-    <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">Yako releases page</a>
-    on GitHub. Each release includes a ZIP file for every supported browser.
+    The recommended installation path is the official store for your browser. Store installs update
+    automatically and do not require developer mode.
   </p>
 
   <h2>Microsoft Edge</h2>
   <ol>
-    <li>Go to the <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">releases page</a> and download <strong>yako-edge.zip</strong> from the latest release</li>
-    <li>Unzip the file to a folder on your computer (e.g. <code>~/yako-edge</code>)</li>
-    <li>Open Edge and go to <code>edge://extensions</code></li>
-    <li>Enable <strong>Developer mode</strong> (toggle in the bottom-left corner)</li>
-    <li>Click <strong>Load unpacked</strong> and select the folder you unzipped</li>
+    <li>Open the <a href={storeLinks.edge} rel="noreferrer noopener">Yako listing on Microsoft Edge Add-ons</a></li>
+    <li>Select <strong>Get</strong></li>
+    <li>Confirm the install prompt</li>
+    <li>Open a new tab to start using Yako</li>
   </ol>
 
   <h2>Google Chrome</h2>
   <ol>
-    <li>Go to the <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">releases page</a> and download <strong>yako-chrome.zip</strong> from the latest release</li>
-    <li>Unzip the file to a folder on your computer (e.g. <code>~/yako-chrome</code>)</li>
-    <li>Open Chrome and go to <code>chrome://extensions</code></li>
-    <li>Enable <strong>Developer mode</strong> (toggle in the top-right corner)</li>
-    <li>Click <strong>Load unpacked</strong> and select the folder you unzipped</li>
+    <li>Open the <a href={storeLinks.chrome} rel="noreferrer noopener">Yako listing on the Chrome Web Store</a></li>
+    <li>Select <strong>Add to Chrome</strong></li>
+    <li>Confirm the install prompt</li>
+    <li>Open a new tab to start using Yako</li>
   </ol>
 
   <h2>Firefox</h2>
   <ol>
-    <li>Go to the <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">releases page</a> and download <strong>yako-firefox.zip</strong> from the latest release</li>
-    <li>Open Firefox and go to <code>about:debugging#/runtime/this-firefox</code></li>
-    <li>Click <strong>Load Temporary Add-on</strong></li>
-    <li>Select the <strong>yako-firefox.zip</strong> file directly (no need to unzip)</li>
+    <li>Open the <a href={storeLinks.firefox} rel="noreferrer noopener">Yako listing on Firefox Add-ons</a></li>
+    <li>Select <strong>Add to Firefox</strong></li>
+    <li>Confirm the install prompt</li>
+    <li>Open a new tab to start using Yako</li>
   </ol>
-  <p class="note">
-    <strong>Note:</strong> Temporary add-ons in Firefox are removed when the browser closes.
-    For a permanent install, Yako will need to be published to Firefox Add-ons (coming soon).
-  </p>
 
   <h2>Other Chromium Browsers</h2>
 
   <h3>Brave</h3>
   <p>
-    Brave is Chromium-based. Download <strong>yako-chrome.zip</strong> from the
-    <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">releases page</a>,
-    unzip it, then go to <code>brave://extensions</code>, enable <strong>Developer mode</strong>,
-    and click <strong>Load unpacked</strong>.
+    Brave supports Chrome Web Store extensions. Open the
+    <a href={storeLinks.chrome} rel="noreferrer noopener">Yako listing on the Chrome Web Store</a>
+    and select <strong>Add to Brave</strong>.
   </p>
 
   <h3>Vivaldi</h3>
   <p>
-    Vivaldi supports Chrome extensions. Follow the Chrome instructions above using
-    <code>vivaldi://extensions</code>. Note that new window behavior may differ from new tab behavior.
+    Vivaldi supports Chrome extensions. Open the
+    <a href={storeLinks.chrome} rel="noreferrer noopener">Yako listing on the Chrome Web Store</a>
+    and follow the browser prompt. Note that new window behavior may differ from new tab behavior.
   </p>
 
-  <h3>Opera</h3>
+  <h3 id="opera">Opera</h3>
   <p>
     Opera does not allow extensions to modify its new tab page. A workaround is to use a third-party
     extension that redirects your new tab to a custom URL.
@@ -66,10 +65,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro'
 
   <h2>Updating</h2>
   <p>
-    To update, download the latest ZIP from the
-    <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">releases page</a>,
-    unzip it to the same folder (replacing the old files), then click the reload button on
-    your browser's extensions page.
+    Store installs update automatically through your browser. If you installed Yako manually, replace
+    the local files with the latest release and reload the extension from your browser's extensions page.
   </p>
 
   <h2>Building from source</h2>
@@ -79,8 +76,46 @@ import DocsLayout from '../../layouts/DocsLayout.astro'
     <li>Install <a href="https://deno.com" rel="noreferrer noopener">Deno</a></li>
     <li>Run <code>deno install</code></li>
     <li>Run <code>deno task chrome</code>, <code>deno task edge</code>, or <code>deno task firefox</code></li>
-    <li>Load the extension from the <code>release/&lt;browser&gt;</code> folder using the steps above</li>
+    <li>Load the extension from the <code>release/&lt;browser&gt;</code> folder using the manual install steps below</li>
   </ol>
+
+  <h2>Manual install from GitHub</h2>
+  <p>
+    Manual installs are useful for testing, but they do not update automatically. Download the latest
+    ZIP from the <a href="https://github.com/merill/yako/releases" rel="noreferrer noopener">Yako releases page</a>
+    and follow the steps for your browser.
+  </p>
+
+  <h3>Edge manual install</h3>
+  <ol>
+    <li>Download <strong>yako-edge.zip</strong> from the latest release</li>
+    <li>Unzip the file to a folder on your computer, for example <code>~/yako-edge</code></li>
+    <li>Open Edge and go to <code>edge://extensions</code></li>
+    <li>Enable <strong>Developer mode</strong></li>
+    <li>Select <strong>Load unpacked</strong> and choose the folder you unzipped</li>
+  </ol>
+
+  <h3>Chrome manual install</h3>
+  <ol>
+    <li>Download <strong>yako-chrome.zip</strong> from the latest release</li>
+    <li>Unzip the file to a folder on your computer, for example <code>~/yako-chrome</code></li>
+    <li>Open Chrome and go to <code>chrome://extensions</code></li>
+    <li>Enable <strong>Developer mode</strong></li>
+    <li>Select <strong>Load unpacked</strong> and choose the folder you unzipped</li>
+  </ol>
+
+  <h3>Firefox temporary install</h3>
+  <ol>
+    <li>Download <strong>yako-firefox.zip</strong> from the latest release</li>
+    <li>Unzip the file to a folder on your computer, for example <code>~/yako-firefox</code></li>
+    <li>Open Firefox and go to <code>about:debugging#/runtime/this-firefox</code></li>
+    <li>Select <strong>Load Temporary Add-on</strong></li>
+    <li>Choose <code>manifest.json</code> from the folder you unzipped</li>
+  </ol>
+  <p class="note">
+    <strong>Note:</strong> Firefox temporary add-ons are removed when the browser closes. Use the Firefox Add-ons
+    store listing for a permanent install.
+  </p>
 </DocsLayout>
 
 <style>

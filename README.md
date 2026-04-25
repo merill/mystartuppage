@@ -24,9 +24,9 @@ A new tab browser extension for Microsoft users and admins. Quickly search and a
 
 | Browser | Link |
 |---------|------|
-| Edge | _Coming soon_ |
-| Chrome | _Coming soon_ |
-| Firefox | _Coming soon_ |
+| Edge | [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/yako/llaljgjhibbinmnhaahepfocpiakphbd) |
+| Chrome | [Chrome Web Store](https://chromewebstore.google.com/detail/yako/hiipeaipmomejiiapfjldkanihokcjcg) |
+| Firefox | [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/yako/) |
 
 ## Development
 
