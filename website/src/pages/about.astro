@@ -1,0 +1,140 @@
+---
+import Footer from '../components/Footer.astro'
+import Nav from '../components/Nav.astro'
+import Base from '../layouts/Base.astro'
+---
+
+<Base
+  title="About Yako - A personal project by Merill Fernando"
+  description="Yako is a personal project by Merill Fernando, built for Microsoft users and admins."
+>
+  <Nav slot="nav" />
+
+  <section class="about-hero">
+    <div class="container about-container">
+      <p class="eyebrow">About Yako</p>
+      <h1>Built by Merill Fernando for the Microsoft community.</h1>
+      <p class="lead">
+        Yako is a personal project by <a href="https://merill.net" rel="noreferrer noopener">Merill Fernando</a>,
+        a Product Manager at Microsoft. To learn more about Merill and his other projects,
+        visit <a href="https://merill.net" rel="noreferrer noopener">merill.net</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="about-details">
+    <div class="container about-grid">
+      <div class="about-card">
+        <h2>Open source</h2>
+        <p>
+          Yako is open source and available on <a href="https://github.com/merill/yako" rel="noreferrer noopener">GitHub</a>.
+          If you encounter any issues or have suggestions for improvements, please
+          <a href="https://github.com/merill/yako/issues" rel="noreferrer noopener">open an issue</a>.
+        </p>
+      </div>
+      <div class="about-card">
+        <h2>Independent project</h2>
+        <p>
+          Yako is not a Microsoft product or service and is not affiliated with Microsoft.
+          It is built independently for people who live in Microsoft 365, Azure, Entra,
+          Intune, Defender, and the wider Microsoft cloud ecosystem.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</Base>
+
+<style>
+  .about-hero {
+    padding: 80px 0 40px;
+  }
+
+  .about-container {
+    max-width: 760px;
+  }
+
+  .eyebrow {
+    margin-bottom: 12px;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .about-container h1 {
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    letter-spacing: -0.04em;
+  }
+
+  .lead {
+    margin-top: 24px;
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .lead a,
+  .about-card a {
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .lead a:hover,
+  .about-card a:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .about-details {
+    padding: 24px 0 128px;
+  }
+
+  .about-grid {
+    display: grid;
+    gap: 1px;
+    max-width: 900px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-border);
+    overflow: hidden;
+  }
+
+  .about-card {
+    background: var(--color-bg);
+    padding: 32px;
+  }
+
+  .about-card h2 {
+    font-size: 1.15rem;
+  }
+
+  .about-card p {
+    margin-top: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .about-hero {
+      padding: 56px 0 32px;
+    }
+
+    .about-details {
+      padding-bottom: 80px;
+    }
+
+    .about-card {
+      padding: 24px;
+    }
+  }
+</style>
