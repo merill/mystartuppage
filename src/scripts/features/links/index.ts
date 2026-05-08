@@ -637,7 +637,7 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
         if (icondom && icon) {
             const img = document.createElement('img')
             const currentSrc = icondom.src
-            let url = getDefaultIcon(link.url)
+            let iconSrc = getDefaultIcon(url ?? link.url)
 
             // Icon is changing — drop any cached bytes for this link
             removeCachedIcon(id)
@@ -651,15 +651,15 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
 
             if (icon.type === 'auto') {
                 icon.value = undefined
-                img.src = url
+                img.src = iconSrc
             }
 
             if (icon.type === 'url') {
                 if (icon.value && stringMaxSize(icon.value, 7500)) {
-                    url = icon.value
-                    img.src = url
+                    iconSrc = icon.value
+                    img.src = iconSrc
                     // Pre-warm the cache for the new URL icon
-                    cacheIconForLink(id, url)
+                    cacheIconForLink(id, iconSrc)
                 } else {
                     console.error(`There was a problem with this icon URL: ${icon.value}`)
                 }
@@ -680,8 +680,6 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
                 }
 
                 if (file) {
-                    url = id
-
                     storeIconFile(id, file).then((uri) => {
                         img.src = uri
                     })
@@ -695,6 +693,11 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
             link.url = stringMaxSize(url, 512)
             urldom.href = link.url
             titledom.textContent = createTitle(link)
+
+            if (link.icon?.type === 'auto') {
+                link.icon.value = undefined
+                removeCachedIcon(id)
+            }
         }
     }
 
@@ -830,9 +833,15 @@ function refreshIcons(ids: string[], data: Sync): Sync {
 
             if (!link.icon || link.icon.type === 'auto') {
                 link.icon = link.icon ?? { type: 'auto', value: '' } // when link was just added, it doesn't have the icon property, so creates it
-                link.icon.value = getDefaultIcon(link.url) + `?r=${unixDate}`
+                link.icon.value = getDefaultIcon(link.url) + `&r=${unixDate}`
             } else if (link.icon.type === 'url') {
-                link.icon.value = `${link.icon.value}?r=${unixDate}`
+                try {
+                    const u = new URL(link.icon.value ?? '')
+                    u.searchParams.set('r', unixDate)
+                    link.icon.value = u.toString()
+                } catch {
+                    // invalid URL — skip cache-busting
+                }
             }
 
             data[id] = link
