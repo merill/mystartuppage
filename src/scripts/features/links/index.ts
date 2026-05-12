@@ -690,11 +690,12 @@ function updateLink({ id, title, icon, url, file }: UpdateLink, data: Sync): Syn
         }
 
         if (titledom && urldom && url !== undefined) {
+            const previousUrl = link.url
             link.url = stringMaxSize(url, 512)
             urldom.href = link.url
             titledom.textContent = createTitle(link)
 
-            if (link.icon?.type === 'auto') {
+            if (link.icon?.type === 'auto' && link.url !== previousUrl) {
                 link.icon.value = undefined
                 removeCachedIcon(id)
             }
@@ -840,7 +841,9 @@ function refreshIcons(ids: string[], data: Sync): Sync {
                     u.searchParams.set('r', unixDate)
                     link.icon.value = u.toString()
                 } catch {
-                    // invalid URL — skip cache-busting
+                    // Fallback for relative or non-standard URLs
+                    const value = link.icon.value ?? ''
+                    link.icon.value = value.includes('?') ? `${value}&r=${unixDate}` : `${value}?r=${unixDate}`
                 }
             }
 
