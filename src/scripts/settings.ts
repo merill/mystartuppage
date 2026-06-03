@@ -16,6 +16,7 @@ import { BROWSER, IS_MOBILE, PLATFORM, SYNC_DEFAULT } from './defaults.ts'
 import { tradThis, traduction } from './utils/translations.ts'
 import { opacityFromHex } from './shared/generic.ts'
 import { isValidTenantId } from './shared/tenant.ts'
+import { setupWizard } from './startup/setup-wizard.ts'
 import { loadCallbacks } from './utils/onsettingsload.ts'
 import { onclickdown } from 'clickdown/mod'
 import { filterData } from './compatibility/apply.ts'
@@ -794,6 +795,12 @@ function initOptionsEvents(): void {
     onclickdown(paramId('b_settings-apply'), () => {
         const val = paramId('settings-data').value
         importSettings(parse<Partial<Sync>>(val) ?? {})
+    })
+
+    onclickdown(paramId('b_advanced-config'), async () => {
+        const sync = await storage.sync.get()
+        const local = await storage.local.get()
+        setupWizard(sync, local)
     })
 
     onclickdown(paramId('b_reset-first'), () => {

@@ -8,20 +8,16 @@ import type { Local } from '../../types/local.ts'
 import type { ExternalTenant, Sync, TenantConfig } from '../../types/sync.ts'
 
 /**
- * First-run setup wizard.
+ * Advanced configuration wizard.
  *
  * Step 1 — keep the standard setup or target a dedicated Microsoft tenant.
  * Step 2 — list any External ID / B2C tenants, which become a dedicated
  * quick-links group (Azure + Entra links per tenant).
  *
- * Runs once: it is skipped as soon as `sync.tenant` is set (which then syncs
- * across devices).
+ * Opened on demand from the settings menu ("Run advanced configuration"). It
+ * pre-fills from the current configuration so it can be re-run to adjust it.
  */
 export function setupWizard(sync: Sync, local: Local): void {
-    if (sync.tenant !== undefined) {
-        return
-    }
-
     const dialog = getHTMLTemplate<HTMLDialogElement>('setup-wizard-template', '#setup-wizard')
     const tenantBlock = dialog.querySelector<HTMLDivElement>('#setup-wizard-tenant')
     const tenantInput = dialog.querySelector<HTMLInputElement>('#i_wizard-tenantid')
@@ -56,11 +52,21 @@ export function setupWizard(sync: Sync, local: Local): void {
         }
     }
 
-    function addRow(): void {
+    function addRow(tenant?: ExternalTenant): void {
         if (!list) {
             return
         }
         const row = getHTMLTemplate<HTMLDivElement>('setup-wizard-row-template', '.setup-wizard-tenant-row')
+        if (tenant) {
+            const idInput = row.querySelector<HTMLInputElement>('.setup-wizard-row-id')
+            const nameInput = row.querySelector<HTMLInputElement>('.setup-wizard-row-name')
+            if (idInput) {
+                idInput.value = tenant.id
+            }
+            if (nameInput) {
+                nameInput.value = tenant.name ?? ''
+            }
+        }
         row.querySelector<HTMLButtonElement>('.setup-wizard-row-remove')?.addEventListener('click', () => {
             row.remove()
         })
@@ -105,8 +111,24 @@ export function setupWizard(sync: Sync, local: Local): void {
         })
     }
 
-    addButton?.addEventListener('click', addRow)
+    addButton?.addEventListener('click', () => addRow())
     backButton?.addEventListener('click', () => showStep(1))
+
+    // Pre-fill from the current configuration so the wizard can be re-run.
+    if (sync.tenant?.mode === 'dedicated') {
+        const dedicatedRadio = dialog.querySelector<HTMLInputElement>('input[name="setup-mode"][value="dedicated"]')
+        if (dedicatedRadio) {
+            dedicatedRadio.checked = true
+        }
+        tenantBlock?.removeAttribute('hidden')
+        if (tenantInput) {
+            tenantInput.value = sync.tenant.id ?? ''
+        }
+    }
+
+    for (const tenant of sync.externalTenants ?? []) {
+        addRow(tenant)
+    }
 
     confirm?.addEventListener('click', async () => {
         if (step === 1) {

@@ -15,7 +15,6 @@ import './features/contextmenu.ts'
 import { displayInterface, onInterfaceDisplay } from './shared/display.ts'
 import { setTranslationCache, traduction } from './utils/translations.ts'
 import { operaExtensionExplainer } from './startup/opera.ts'
-import { setupWizard } from './startup/setup-wizard.ts'
 import { setPotatoComputerMode } from './startup/potato.ts'
 import { userDate } from './shared/time.ts'
 import { onlineAndMobile } from './startup/online.ts'
@@ -96,7 +95,6 @@ async function startup(): Promise<void> {
     getCatalog()
     pageControl({ width: sync.pagewidth, gap: sync.pagegap })
     operaExtensionExplainer(local.operaExplained)
-    setupWizard(sync, local)
     tabsTracking()
 
     document.documentElement.dataset.system = SYSTEM_OS as string
