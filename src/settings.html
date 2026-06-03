@@ -581,6 +581,35 @@
     </div>
 </div>
 
+<div class="settings-title dashboard-setting" id="tenant_title">
+    <h2 class="trn">Tenant</h2>
+</div>
+
+<div class="param dashboard-setting">
+    <div class="wrapper">
+        <label for="i_tenant-mode" class="trn">Portal links</label>
+        <select id="i_tenant-mode">
+            <option value="default" class="trn">Standard setup</option>
+            <option value="dedicated" class="trn">Dedicated tenant</option>
+        </select>
+    </div>
+
+    <div id="tenant_options" class="dropdown">
+        <hr />
+
+        <div class="wrapper">
+            <label for="i_tenant-id" class="trn">Tenant ID</label>
+            <input
+                type="text"
+                id="i_tenant-id"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="GUID or contoso.onmicrosoft.com"
+            />
+        </div>
+    </div>
+</div>
+
 <div class="settings-title dashboard-setting" id="links_title">
     <h2 class="trn">Quick Links</h2>
 

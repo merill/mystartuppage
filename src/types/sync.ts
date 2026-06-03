@@ -48,7 +48,19 @@ export interface Sync {
         browser: string
         version: string
     }
+    tenant?: TenantConfig
+    externalTenants?: ExternalTenant[]
     [key: string]: Link | unknown
+}
+
+export interface TenantConfig {
+    mode: 'default' | 'dedicated'
+    id?: string // GUID or verified domain; set only when mode === 'dedicated'
+}
+
+export interface ExternalTenant {
+    id: string // GUID or domain of the External ID / B2C tenant
+    name?: string // optional display label
 }
 
 export interface Notes {

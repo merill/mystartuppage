@@ -15,6 +15,7 @@ import { colorInput, fadeOut, webkitRangeTrackColor } from './shared/dom.ts'
 import { BROWSER, IS_MOBILE, PLATFORM, SYNC_DEFAULT } from './defaults.ts'
 import { tradThis, traduction } from './utils/translations.ts'
 import { opacityFromHex } from './shared/generic.ts'
+import { isValidTenantId } from './shared/tenant.ts'
 import { loadCallbacks } from './utils/onsettingsload.ts'
 import { onclickdown } from 'clickdown/mod'
 import { filterData } from './compatibility/apply.ts'
@@ -23,7 +24,7 @@ import { debounce } from './utils/debounce.ts'
 import { storage } from './storage.ts'
 import { parse } from './utils/parse.ts'
 
-import type { Sync } from '../types/sync.ts'
+import type { Sync, TenantConfig } from '../types/sync.ts'
 import type { Local } from '../types/local.ts'
 
 // Initialization
@@ -177,6 +178,8 @@ function initOptionsValues(data: Sync, _local: Local): void {
     setInput('i_pagewidth', data.pagewidth || 1600)
     setInput('i_pagegap', data.pagegap ?? 1)
     setInput('i_dateformat', data.dateformat || 'eu')
+    setInput('i_tenant-mode', data.tenant?.mode ?? 'default')
+    setInput('i_tenant-id', data.tenant?.id ?? '')
     setInput('i_greeting', data.greeting ?? '')
     setInput('i_greetmorning', data.greetingscustom?.morning ?? '')
     setInput('i_greetafternoon', data.greetingscustom?.afternoon ?? '')
@@ -252,6 +255,7 @@ function initOptionsValues(data: Sync, _local: Local): void {
     paramId('worldclocks_options')?.classList.toggle('shown', data.clock.worldclocks)
     paramId('main_options')?.classList.toggle('shown', data.main)
     paramId('quicklinks_options')?.classList.toggle('shown', data.quicklinks)
+    paramId('tenant_options')?.classList.toggle('shown', data.tenant?.mode === 'dedicated')
     paramId('notes_options')?.classList.toggle('shown', data.notes?.on)
 
     // Page layout
@@ -633,6 +637,18 @@ function initOptionsEvents(): void {
         document.getElementById('greetings_options')?.classList.toggle('shown', target.checked)
         hideElements({ greetings: !target.checked }, { isEvent: true })
     })
+
+    // Tenant
+
+    const tenantInputDebounced = debounce(applyTenantSetting, 500)
+
+    paramId('i_tenant-mode').addEventListener('change', () => {
+        const dedicated = paramId('i_tenant-mode').value === 'dedicated'
+        document.getElementById('tenant_options')?.classList.toggle('shown', dedicated)
+        applyTenantSetting()
+    })
+
+    paramId('i_tenant-id').addEventListener('input', () => tenantInputDebounced())
 
     // Greetings
 
@@ -1312,6 +1328,29 @@ function switchView(view: string): void {
 }
 
 //	Helpers
+
+async function applyTenantSetting(): Promise<void> {
+    const mode = paramId('i_tenant-mode').value === 'dedicated' ? 'dedicated' : 'default'
+    const idInput = paramId('i_tenant-id')
+    const id = idInput.value.trim()
+
+    let tenant: TenantConfig
+
+    if (mode === 'dedicated') {
+        const valid = isValidTenantId(id)
+        idInput.classList.toggle('invalid', id.length > 0 && !valid)
+        tenant = valid ? { mode, id } : { mode }
+    } else {
+        idInput.classList.remove('invalid')
+        tenant = { mode: 'default' }
+    }
+
+    await storage.sync.set({ tenant })
+
+    const sync = await storage.sync.get()
+    const local = await storage.local.get()
+    quickLinks({ sync, local })
+}
 
 function paramId(str: string): HTMLInputElement {
     return document.getElementById(str) as HTMLInputElement
