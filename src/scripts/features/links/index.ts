@@ -16,6 +16,7 @@ import {
 } from './helpers.ts'
 
 import { randomString, stringMaxSize } from '../../shared/generic.ts'
+import { applyTenantToUrl } from '../../shared/tenant.ts'
 import { displayInterface } from '../../shared/display.ts'
 import { getHTMLTemplate } from '../../shared/dom.ts'
 import { eventDebounce } from '../../utils/debounce.ts'
@@ -207,7 +208,7 @@ export function initblocks(sync: Sync, local?: Local): true {
             }
 
             li = isElem(link)
-                ? createElem(link, sync.linknewtab, sync.linkstyle)
+                ? createElem(link, sync.linknewtab, sync.linkstyle, sync.tenant)
                 : createFolder(link, linksInFolders, sync.linkstyle)
 
             fragment.appendChild(li)
@@ -289,7 +290,12 @@ function createFolder(link: LinkFolder, folderChildren: Link[], style: Sync['lin
     return li
 }
 
-function createElem(link: LinkElem, openInNewtab: boolean, style: Sync['linkstyle']): HTMLLIElement {
+function createElem(
+    link: LinkElem,
+    openInNewtab: boolean,
+    style: Sync['linkstyle'],
+    tenant?: Sync['tenant'],
+): HTMLLIElement {
     const li = getHTMLTemplate<HTMLLIElement>('link-elem-template', 'li')
     const span = li.querySelector('span')
     const anchor = li.querySelector('a')
@@ -300,7 +306,7 @@ function createElem(link: LinkElem, openInNewtab: boolean, style: Sync['linkstyl
     }
 
     li.id = link._id
-    anchor.href = stringMaxSize(link.url, 512)
+    anchor.href = stringMaxSize(applyTenantToUrl(link.url, tenant), 512)
     span.textContent = createTitle(link)
 
     if (style !== 'text') {

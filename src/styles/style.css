@@ -34,6 +34,7 @@
 /* Components that can be used anywhere (interface or settings) */
 @import './components/dialog';
 @import './components/networkform';
+@import './components/setup-wizard';
 
 /* Baked-in features and dialogs */
 @import './features/time';

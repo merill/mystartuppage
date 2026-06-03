@@ -3,6 +3,7 @@ import { initblocks } from './index.ts'
 
 import { transitioner } from '../../utils/transitioner.ts'
 import { tradThis } from '../../utils/translations.ts'
+import { applyTenantToUrl } from '../../shared/tenant.ts'
 import { storage } from '../../storage.ts'
 
 import type { LinkFolder } from '../../../types/shared.ts'
@@ -124,7 +125,7 @@ function openAllLinks(data: Sync, li: HTMLLIElement): void {
     const linksInFolder = getLinksInFolder(data, li.id)
 
     for (const link of linksInFolder) {
-        globalThis.open(link.url, '_blank')?.focus()
+        globalThis.open(applyTenantToUrl(link.url, data.tenant), '_blank')?.focus()
     }
 
     globalThis.open(globalThis.location.href, '_blank')?.focus()

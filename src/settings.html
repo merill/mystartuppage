@@ -581,6 +581,35 @@
     </div>
 </div>
 
+<div class="settings-title dashboard-setting" id="tenant_title">
+    <h2 class="trn">Tenant</h2>
+</div>
+
+<div class="param dashboard-setting">
+    <div class="wrapper">
+        <label for="i_tenant-mode" class="trn">Portal links</label>
+        <select id="i_tenant-mode">
+            <option value="default" class="trn">Standard setup</option>
+            <option value="dedicated" class="trn">Dedicated tenant</option>
+        </select>
+    </div>
+
+    <div id="tenant_options" class="dropdown">
+        <hr />
+
+        <div class="wrapper">
+            <label for="i_tenant-id" class="trn">Tenant ID</label>
+            <input
+                type="text"
+                id="i_tenant-id"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="GUID or contoso.onmicrosoft.com"
+            />
+        </div>
+    </div>
+</div>
+
 <div class="settings-title dashboard-setting" id="links_title">
     <h2 class="trn">Quick Links</h2>
 
@@ -1410,6 +1439,23 @@
             >
                 <img src="src/assets/labels/upload.svg" height="16" alt="" />
                 <span class="trn">Export</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="param dashboard-setting" id="advanced-config">
+    <div class="wrapper">
+        <label for="b_advanced-config" class="trn">Advanced configuration</label>
+
+        <div>
+            <button
+                id="b_advanced-config"
+                class="param-btn"
+                title="Run advanced configuration"
+                aria-label="Run advanced configuration"
+            >
+                <span class="trn">Run advanced configuration</span>
             </button>
         </div>
     </div>

@@ -1,0 +1,222 @@
+#setup-wizard {
+    opacity: 0;
+    outline: none;
+    width: min(420px, calc(100% - 32px));
+    padding: 1.5em 1.75em 1.25em;
+    line-height: 1.5em;
+    transition: opacity 0.3s;
+}
+
+#setup-wizard.shown {
+    opacity: 1;
+}
+
+#setup-wizard::backdrop {
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: background-color 0.3s;
+}
+
+#setup-wizard.shown::backdrop {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+#setup-wizard h1 {
+    margin: 0 0 0.25em;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#setup-wizard .setup-wizard-body > p {
+    margin: 0 0 1em;
+    opacity: 0.75;
+    font-size: 0.9rem;
+}
+
+.setup-wizard-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.setup-wizard-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6em;
+    padding: 0.75em;
+    border: 1px solid var(--color-dialog-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
+}
+
+.setup-wizard-choice:hover,
+.setup-wizard-choice:has(input:checked) {
+    border-color: var(--color-blue);
+    background-color: color-mix(in srgb, var(--color-blue) 8%, transparent);
+}
+
+.setup-wizard-choice input {
+    margin-top: 0.2em;
+    accent-color: var(--color-blue);
+}
+
+.setup-wizard-choice-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+}
+
+.setup-wizard-choice-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.setup-wizard-choice-desc {
+    font-size: 0.82rem;
+    opacity: 0.7;
+    line-height: 1.35;
+}
+
+.setup-wizard-tenant {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    margin-top: 1em;
+}
+
+.setup-wizard-tenant[hidden] {
+    display: none;
+}
+
+.setup-wizard-tenant label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.setup-wizard-tenant input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5em 0.7em;
+    border: 1px solid var(--color-dialog-border);
+    border-radius: 8px;
+    background-color: transparent;
+    color: var(--color-text);
+    font-size: 0.85rem;
+}
+
+.setup-wizard-tenant input:focus-visible {
+    outline: none;
+    border-color: var(--color-blue);
+}
+
+.setup-wizard-hint {
+    font-size: 0.78rem;
+    opacity: 0.65;
+}
+
+.setup-wizard-hint.invalid {
+    color: var(--color-red);
+    opacity: 1;
+}
+
+.setup-wizard-step[hidden] {
+    display: none;
+}
+
+/* ─── Step 2: external tenants list ─── */
+.setup-wizard-tenant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-bottom: 0.75em;
+}
+
+.setup-wizard-tenant-row {
+    display: flex;
+    gap: 0.4em;
+    align-items: center;
+}
+
+.setup-wizard-tenant-row input {
+    box-sizing: border-box;
+    padding: 0.45em 0.6em;
+    border: 1px solid var(--color-dialog-border);
+    border-radius: 8px;
+    background-color: transparent;
+    color: var(--color-text);
+    font-size: 0.82rem;
+}
+
+.setup-wizard-row-name {
+    flex: 0 0 35%;
+    min-width: 0;
+}
+
+.setup-wizard-row-id {
+    flex: 1;
+    min-width: 0;
+}
+
+.setup-wizard-tenant-row input:focus-visible {
+    outline: none;
+    border-color: var(--color-blue);
+}
+
+.setup-wizard-tenant-row input.invalid {
+    border-color: var(--color-red);
+}
+
+.setup-wizard-row-remove {
+    flex: 0 0 auto;
+    padding: 0.35em 0.6em;
+    border-radius: 8px;
+    opacity: 0.7;
+}
+
+.setup-wizard-add {
+    padding: 0.4em 0.6em;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    border: 1px dashed var(--color-dialog-border);
+}
+
+/* ─── Footer actions ─── */
+.setup-wizard-actions {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+}
+
+#b_setup-wizard-confirm {
+    flex: 1;
+    padding: 0.6em;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--color-blue);
+    color: white;
+}
+
+#b_setup-wizard-confirm:hover,
+#b_setup-wizard-confirm:focus-visible {
+    background-color: var(--color-blue);
+    filter: brightness(1.08);
+}
+
+.setup-wizard-secondary {
+    flex: 0 0 auto;
+    padding: 0.6em 1em;
+    border-radius: 8px;
+    border: 1px solid var(--color-dialog-border);
+}
+
+.setup-wizard-secondary[hidden] {
+    display: none;
+}
+
+/* Settings: invalid tenant id input */
+#i_tenant-id.invalid {
+    border-color: var(--color-red);
+}

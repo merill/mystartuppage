@@ -907,6 +907,94 @@
                 </dialog>
             </template>
 
+            <template id="setup-wizard-template">
+                <dialog id="setup-wizard">
+                    <div class="setup-wizard-body setup-wizard-step" data-step="1">
+                        <h1 class="trn">Welcome to Yako</h1>
+                        <p class="trn">How would you like your Microsoft portal links to open?</p>
+
+                        <div class="setup-wizard-choices">
+                            <label class="setup-wizard-choice">
+                                <input type="radio" name="setup-mode" value="default" checked />
+                                <div class="setup-wizard-choice-body">
+                                    <span class="setup-wizard-choice-title trn">Standard setup</span>
+                                    <span class="setup-wizard-choice-desc trn">
+                                        Open portals normally. You pick the tenant when signing in.
+                                    </span>
+                                </div>
+                            </label>
+
+                            <label class="setup-wizard-choice">
+                                <input type="radio" name="setup-mode" value="dedicated" />
+                                <div class="setup-wizard-choice-body">
+                                    <span class="setup-wizard-choice-title trn">Dedicated tenant</span>
+                                    <span class="setup-wizard-choice-desc trn">
+                                        Send portal links straight to one Microsoft tenant.
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div id="setup-wizard-tenant" class="setup-wizard-tenant" hidden>
+                            <label for="i_wizard-tenantid" class="trn">Tenant ID</label>
+                            <input
+                                type="text"
+                                id="i_wizard-tenantid"
+                                autocomplete="off"
+                                spellcheck="false"
+                                placeholder="00000000-0000-0000-0000-000000000000 or contoso.onmicrosoft.com"
+                            />
+                            <span id="setup-wizard-hint" class="setup-wizard-hint trn">
+                                Enter your tenant ID (GUID) or a verified domain.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="setup-wizard-body setup-wizard-step" data-step="2" hidden>
+                        <h1 class="trn">External ID or B2C tenants</h1>
+                        <p class="trn">
+                            Add any External ID or B2C tenants you manage. Each one gets Azure and Entra links in a
+                            dedicated section. You can skip this and add them later.
+                        </p>
+
+                        <div id="setup-wizard-tenant-list" class="setup-wizard-tenant-list"></div>
+
+                        <button id="b_setup-wizard-add" class="setup-wizard-add trn" type="button">
+                            + Add tenant
+                        </button>
+                    </div>
+
+                    <hr />
+
+                    <div class="setup-wizard-actions">
+                        <button id="b_setup-wizard-back" class="setup-wizard-secondary trn" type="button" hidden>
+                            Back
+                        </button>
+                        <button id="b_setup-wizard-confirm" class="trn" type="button">Continue</button>
+                    </div>
+                </dialog>
+            </template>
+
+            <template id="setup-wizard-row-template">
+                <div class="setup-wizard-tenant-row">
+                    <input
+                        type="text"
+                        class="setup-wizard-row-name"
+                        autocomplete="off"
+                        spellcheck="false"
+                        placeholder="Name (optional)"
+                    />
+                    <input
+                        type="text"
+                        class="setup-wizard-row-id"
+                        autocomplete="off"
+                        spellcheck="false"
+                        placeholder="Tenant ID or domain"
+                    />
+                    <button class="setup-wizard-row-remove" type="button" aria-label="Remove tenant">✕</button>
+                </div>
+            </template>
+
             <!-- help-mode -->
             <style>
                 #help-mode-prompt {
